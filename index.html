@@ -15,10 +15,12 @@
         <div class="max-w-xl mx-auto flex justify-between items-center">
             <div>
                 <h1 class="text-base font-bold text-emerald-400">Selección de Maquinaria</h1>
-                <p class="text-xs text-slate-400" id="fecha-subtitulo">Sincronizado con Google Sheets</p>
+                <p class="text-xs text-slate-400">Sincronizado con Google Sheets</p>
             </div>
-            <div id="badge-fecha" class="bg-emerald-500 text-slate-950 font-black text-xs px-3 py-1 rounded shadow">
-                --/--/--
+            <!-- Selector de Fecha Interactivo -->
+            <div class="relative">
+                <input type="date" id="input-fecha" 
+                    class="bg-emerald-500 text-slate-950 font-black text-xs px-3 py-1.5 rounded shadow border-none focus:ring-2 focus:ring-emerald-300 cursor-pointer">
             </div>
         </div>
     </header>
@@ -46,7 +48,7 @@
 
     <!-- Modal / Tarjeta de Detalle -->
     <div id="modal-detalle" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4 relative animate-in fade-in zoom-in duration-200">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4 relative">
             
             <div class="flex justify-between items-start border-b border-slate-700 pb-3">
                 <div>
@@ -94,7 +96,6 @@
     </div>
 
     <script>
-        // Enlace CSV de tu Google Sheet
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vReJl2BT_9uiaFmB-U1-UlhHKE9lSmhK8jB2bF1Pu1MlM0B15O2H5WxM_ot85WtTIol4_bVhuudvcHU/pub?gid=1193959640&single=true&output=csv";
 
         let maquinasData = [];
@@ -109,31 +110,42 @@
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('grid-maquinas').classList.remove('hidden');
 
-                // Detección automática de la fecha
-                let ultimaFecha = "11/11/26";
-                for (let r = 0; r < Math.min(rows.length, 5); r++) {
-                    for (let c = 0; c < Math.min(rows[r].length, 5); c++) {
-                        let cell = rows[r][c] ? rows[r][c].trim() : "";
+                // Encontrar la ÚLTIMA fecha escaneando toda la hoja hacia abajo
+                let ultimaFechaDetectada = "";
+                for (let i = 0; i < rows.length; i++) {
+                    for (let j = 0; j < rows[i].length; j++) {
+                        let cell = rows[i][j] ? rows[i][j].trim() : "";
+                        // Detectar formatos de fecha comunes (DD/MM/YY o similares)
                         if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(cell)) {
-                            ultimaFecha = cell;
+                            ultimaFechaDetectada = cell;
                         }
                     }
                 }
-                document.getElementById('badge-fecha').innerText = ultimaFecha;
 
-                // Mapeo de columnas según tus indicaciones:
-                // Columna H (índice 7): Unidad
-                // Columna G (índice 6): Operador
-                // Columna I (índice 8): Horómetro Inicial
-                // Columna J (índice 9): Horómetro Final
-                // Columna K (índice 10): Horas Totales
-                // Columna M (índice 12): Combustible Abastecido
+                // Si encuentra una fecha válida, la asigna al selector de fecha en formato YYYY-MM-DD para el input type="date"
+                if (ultimaFechaDetectada) {
+                    const partes = ultimaFechaDetectada.split('/');
+                    if (partes.length === 3) {
+                        let dia = partes[0].padStart(2, '0');
+                        let mes = partes[1].padStart(2, '0');
+                        let anio = partes[2].length === 2 ? '20' + partes[2] : partes[2];
+                        document.getElementById('input-fecha').value = `${anio}-${mes}-${dia}`;
+                    }
+                }
+
+                // Cargar datos mapeando la Columna H (índice 7) y excluyendo encabezados como "EQUIPO" o "UNIDAD"
                 for (let i = 0; i < rows.length; i++) {
                     const row = rows[i];
                     if (!row || row.length < 8) continue;
 
                     const unidad = row[7] ? row[7].trim() : ''; // Columna H
-                    if (!unidad || unidad.toUpperCase() === 'UNIDAD' || unidad.includes('REPORTE')) continue;
+                    if (!unidad) continue;
+
+                    const unidadUpper = unidad.toUpperCase();
+                    // Evitar que tome los títulos o encabezados de tabla
+                    if (unidadUpper === 'UNIDAD' || unidadUpper === 'EQUIPO' || unidadUpper.includes('REPORTE DIARIO')) {
+                        continue;
+                    }
 
                     maquinasData.push({
                         unidad: unidad,
@@ -148,7 +160,7 @@
                 renderizarBotones(maquinasData);
             },
             error: function(err) {
-                document.getElementById('loading').innerHTML = '<span class="text-red-400">Error al leer los datos de la hoja.</span>';
+                document.getElementById('loading').innerHTML = '<span class="text-red-400">Error al leer los datos.</span>';
                 console.error(err);
             }
         });
@@ -158,7 +170,7 @@
             let html = '';
 
             if (datos.length === 0) {
-                grid.innerHTML = '<div class="col-span-2 text-center text-slate-500 py-8">No se encontraron unidades en la Columna H.</div>';
+                grid.innerHTML = '<div class="col-span-2 text-center text-slate-500 py-8">No se encontraron unidades.</div>';
                 return;
             }
 
@@ -166,7 +178,7 @@
                 html += `
                     <button onclick="abrirDetalle(${index})" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 p-4 rounded-2xl shadow-md border border-emerald-500 flex flex-col justify-between items-start text-left transition transform active:scale-95 h-28">
                         <span class="text-2xl">🚜</span>
-                        <span class="font-black text-sm md:text-base leading-snug line-clamp-2 text-slate-950">${item.unidad}</span>
+                        <span class="font-black text-sm md:text-base leading-snug text-slate-950">${item.unidad}</span>
                     </button>
                 `;
             });
