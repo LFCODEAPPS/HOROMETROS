@@ -65,7 +65,7 @@
                 </button>
             </div>
 
-            <!-- NUEVO: Controles de Navegación por Fecha -->
+            <!-- Controles de Navegación por Fecha -->
             <div class="flex items-center justify-between bg-slate-900/60 p-2 rounded-xl border border-emerald-900/30">
                 <button id="btn-fecha-ant" class="p-2 text-emerald-500 hover:bg-slate-700 rounded-lg transition disabled:opacity-30 disabled:hover:bg-transparent">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
@@ -79,31 +79,37 @@
                 </button>
             </div>
 
-            <!-- Datos Ordenados -->
+            <!-- Datos Ordenados (Textos limpios) -->
             <div class="space-y-3 text-sm">
+                
                 <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/50 flex justify-between items-center">
-                    <span class="text-slate-400 text-xs">👤 Operador (Col. G):</span>
+                    <span class="text-slate-400 text-xs">📍 Lugar:</span>
+                    <span id="modal-lugar" class="font-semibold text-white text-right">--</span>
+                </div>
+
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/50 flex justify-between items-center">
+                    <span class="text-slate-400 text-xs">👤 Operador:</span>
                     <span id="modal-operador" class="font-semibold text-white text-right">--</span>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
                     <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/50">
-                        <span class="text-slate-400 text-xs block mb-1">⏱️ H. Inicial (Col. I):</span>
+                        <span class="text-slate-400 text-xs block mb-1">⏱️ H. Inicial:</span>
                         <span id="modal-hinicial" class="font-bold text-emerald-300 text-base">--</span>
                     </div>
                     <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/50">
-                        <span class="text-slate-400 text-xs block mb-1">⏱️ H. Final (Col. J):</span>
+                        <span class="text-slate-400 text-xs block mb-1">⏱️ H. Final:</span>
                         <span id="modal-hfinal" class="font-bold text-emerald-300 text-base">--</span>
                     </div>
                 </div>
 
                 <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/50 flex justify-between items-center">
-                    <span class="text-slate-400 text-xs">📊 Horas Totales (Col. K):</span>
+                    <span class="text-slate-400 text-xs">📊 Horas Totales:</span>
                     <span id="modal-totales" class="font-bold text-blue-400 text-base">--</span>
                 </div>
 
                 <div class="bg-amber-950/40 border border-amber-800/50 p-3 rounded-xl flex justify-between items-center">
-                    <span class="text-amber-300 text-xs font-medium">⛽ Combustible (Col. M):</span>
+                    <span class="text-amber-300 text-xs font-medium">⛽ Combustible:</span>
                     <span id="modal-combustible" class="font-black text-amber-400 text-base">--</span>
                 </div>
             </div>
@@ -118,12 +124,23 @@
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vReJl2BT_9uiaFmB-U1-UlhHKE9lSmhK8jB2bF1Pu1MlM0B15O2H5WxM_ot85WtTIol4_bVhuudvcHU/pub?gid=1193959640&single=true&output=csv";
 
         let todosLosRegistros = [];
-        let fechasUnicas = []; // Array ordenado de fechas disponibles
+        let fechasUnicas = []; 
         let fechaVigenteParseo = "Sin Fecha";
         
-        // Variables para la navegación interna del modal
         let maquinaActualModal = "";
         let fechaActualModal = "";
+
+        // Paleta de colores atractivos para las tarjetas
+        const paletaColores = [
+            'bg-emerald-600 border-emerald-500 hover:bg-emerald-500',
+            'bg-blue-600 border-blue-500 hover:bg-blue-500',
+            'bg-purple-600 border-purple-500 hover:bg-purple-500',
+            'bg-amber-600 border-amber-500 hover:bg-amber-500',
+            'bg-rose-600 border-rose-500 hover:bg-rose-500',
+            'bg-cyan-600 border-cyan-500 hover:bg-cyan-500',
+            'bg-indigo-600 border-indigo-500 hover:bg-indigo-500',
+            'bg-fuchsia-600 border-fuchsia-500 hover:bg-fuchsia-500'
+        ];
 
         Papa.parse(SHEET_CSV_URL, {
             download: true,
@@ -137,7 +154,6 @@
                 
                 let fechasEncontradasSet = new Set();
 
-                // Recorrer la tabla de arriba a abajo
                 for (let i = 0; i < rows.length; i++) {
                     const row = rows[i];
                     if (!row || row.length === 0) continue;
@@ -152,9 +168,10 @@
                         }
                     }
 
-                    // 2. Extraer Máquina
                     if (row.length < 8) continue;
-                    const unidad = row[7] ? row[7].trim() : ''; 
+
+                    const lugar = row[0] ? row[0].trim() : 'Sin ubicación'; // Columna A
+                    const unidad = row[7] ? row[7].trim() : '';             // Columna H
 
                     if (!unidad || unidad.toUpperCase() === 'UNIDAD' || unidad.toUpperCase() === 'EQUIPO' || unidad.toUpperCase().includes('REPORTE')) {
                         continue;
@@ -162,16 +179,16 @@
 
                     todosLosRegistros.push({
                         fechaFiltro: fechaVigenteParseo,
+                        lugar: lugar,                                     // Col. A
                         unidad: unidad,                                   
-                        operador: row[6] ? row[6].trim() : 'No asignado', 
-                        hInicial: row[8] ? row[8].trim() : '-',           
-                        hFinal: row[9] ? row[9].trim() : '-',             
-                        totalHoras: row[10] ? row[10].trim() : '0',       
-                        combustible: row[12] ? row[12].trim() : '0 Gal'   
+                        operador: row[6] ? row[6].trim() : 'No asignado', // Col. G
+                        hInicial: row[8] ? row[8].trim() : '-',           // Col. I
+                        hFinal: row[9] ? row[9].trim() : '-',             // Col. J
+                        totalHoras: row[10] ? row[10].trim() : '0',       // Col. K
+                        combustible: row[12] ? row[12].trim() : '0 Gal'   // Col. M
                     });
                 }
 
-                // 3. Preparar Selector
                 fechasUnicas = Array.from(fechasEncontradasSet);
                 const selector = document.getElementById('selector-fecha');
                 selector.innerHTML = '';
@@ -183,7 +200,7 @@
                         opt.innerText = f;
                         selector.appendChild(opt);
                     });
-                    selector.value = fechasUnicas[fechasUnicas.length - 1]; // Selecciona la última
+                    selector.value = fechasUnicas[fechasUnicas.length - 1]; 
                 } else {
                     selector.innerHTML = '<option value="">No hay fechas</option>';
                 }
@@ -217,10 +234,16 @@
 
             datos.forEach(item => {
                 const indexReal = todosLosRegistros.indexOf(item);
+                // Asignar un color de la paleta basándose en su índice
+                const colorClase = paletaColores[indexReal % paletaColores.length];
+
                 html += `
-                    <button onclick="abrirDetalle(${indexReal})" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 p-3.5 rounded-2xl shadow-md border border-emerald-500 flex flex-col justify-between items-start text-left transition transform active:scale-95 min-h-[110px]">
-                        <span class="text-xl mb-1">🚜</span>
-                        <span class="font-bold text-xs md:text-sm leading-tight text-slate-950">${item.unidad}</span>
+                    <button onclick="abrirDetalle(${indexReal})" class="${colorClase} text-white p-3.5 rounded-2xl shadow-md border flex flex-col justify-between items-start text-left transition transform active:scale-95 min-h-[110px]">
+                        <div class="flex justify-between items-start w-full mb-2">
+                            <span class="text-xl">🚜</span>
+                            <span class="text-[10px] font-bold bg-black/30 px-2 py-0.5 rounded shadow-sm text-white/90 truncate max-w-[70%]" title="${item.lugar}">${item.lugar}</span>
+                        </div>
+                        <span class="font-bold text-xs md:text-sm leading-tight">${item.unidad}</span>
                     </button>
                 `;
             });
@@ -241,6 +264,7 @@
         function cargarDatosEnModal(m) {
             document.getElementById('modal-titulo').innerText = m.unidad;
             document.getElementById('modal-fecha-actual').innerText = m.fechaFiltro;
+            document.getElementById('modal-lugar').innerText = m.lugar;
             document.getElementById('modal-operador').innerText = m.operador || 'Sin registro';
             document.getElementById('modal-hinicial').innerText = m.hInicial;
             document.getElementById('modal-hfinal').innerText = m.hFinal;
@@ -253,7 +277,6 @@
             const btnAnt = document.getElementById('btn-fecha-ant');
             const btnSig = document.getElementById('btn-fecha-sig');
 
-            // Buscar si la máquina existe en fechas anteriores/siguientes
             let indiceAnterior = -1;
             for (let i = idxFechaActual - 1; i >= 0; i--) {
                 if (verificarSiMaquinaExisteEnFecha(maquinaActualModal, fechasUnicas[i])) {
@@ -270,7 +293,6 @@
                 }
             }
 
-            // Habilitar o deshabilitar botones según disponibilidad
             if (indiceAnterior !== -1) {
                 btnAnt.disabled = false;
                 btnAnt.onclick = () => saltarAFecha(fechasUnicas[indiceAnterior]);
@@ -293,7 +315,6 @@
         }
 
         function saltarAFecha(nuevaFecha) {
-            // Buscar el registro exacto de esta máquina en la nueva fecha
             const registroEncontrado = todosLosRegistros.find(r => r.unidad === maquinaActualModal && r.fechaFiltro === nuevaFecha);
             if (registroEncontrado) {
                 fechaActualModal = nuevaFecha;
