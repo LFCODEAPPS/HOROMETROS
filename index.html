@@ -3,87 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte Diario de Maquinaria</title>
+    <title>Control de Maquinaria por Unidad</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen pb-10">
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-12">
 
-    <!-- Encabezado Estilo Reporte Original -->
-    <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-30 shadow-md">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between p-4 gap-3">
-            <!-- Cuadro de Fecha (Última Fecha detectada) -->
-            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
-                <div class="bg-amber-500 text-slate-950 font-black text-lg px-4 py-2 rounded shadow-inner text-center min-w-[120px]" id="display-fecha">
-                    --/--/--
-                </div>
-                <div class="text-xs text-slate-400 hidden md:block">
-                    Sincronizado con Google Sheets
-                </div>
+    <!-- Encabezado -->
+    <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-30 shadow-md p-4">
+        <div class="max-w-xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-base font-bold text-emerald-400">Selección de Maquinaria</h1>
+                <p class="text-xs text-slate-400" id="fecha-subtitulo">Sincronizado con Google Sheets</p>
             </div>
-
-            <!-- Título Principal -->
-            <h1 class="text-sm md:text-base font-bold text-center tracking-wide text-amber-400 uppercase">
-                REPORTE DIARIO MAQUINARIA (HORAS, COMBUSTIBLE Y HORAS RESTANTES PARA MTTO)
-            </h1>
+            <div id="badge-fecha" class="bg-emerald-500 text-slate-950 font-black text-xs px-3 py-1 rounded shadow">
+                --/--/--
+            </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto p-2 md:p-4 space-y-4">
+    <main class="max-w-xl mx-auto p-4 space-y-4">
 
-        <!-- Panel de Filtros estilo Tabla Dinámica -->
-        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 flex flex-col md:flex-row gap-3 items-center justify-between shadow">
-            <div class="w-full md:w-1/3">
-                <input type="text" id="filtro-unidad" placeholder="🔍 Filtrar por unidad..." 
-                    class="w-full bg-slate-900 border border-slate-700 text-sm rounded px-3 py-2 text-white focus:outline-none focus:border-amber-500">
-            </div>
-            
-            <div class="w-full md:w-auto flex gap-2 overflow-x-auto">
-                <select id="filtro-mtto" class="bg-slate-900 border border-slate-700 text-sm rounded px-3 py-2 text-white focus:outline-none focus:border-amber-500">
-                    <option value="todos">Todos los estados de MTTO</option>
-                    <option value="retrasado">⚠️ Solo MTTO Retrasado</option>
-                    <option value="al-dia">✅ Al día / Horas restantes</option>
-                </select>
-
-                <div id="contador-registros" class="bg-slate-700 text-slate-300 text-xs px-3 py-2 rounded flex items-center whitespace-nowrap">
-                    0 registros
-                </div>
-            </div>
+        <!-- Buscador de Equipos -->
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">🔍</span>
+            <input type="text" id="buscador" placeholder="Buscar equipo o maquinaria..." 
+                class="w-full bg-slate-800 border border-slate-700 text-sm rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-emerald-500 shadow-sm">
         </div>
 
         <!-- Indicador de Carga -->
-        <div id="loading" class="text-center py-16 text-slate-400 text-sm">
-            Cargando reporte y última fecha desde Google Sheets...
+        <div id="loading" class="text-center py-20 text-slate-400 text-sm">
+            Cargando unidades desde Google Sheets...
         </div>
 
-        <!-- Contenedor Estilo Tabla (Adaptable a Móvil mediante Scroll Horizontal y Tarjetas) -->
-        <div id="contenedor-tabla" class="hidden overflow-x-auto rounded-lg border border-slate-700 shadow-xl bg-slate-950">
-            <table class="w-full text-left border-collapse min-w-[850px]">
-                <thead>
-                    <tr class="bg-amber-500 text-slate-950 text-xs font-black uppercase text-center border-b border-amber-600">
-                        <th class="p-3 text-left w-1/4">UNIDAD</th>
-                        <th class="p-2 w-20">H. INICIAL</th>
-                        <th class="p-2 w-20">H. FINAL</th>
-                        <th class="p-2 w-20">TOTAL HORAS</th>
-                        <th class="p-3 w-1/4 bg-amber-600 text-white">HORAS RESTANTES PARA MTTO</th>
-                        <th class="p-2 w-28 bg-amber-600 text-slate-950">COMBUSTIBLE ABASTECIDO</th>
-                        <th class="p-2 w-28 bg-amber-600 text-slate-950">H. RESTANTES DE COMBUSTIBLE APROX</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-cuerpo" class="divide-y divide-slate-800 text-xs md:text-sm">
-                    <!-- Filas dinámicas -->
-                </tbody>
-            </table>
+        <!-- Cuadrícula de Botones de Máquinas -->
+        <div id="grid-maquinas" class="grid grid-cols-2 gap-3 hidden">
+            <!-- Los botones se inyectarán aquí -->
         </div>
 
     </main>
+
+    <!-- Modal / Tarjeta de Detalle -->
+    <div id="modal-detalle" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4 relative animate-in fade-in zoom-in duration-200">
+            
+            <div class="flex justify-between items-start border-b border-slate-700 pb-3">
+                <div>
+                    <span class="text-xs uppercase tracking-wider text-emerald-400 font-bold">Detalle de Unidad</span>
+                    <h2 id="modal-titulo" class="text-lg font-extrabold text-white mt-0.5">Nombre de Máquina</h2>
+                </div>
+                <button onclick="cerrarModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Datos Ordenados -->
+            <div class="space-y-3 text-sm">
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/50 flex justify-between items-center">
+                    <span class="text-slate-400 text-xs">👤 Operador (Col. G):</span>
+                    <span id="modal-operador" class="font-semibold text-white text-right">--</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/50">
+                        <span class="text-slate-400 text-xs block mb-1">⏱️ H. Inicial (Col. I):</span>
+                        <span id="modal-hinicial" class="font-bold text-emerald-300 text-base">--</span>
+                    </div>
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/50">
+                        <span class="text-slate-400 text-xs block mb-1">⏱️ H. Final (Col. J):</span>
+                        <span id="modal-hfinal" class="font-bold text-emerald-300 text-base">--</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/50 flex justify-between items-center">
+                    <span class="text-slate-400 text-xs">📊 Horas Totales (Col. K):</span>
+                    <span id="modal-totales" class="font-bold text-blue-400 text-base">--</span>
+                </div>
+
+                <div class="bg-amber-950/40 border border-amber-800/50 p-3 rounded-xl flex justify-between items-center">
+                    <span class="text-amber-300 text-xs font-medium">⛽ Combustible Abastecido (Col. M):</span>
+                    <span id="modal-combustible" class="font-black text-amber-400 text-base">--</span>
+                </div>
+            </div>
+
+            <button onclick="cerrarModal()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold py-2.5 rounded-xl transition text-sm">
+                Aceptar / Cerrar
+            </button>
+        </div>
+    </div>
 
     <script>
         // Enlace CSV de tu Google Sheet
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vReJl2BT_9uiaFmB-U1-UlhHKE9lSmhK8jB2bF1Pu1MlM0B15O2H5WxM_ot85WtTIol4_bVhuudvcHU/pub?gid=1193959640&single=true&output=csv";
 
-        let rawData = [];
+        let maquinasData = [];
 
         Papa.parse(SHEET_CSV_URL, {
             download: true,
@@ -93,116 +107,95 @@
                 if (!rows || rows.length === 0) return;
 
                 document.getElementById('loading').classList.add('hidden');
-                document.getElementById('contenedor-tabla').classList.remove('hidden');
+                document.getElementById('grid-maquinas').classList.remove('hidden');
 
-                // Detección automática de la última fecha (ej: si está en la celda A1 o en la cabecera)
-                let ultimaFecha = "11/11/26"; // Valor por defecto basado en tu imagen
+                // Detección automática de la fecha
+                let ultimaFecha = "11/11/26";
                 for (let r = 0; r < Math.min(rows.length, 5); r++) {
                     for (let c = 0; c < Math.min(rows[r].length, 5); c++) {
                         let cell = rows[r][c] ? rows[r][c].trim() : "";
-                        // Patrón simple para detectar fechas tipo DD/MM/YY o DD/MM/YYYY
                         if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(cell)) {
                             ultimaFecha = cell;
                         }
                     }
                 }
-                document.getElementById('display-fecha').innerText = ultimaFecha;
+                document.getElementById('badge-fecha').innerText = ultimaFecha;
 
-                // Procesamiento de las filas de maquinaria
-                // Buscamos dinámicamente dónde empiezan los datos reales de las unidades
+                // Mapeo de columnas según tus indicaciones:
+                // Columna H (índice 7): Unidad
+                // Columna G (índice 6): Operador
+                // Columna I (índice 8): Horómetro Inicial
+                // Columna J (índice 9): Horómetro Final
+                // Columna K (índice 10): Horas Totales
+                // Columna M (índice 12): Combustible Abastecido
                 for (let i = 0; i < rows.length; i++) {
                     const row = rows[i];
-                    if (!row || row.length === 0 || !row[0]) continue;
-                    
-                    const unidadTexto = row[0].trim();
-                    // Ignorar filas de títulos o encabezados repetidos
-                    if (unidadTexto.toUpperCase() === 'UNIDAD' || unidadTexto.includes('REPORTE DIARIO')) continue;
+                    if (!row || row.length < 8) continue;
 
-                    rawData.push({
-                        unidad: unidadTexto,
-                        hInicial: row[1] ? row[1].trim() : '',
-                        hFinal: row[2] ? row[2].trim() : '',
-                        totalHoras: row[3] ? row[3].trim() : '0',
-                        mtto: row[4] ? row[4].trim() : '',
-                        combustibleAbastecido: row[5] ? row[5].trim() : '',
-                        combustibleAprox: row[6] ? row[6].trim() : ''
+                    const unidad = row[7] ? row[7].trim() : ''; // Columna H
+                    if (!unidad || unidad.toUpperCase() === 'UNIDAD' || unidad.includes('REPORTE')) continue;
+
+                    maquinasData.push({
+                        unidad: unidad,
+                        operador: row[6] ? row[6].trim() : 'No asignado', // Columna G
+                        hInicial: row[8] ? row[8].trim() : '-',          // Columna I
+                        hFinal: row[9] ? row[9].trim() : '-',            // Columna J
+                        totalHoras: row[10] ? row[10].trim() : '0',      // Columna K
+                        combustible: row[12] ? row[12].trim() : '0 Gal'  // Columna M
                     });
                 }
 
-                renderizarTabla(rawData);
+                renderizarBotones(maquinasData);
             },
             error: function(err) {
-                document.getElementById('loading').innerHTML = '<span class="text-red-400">Error al conectar con la hoja de cálculo.</span>';
+                document.getElementById('loading').innerHTML = '<span class="text-red-400">Error al leer los datos de la hoja.</span>';
                 console.error(err);
             }
         });
 
-        function renderizarTabla(datos) {
-            const tbody = document.getElementById('tabla-cuerpo');
+        function renderizarBotones(datos) {
+            const grid = document.getElementById('grid-maquinas');
             let html = '';
 
             if (datos.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-500">No hay registros que coincidan con los filtros.</td></tr>`;
-                document.getElementById('contador-registros').innerText = '0 registros';
+                grid.innerHTML = '<div class="col-span-2 text-center text-slate-500 py-8">No se encontraron unidades en la Columna H.</div>';
                 return;
             }
 
-            datos.forEach(item => {
-                const esRetrasado = item.mtto.toLowerCase().includes('retrasado');
-                const tieneHorasTrabajadas = parseFloat(item.totalHoras) > 0;
-
-                // Estilo para la celda de Mantenimiento (rojiza si está retrasado, azulada si normal)
-                let mttoStyle = "bg-slate-900/60 text-slate-300";
-                if (esRetrasado) {
-                    mttoStyle = "bg-red-950/80 text-red-300 font-bold border border-red-800/50";
-                }
-
-                // Estilo para indicador de total de horas
-                let horasBadge = "text-slate-300";
-                if (tieneHorasTrabajadas) {
-                    horasBadge = "bg-blue-600/30 text-blue-300 font-bold px-2 py-0.5 rounded";
-                }
-
+            datos.forEach((item, index) => {
                 html += `
-                    <tr class="hover:bg-slate-900/80 transition">
-                        <td class="p-3 font-semibold text-white">${item.unidad}</td>
-                        <td class="p-2 text-center text-slate-300">${item.hInicial}</td>
-                        <td class="p-2 text-center text-slate-300">${item.hFinal}</td>
-                        <td class="p-2 text-center"><span class="${horasBadge}">${item.totalHoras}</span></td>
-                        <td class="p-3 text-center ${mttoStyle}">${item.mtto || '-'}</td>
-                        <td class="p-2 text-center font-medium text-amber-300">${item.combustibleAbastecido}</td>
-                        <td class="p-2 text-center text-slate-300">${item.combustibleAprox}</td>
-                    </tr>
+                    <button onclick="abrirDetalle(${index})" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 p-4 rounded-2xl shadow-md border border-emerald-500 flex flex-col justify-between items-start text-left transition transform active:scale-95 h-28">
+                        <span class="text-2xl">🚜</span>
+                        <span class="font-black text-sm md:text-base leading-snug line-clamp-2 text-slate-950">${item.unidad}</span>
+                    </button>
                 `;
             });
 
-            tbody.innerHTML = html;
-            document.getElementById('contador-registros').innerText = `${datos.length} registros`;
+            grid.innerHTML = html;
         }
 
-        // Sistema de Filtros (Tabla Dinámica en Vivo)
-        function aplicarFiltros() {
-            const texto = document.getElementById('filtro-unidad').value.toLowerCase();
-            const estadoMtto = document.getElementById('filtro-mtto').value;
+        function abrirDetalle(index) {
+            const m = maquinasData[index];
+            document.getElementById('modal-titulo').innerText = m.unidad;
+            document.getElementById('modal-operador').innerText = m.operador || 'Sin registro';
+            document.getElementById('modal-hinicial').innerText = m.hInicial;
+            document.getElementById('modal-hfinal').innerText = m.hFinal;
+            document.getElementById('modal-totales').innerText = m.totalHoras + " hrs";
+            document.getElementById('modal-combustible').innerText = m.combustible || '0 Gal';
 
-            const filtrados = rawData.filter(item => {
-                const coincideTexto = item.unidad.toLowerCase().includes(texto);
-                let coincideMtto = true;
-
-                if (estadoMtto === 'retrasado') {
-                    coincideMtto = item.mtto.toLowerCase().includes('retrasado');
-                } else if (estadoMtto === 'al-dia') {
-                    coincideMtto = !item.mtto.toLowerCase().includes('retrasado');
-                }
-
-                return coincideTexto && coincideMtto;
-            });
-
-            renderizarTabla(filtrados);
+            document.getElementById('modal-detalle').classList.remove('hidden');
         }
 
-        document.getElementById('filtro-unidad').addEventListener('input', aplicarFiltros);
-        document.getElementById('filtro-mtto').addEventListener('change', aplicarFiltros);
+        function cerrarModal() {
+            document.getElementById('modal-detalle').classList.add('hidden');
+        }
+
+        // Filtro de búsqueda en tiempo real
+        document.getElementById('buscador').addEventListener('input', function(e) {
+            const texto = e.target.value.toLowerCase();
+            const filtrados = maquinasData.filter(m => m.unidad.toLowerCase().includes(texto));
+            renderizarBotones(filtrados);
+        });
     </script>
 </body>
 </html>
