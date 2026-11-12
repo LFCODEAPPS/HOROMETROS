@@ -12,15 +12,21 @@
 
     <!-- Encabezado -->
     <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-30 shadow-md p-4">
-        <div class="max-w-xl mx-auto flex justify-between items-center">
+        <div class="max-w-xl mx-auto flex justify-between items-center gap-2">
             <div>
                 <h1 class="text-base font-bold text-emerald-400">Selección de Maquinaria</h1>
-                <p class="text-xs text-slate-400">Filtrado por fecha seleccionada</p>
+                <p class="text-[10px] text-slate-400">Despliega para cambiar de fecha 👉</p>
             </div>
-            <!-- Selector de Fecha Interactivo -->
-            <div class="relative">
-                <input type="date" id="input-fecha" 
-                    class="bg-emerald-500 text-slate-950 font-black text-xs px-3 py-1.5 rounded shadow border-none focus:ring-2 focus:ring-emerald-300 cursor-pointer">
+            
+            <!-- Selector de Fecha Seguro (Desplegable) -->
+            <div class="relative shrink-0">
+                <select id="selector-fecha" class="bg-emerald-500 text-slate-950 font-black text-xs px-3 py-2 rounded shadow border-none focus:ring-2 focus:ring-emerald-300 cursor-pointer outline-none text-center appearance-none pr-6">
+                    <option value="">Cargando...</option>
+                </select>
+                <!-- Flechita para el select -->
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-900">
+                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                </div>
             </div>
         </div>
     </header>
@@ -36,7 +42,7 @@
 
         <!-- Indicador de Carga -->
         <div id="loading" class="text-center py-20 text-slate-400 text-sm">
-            Cargando y filtrando datos desde Google Sheets...
+            Leyendo registros y fechas desde Google Sheets...
         </div>
 
         <!-- Cuadrícula de Botones de Máquinas -->
@@ -84,7 +90,7 @@
                 </div>
 
                 <div class="bg-amber-950/40 border border-amber-800/50 p-3 rounded-xl flex justify-between items-center">
-                    <span class="text-amber-300 text-xs font-medium">⛽ Combustible Abastecido (Col. M):</span>
+                    <span class="text-amber-300 text-xs font-medium">⛽ Combustible (Col. M):</span>
                     <span id="modal-combustible" class="font-black text-amber-400 text-base">--</span>
                 </div>
             </div>
@@ -96,10 +102,12 @@
     </div>
 
     <script>
+        // Enlace CSV seguro
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vReJl2BT_9uiaFmB-U1-UlhHKE9lSmhK8jB2bF1Pu1MlM0B15O2H5WxM_ot85WtTIol4_bVhuudvcHU/pub?gid=1193959640&single=true&output=csv";
 
         let todosLosRegistros = [];
-        let ultimaFechaDetectadaStr = "";
+        let fechasEncontradas = new Set();
+        let fechaVigente = "Sin Fecha";
 
         Papa.parse(SHEET_CSV_URL, {
             download: true,
@@ -111,87 +119,74 @@
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('grid-maquinas').classList.remove('hidden');
 
-                let fechaActualFila = "";
-
-                // Recorremos todas las filas para asociar cada máquina con su fecha correspondiente
+                // Recorrer la tabla de arriba a abajo
                 for (let i = 0; i < rows.length; i++) {
                     const row = rows[i];
                     if (!row || row.length === 0) continue;
 
-                    // Detectar si la fila contiene una fecha (ej: en la primera o segunda columna)
-                    for (let j = 0; j < Math.min(row.length, 3); j++) {
-                        let cell = row[j] ? row[j].trim() : "";
-                        if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(cell)) {
-                            fechaActualFila = cell;
-                            ultimaFechaDetectadaStr = cell; // Guarda la última encontrada (la más abajo)
+                    // 1. Buscar si esta fila contiene una fecha (en las primeras 6 columnas)
+                    for (let j = 0; j < Math.min(row.length, 6); j++) {
+                        let celda = row[j] ? row[j].trim() : "";
+                        // Si se parece a una fecha (ej: 11/11/26, 22-09-2025)
+                        if (/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/.test(celda)) {
+                            fechaVigente = celda;
+                            fechasEncontradas.add(celda);
+                            break;
                         }
                     }
 
-                    const unidad = row[7] ? row[7].trim() : ''; // Columna H (índice 7)
-                    if (!unidad) continue;
+                    // 2. Extraer datos de la maquinaria
+                    if (row.length < 8) continue;
+                    const unidad = row[7] ? row[7].trim() : ''; // Columna H
 
-                    const unidadUpper = unidad.toUpperCase();
-                    if (unidadUpper === 'UNIDAD' || unidadUpper === 'EQUIPO' || unidadUpper.includes('REPORTE DIARIO')) {
+                    // Ignorar celdas vacías o encabezados
+                    if (!unidad || unidad.toUpperCase() === 'UNIDAD' || unidad.toUpperCase() === 'EQUIPO' || unidad.toUpperCase().includes('REPORTE')) {
                         continue;
                     }
 
                     todosLosRegistros.push({
-                        fechaOriginal: fechaActualFila,
-                        unidad: unidad,                                   // Nombre completo intacto
-                        operador: row[6] ? row[6].trim() : 'No asignado', // Columna G
-                        hInicial: row[8] ? row[8].trim() : '-',          // Columna I
-                        hFinal: row[9] ? row[9].trim() : '-',            // Columna J
-                        totalHoras: row[10] ? row[10].trim() : '0',      // Columna K
-                        combustible: row[12] ? row[12].trim() : '0 Gal'  // Columna M
+                        fechaFiltro: fechaVigente,
+                        unidad: unidad,                                   // AQUÍ SE GUARDA EL NOMBRE COMPLETO INTACTO
+                        operador: row[6] ? row[6].trim() : 'No asignado', // Col. G
+                        hInicial: row[8] ? row[8].trim() : '-',           // Col. I
+                        hFinal: row[9] ? row[9].trim() : '-',             // Col. J
+                        totalHoras: row[10] ? row[10].trim() : '0',       // Col. K
+                        combustible: row[12] ? row[12].trim() : '0 Gal'   // Col. M
                     });
                 }
 
-                // Configurar el input date con la última fecha detectada por defecto
-                if (ultimaFechaDetectadaStr) {
-                    const partes = ultimaFechaDetectadaStr.split('/');
-                    if (partes.length === 3) {
-                        let dia = partes[0].padStart(2, '0');
-                        let mes = partes[1].padStart(2, '0');
-                        let anio = partes[2].length === 2 ? '20' + partes[2] : partes[2];
-                        document.getElementById('input-fecha').value = `${anio}-${mes}-${dia}`;
-                    }
+                // 3. Llenar el selector de fechas
+                const selector = document.getElementById('selector-fecha');
+                selector.innerHTML = '';
+                const arrayFechas = Array.from(fechasEncontradas);
+
+                if (arrayFechas.length > 0) {
+                    arrayFechas.forEach(f => {
+                        const opt = document.createElement('option');
+                        opt.value = f;
+                        opt.innerText = f;
+                        selector.appendChild(opt);
+                    });
+                    // Seleccionar la última fecha encontrada en la hoja por defecto
+                    selector.value = arrayFechas[arrayFechas.length - 1];
+                } else {
+                    selector.innerHTML = '<option value="">No hay fechas</option>';
                 }
 
-                // Renderizar los datos filtrados por la fecha seleccionada inicialmente
                 actualizarVista();
             },
             error: function(err) {
                 document.getElementById('loading').innerHTML = '<span class="text-red-400">Error al leer los datos de la hoja.</span>';
-                console.error(err);
             }
         });
 
-        function convertirFechaInputAFormatos(inputVal) {
-            // inputVal viene en formato "YYYY-MM-DD"
-            if (!inputVal) return [];
-            const [anio, mes, dia] = inputVal.split('-');
-            const d = parseInt(dia, 10);
-            const m = parseInt(mes, 10);
-            const aFull = anio;
-            const aShort = anio.slice(-2);
-
-            // Retorna posibles formatos en los que puede estar escrito en el Google Sheet
-            return [
-                `${d}/${m}/${aFull}`,
-                `${d}/${m}/${aShort}`,
-                `${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')}/${aFull}`,
-                `${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')}/${aShort}`
-            ];
-        }
-
         function actualizarVista() {
-            const fechaInputVal = document.getElementById('input-fecha').value;
+            const fechaSeleccionada = document.getElementById('selector-fecha').value;
             const textoBusqueda = document.getElementById('buscador').value.toLowerCase();
-            const formatosValidos = convertirFechaInputAFormatos(fechaInputVal);
 
-            // Filtrar estrictamente por la fecha seleccionada y el texto de búsqueda
+            // Filtrar estrictamente por la fecha del desplegable
             const filtrados = todosLosRegistros.filter(item => {
-                const coincideFecha = formatosValidos.includes(item.fechaOriginal) || item.fechaOriginal === "";
+                const coincideFecha = (item.fechaFiltro === fechaSeleccionada);
                 const coincideTexto = item.unidad.toLowerCase().includes(textoBusqueda);
                 return coincideFecha && coincideTexto;
             });
@@ -204,16 +199,15 @@
             let html = '';
 
             if (datos.length === 0) {
-                grid.innerHTML = '<div class="col-span-2 text-center text-slate-400 py-12 text-sm">No hay unidades registradas para esta fecha.</div>';
+                grid.innerHTML = '<div class="col-span-2 text-center text-slate-400 py-12 text-sm">No hay unidades para esta fecha.</div>';
                 return;
             }
 
-            datos.forEach((item, indexOriginal) => {
-                // Buscamos el índice real dentro de todosLosRegistros para abrir el modal correcto
+            datos.forEach(item => {
                 const indexReal = todosLosRegistros.indexOf(item);
                 html += `
                     <button onclick="abrirDetalle(${indexReal})" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 p-3.5 rounded-2xl shadow-md border border-emerald-500 flex flex-col justify-between items-start text-left transition transform active:scale-95 min-h-[110px]">
-                        <span class="text-xl">🚜</span>
+                        <span class="text-xl mb-1">🚜</span>
                         <span class="font-bold text-xs md:text-sm leading-tight text-slate-950">${item.unidad}</span>
                     </button>
                 `;
@@ -238,8 +232,7 @@
             document.getElementById('modal-detalle').classList.add('hidden');
         }
 
-        // Eventos para actualizar la vista al cambiar fecha o buscar texto
-        document.getElementById('input-fecha').addEventListener('change', actualizarVista);
+        document.getElementById('selector-fecha').addEventListener('change', actualizarVista);
         document.getElementById('buscador').addEventListener('input', actualizarVista);
     </script>
 </body>
