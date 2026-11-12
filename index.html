@@ -8,54 +8,73 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen pb-12">
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-10">
 
-    <!-- Encabezado principal -->
-    <header class="bg-slate-900 text-white p-4 shadow-md sticky top-0 z-20">
-        <div class="max-w-xl mx-auto flex justify-between items-center">
-            <div>
-                <h1 class="text-lg font-bold">Reporte de Maquinaria</h1>
-                <p class="text-xs text-slate-400">Control de Horas, Combustible y MTTO</p>
+    <!-- Encabezado Estilo Reporte Original -->
+    <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-30 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between p-4 gap-3">
+            <!-- Cuadro de Fecha (Última Fecha detectada) -->
+            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+                <div class="bg-amber-500 text-slate-950 font-black text-lg px-4 py-2 rounded shadow-inner text-center min-w-[120px]" id="display-fecha">
+                    --/--/--
+                </div>
+                <div class="text-xs text-slate-400 hidden md:block">
+                    Sincronizado con Google Sheets
+                </div>
             </div>
-            <div id="fecha-badge" class="bg-amber-500 text-slate-950 font-extrabold text-sm px-3 py-1.5 rounded-lg shadow">
-                11/11/26
-            </div>
+
+            <!-- Título Principal -->
+            <h1 class="text-sm md:text-base font-bold text-center tracking-wide text-amber-400 uppercase">
+                REPORTE DIARIO MAQUINARIA (HORAS, COMBUSTIBLE Y HORAS RESTANTES PARA MTTO)
+            </h1>
         </div>
     </header>
 
-    <main class="max-w-xl mx-auto p-4 space-y-4">
+    <main class="max-w-7xl mx-auto p-2 md:p-4 space-y-4">
 
-        <!-- Panel de Filtros (Estilo Tabla Dinámica para Móvil) -->
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3">
-            <h2 class="text-sm font-bold text-slate-700 flex items-center justify-between">
-                <span>Filtros Rápidos</span>
-                <span id="contador-resultados" class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-normal">Mostrando todo</span>
-            </h2>
+        <!-- Panel de Filtros estilo Tabla Dinámica -->
+        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 flex flex-col md:flex-row gap-3 items-center justify-between shadow">
+            <div class="w-full md:w-1/3">
+                <input type="text" id="filtro-unidad" placeholder="🔍 Filtrar por unidad..." 
+                    class="w-full bg-slate-900 border border-slate-700 text-sm rounded px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+            </div>
             
-            <div class="grid grid-cols-1 gap-2">
-                <!-- Buscador por texto -->
-                <input type="text" id="filtro-texto" placeholder="Buscar unidad (Ej: Excavadora, CAT...)" 
-                    class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500">
-                
-                <!-- Filtros desplegables / categorías -->
-                <div class="flex gap-2">
-                    <select id="filtro-estado" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">
-                        <option value="todos">Todos los estados</option>
-                        <option value="activo">Con Horas Trabajadas (> 0)</option>
-                        <option value="retrasado">Con MTTO Retrasado</option>
-                    </select>
+            <div class="w-full md:w-auto flex gap-2 overflow-x-auto">
+                <select id="filtro-mtto" class="bg-slate-900 border border-slate-700 text-sm rounded px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+                    <option value="todos">Todos los estados de MTTO</option>
+                    <option value="retrasado">⚠️ Solo MTTO Retrasado</option>
+                    <option value="al-dia">✅ Al día / Horas restantes</option>
+                </select>
+
+                <div id="contador-registros" class="bg-slate-700 text-slate-300 text-xs px-3 py-2 rounded flex items-center whitespace-nowrap">
+                    0 registros
                 </div>
             </div>
         </div>
 
         <!-- Indicador de Carga -->
-        <div id="loading" class="text-center py-10 text-slate-500 text-sm">
-            Cargando datos desde Google Sheets...
+        <div id="loading" class="text-center py-16 text-slate-400 text-sm">
+            Cargando reporte y última fecha desde Google Sheets...
         </div>
 
-        <!-- Contenedor de Tarjetas (Adaptado para Móvil) -->
-        <div id="lista-unidades" class="space-y-3 hidden">
-            <!-- Las tarjetas se inyectarán dinámicamente aquí -->
+        <!-- Contenedor Estilo Tabla (Adaptable a Móvil mediante Scroll Horizontal y Tarjetas) -->
+        <div id="contenedor-tabla" class="hidden overflow-x-auto rounded-lg border border-slate-700 shadow-xl bg-slate-950">
+            <table class="w-full text-left border-collapse min-w-[850px]">
+                <thead>
+                    <tr class="bg-amber-500 text-slate-950 text-xs font-black uppercase text-center border-b border-amber-600">
+                        <th class="p-3 text-left w-1/4">UNIDAD</th>
+                        <th class="p-2 w-20">H. INICIAL</th>
+                        <th class="p-2 w-20">H. FINAL</th>
+                        <th class="p-2 w-20">TOTAL HORAS</th>
+                        <th class="p-3 w-1/4 bg-amber-600 text-white">HORAS RESTANTES PARA MTTO</th>
+                        <th class="p-2 w-28 bg-amber-600 text-slate-950">COMBUSTIBLE ABASTECIDO</th>
+                        <th class="p-2 w-28 bg-amber-600 text-slate-950">H. RESTANTES DE COMBUSTIBLE APROX</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-cuerpo" class="divide-y divide-slate-800 text-xs md:text-sm">
+                    <!-- Filas dinámicas -->
+                </tbody>
+            </table>
         </div>
 
     </main>
@@ -74,117 +93,116 @@
                 if (!rows || rows.length === 0) return;
 
                 document.getElementById('loading').classList.add('hidden');
-                document.getElementById('lista-unidades').classList.remove('hidden');
+                document.getElementById('contenedor-tabla').classList.remove('hidden');
 
-                // Procesar filas (asumimos la estructura basada en tu imagen)
-                // Col 0: Unidad, Col 1: H. Inicial, Col 2: H. Final, Col 3: Total Horas, Col 4: MTTO, Col 5: Combustible Abastecido, Col 6: Combustible Aprox
-                for (let i = 1; i < rows.length; i++) {
+                // Detección automática de la última fecha (ej: si está en la celda A1 o en la cabecera)
+                let ultimaFecha = "11/11/26"; // Valor por defecto basado en tu imagen
+                for (let r = 0; r < Math.min(rows.length, 5); r++) {
+                    for (let c = 0; c < Math.min(rows[r].length, 5); c++) {
+                        let cell = rows[r][c] ? rows[r][c].trim() : "";
+                        // Patrón simple para detectar fechas tipo DD/MM/YY o DD/MM/YYYY
+                        if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(cell)) {
+                            ultimaFecha = cell;
+                        }
+                    }
+                }
+                document.getElementById('display-fecha').innerText = ultimaFecha;
+
+                // Procesamiento de las filas de maquinaria
+                // Buscamos dinámicamente dónde empiezan los datos reales de las unidades
+                for (let i = 0; i < rows.length; i++) {
                     const row = rows[i];
-                    if (!row || row.length === 0 || !row[0] || row[0].trim() === '') continue;
+                    if (!row || row.length === 0 || !row[0]) continue;
+                    
+                    const unidadTexto = row[0].trim();
+                    // Ignorar filas de títulos o encabezados repetidos
+                    if (unidadTexto.toUpperCase() === 'UNIDAD' || unidadTexto.includes('REPORTE DIARIO')) continue;
 
                     rawData.push({
-                        unidad: row[0] ? row[0].trim() : '',
-                        hInicial: row[1] ? row[1].trim() : '-',
-                        hFinal: row[2] ? row[2].trim() : '-',
+                        unidad: unidadTexto,
+                        hInicial: row[1] ? row[1].trim() : '',
+                        hFinal: row[2] ? row[2].trim() : '',
                         totalHoras: row[3] ? row[3].trim() : '0',
                         mtto: row[4] ? row[4].trim() : '',
                         combustibleAbastecido: row[5] ? row[5].trim() : '',
-                        combustibleAprox: row[6] ? row[6].trim() : '-'
+                        combustibleAprox: row[6] ? row[6].trim() : ''
                     });
                 }
 
-                renderizarTarjetas(rawData);
+                renderizarTabla(rawData);
             },
             error: function(err) {
-                document.getElementById('loading').innerHTML = '<span class="text-red-500">Error al cargar los datos del reporte.</span>';
+                document.getElementById('loading').innerHTML = '<span class="text-red-400">Error al conectar con la hoja de cálculo.</span>';
                 console.error(err);
             }
         });
 
-        function renderizarTarjetas(datos) {
-            const container = document.getElementById('lista-unidades');
+        function renderizarTabla(datos) {
+            const tbody = document.getElementById('tabla-cuerpo');
             let html = '';
 
             if (datos.length === 0) {
-                container.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm">No se encontraron unidades con estos filtros.</div>';
-                document.getElementById('contador-resultados').innerText = '0 resultados';
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-500">No hay registros que coincidan con los filtros.</td></tr>`;
+                document.getElementById('contador-registros').innerText = '0 registros';
                 return;
             }
 
             datos.forEach(item => {
                 const esRetrasado = item.mtto.toLowerCase().includes('retrasado');
-                const tieneHoras = parseFloat(item.totalHoras) > 0;
-                
-                // Color distintivo para el estado de mantenimiento
-                let mttoBadgeClass = "bg-slate-100 text-slate-700";
+                const tieneHorasTrabajadas = parseFloat(item.totalHoras) > 0;
+
+                // Estilo para la celda de Mantenimiento (rojiza si está retrasado, azulada si normal)
+                let mttoStyle = "bg-slate-900/60 text-slate-300";
                 if (esRetrasado) {
-                    mttoBadgeClass = "bg-red-100 text-red-700 font-semibold";
-                } else if (item.mtto) {
-                    mttoBadgeClass = "bg-blue-50 text-blue-700";
+                    mttoStyle = "bg-red-950/80 text-red-300 font-bold border border-red-800/50";
+                }
+
+                // Estilo para indicador de total de horas
+                let horasBadge = "text-slate-300";
+                if (tieneHorasTrabajadas) {
+                    horasBadge = "bg-blue-600/30 text-blue-300 font-bold px-2 py-0.5 rounded";
                 }
 
                 html += `
-                    <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 space-y-3">
-                        <div class="flex justify-between items-start">
-                            <h3 class="font-bold text-slate-900 text-base">${item.unidad}</h3>
-                            <span class="text-xs font-semibold px-2 py-1 rounded-lg ${tieneHoras ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}">
-                                ${item.totalHoras} hrs tot.
-                            </span>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-                            <div>
-                                <span class="text-slate-400 block">H. Inicial / Final:</span>
-                                <span class="font-medium text-slate-700">${item.hInicial} ➔ ${item.hFinal}</span>
-                            </div>
-                            <div>
-                                <span class="text-slate-400 block">Combustible Aprox:</span>
-                                <span class="font-medium text-slate-700">${item.combustibleAprox} Gal</span>
-                            </div>
-                        </div>
-
-                        ${item.combustibleAbastecido ? `
-                            <div class="text-xs bg-amber-50 text-amber-800 px-2.5 py-1.5 rounded-lg font-medium flex items-center justify-between">
-                                <span>Abastecido:</span>
-                                <span class="font-bold">${item.combustibleAbastecido}</span>
-                            </div>
-                        ` : ''}
-
-                        <div class="text-xs px-2.5 py-1.5 rounded-lg ${mttoBadgeClass} flex items-center justify-between">
-                            <span class="text-slate-500">Estado MTTO:</span>
-                            <span class="text-right">${item.mtto || 'Al día / Sin registros'}</span>
-                        </div>
-                    </div>
+                    <tr class="hover:bg-slate-900/80 transition">
+                        <td class="p-3 font-semibold text-white">${item.unidad}</td>
+                        <td class="p-2 text-center text-slate-300">${item.hInicial}</td>
+                        <td class="p-2 text-center text-slate-300">${item.hFinal}</td>
+                        <td class="p-2 text-center"><span class="${horasBadge}">${item.totalHoras}</span></td>
+                        <td class="p-3 text-center ${mttoStyle}">${item.mtto || '-'}</td>
+                        <td class="p-2 text-center font-medium text-amber-300">${item.combustibleAbastecido}</td>
+                        <td class="p-2 text-center text-slate-300">${item.combustibleAprox}</td>
+                    </tr>
                 `;
             });
 
-            container.innerHTML = html;
-            document.getElementById('contador-resultados').innerText = `${datos.length} unidades`;
+            tbody.innerHTML = html;
+            document.getElementById('contador-registros').innerText = `${datos.length} registros`;
         }
 
-        // Lógica de filtrado en tiempo real estilo tabla dinámica
+        // Sistema de Filtros (Tabla Dinámica en Vivo)
         function aplicarFiltros() {
-            const texto = document.getElementById('filtro-texto').value.toLowerCase();
-            const estado = document.getElementById('filtro-estado').value;
+            const texto = document.getElementById('filtro-unidad').value.toLowerCase();
+            const estadoMtto = document.getElementById('filtro-mtto').value;
 
             const filtrados = rawData.filter(item => {
                 const coincideTexto = item.unidad.toLowerCase().includes(texto);
-                
-                let coincideEstado = true;
-                if (estado === 'activo') {
-                    coincideEstado = parseFloat(item.totalHoras) > 0;
-                } else if (estado === 'retrasado') {
-                    coincideEstado = item.mtto.toLowerCase().includes('retrasado');
+                let coincideMtto = true;
+
+                if (estadoMtto === 'retrasado') {
+                    coincideMtto = item.mtto.toLowerCase().includes('retrasado');
+                } else if (estadoMtto === 'al-dia') {
+                    coincideMtto = !item.mtto.toLowerCase().includes('retrasado');
                 }
 
-                return coincideTexto && coincideEstado;
+                return coincideTexto && coincideMtto;
             });
 
-            renderizarTarjetas(filtrados);
+            renderizarTabla(filtrados);
         }
 
-        document.getElementById('filtro-texto').addEventListener('input', aplicarFiltros);
-        document.getElementById('filtro-estado').addEventListener('change', aplicarFiltros);
+        document.getElementById('filtro-unidad').addEventListener('input', aplicarFiltros);
+        document.getElementById('filtro-mtto').addEventListener('change', aplicarFiltros);
     </script>
 </body>
 </html>
