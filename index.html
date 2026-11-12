@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Maquinaria por Unidad</title>
+    <title>Control de Maquinaria por Fecha</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -15,7 +15,7 @@
         <div class="max-w-xl mx-auto flex justify-between items-center">
             <div>
                 <h1 class="text-base font-bold text-emerald-400">Selección de Maquinaria</h1>
-                <p class="text-xs text-slate-400">Sincronizado con Google Sheets</p>
+                <p class="text-xs text-slate-400">Filtrado por fecha seleccionada</p>
             </div>
             <!-- Selector de Fecha Interactivo -->
             <div class="relative">
@@ -36,7 +36,7 @@
 
         <!-- Indicador de Carga -->
         <div id="loading" class="text-center py-20 text-slate-400 text-sm">
-            Cargando unidades con nombres completos desde Google Sheets...
+            Cargando y filtrando datos desde Google Sheets...
         </div>
 
         <!-- Cuadrícula de Botones de Máquinas -->
@@ -96,10 +96,10 @@
     </div>
 
     <script>
-        // Enlace CSV directo para leer los textos completos sin alteraciones de HTML
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vReJl2BT_9uiaFmB-U1-UlhHKE9lSmhK8jB2bF1Pu1MlM0B15O2H5WxM_ot85WtTIol4_bVhuudvcHU/pub?gid=1193959640&single=true&output=csv";
 
-        let maquinasData = [];
+        let todosLosRegistros = [];
+        let ultimaFechaDetectadaStr = "";
 
         Papa.parse(SHEET_CSV_URL, {
             download: true,
@@ -111,33 +111,23 @@
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('grid-maquinas').classList.remove('hidden');
 
-                // Detección automática de la fecha más reciente (buscando en toda la hoja)
-                let ultimaFechaDetectada = "";
-                for (let i = 0; i < rows.length; i++) {
-                    for (let j = 0; j < rows[i].length; j++) {
-                        let cell = rows[i][j] ? rows[i][j].trim() : "";
-                        if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(cell)) {
-                            ultimaFechaDetectada = cell;
-                        }
-                    }
-                }
+                let fechaActualFila = "";
 
-                if (ultimaFechaDetectada) {
-                    const partes = ultimaFechaDetectada.split('/');
-                    if (partes.length === 3) {
-                        let dia = partes[0].padStart(2, '0');
-                        let mes = partes[1].padStart(2, '0');
-                        let anio = partes[2].length === 2 ? '20' + partes[2] : partes[2];
-                        document.getElementById('input-fecha').value = `${anio}-${mes}-${dia}`;
-                    }
-                }
-
-                // Cargar datos mapeando la Columna H (índice 7) y evitando encabezados
+                // Recorremos todas las filas para asociar cada máquina con su fecha correspondiente
                 for (let i = 0; i < rows.length; i++) {
                     const row = rows[i];
-                    if (!row || row.length < 8) continue;
+                    if (!row || row.length === 0) continue;
 
-                    const unidad = row[7] ? row[7].trim() : ''; // Columna H
+                    // Detectar si la fila contiene una fecha (ej: en la primera o segunda columna)
+                    for (let j = 0; j < Math.min(row.length, 3); j++) {
+                        let cell = row[j] ? row[j].trim() : "";
+                        if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(cell)) {
+                            fechaActualFila = cell;
+                            ultimaFechaDetectadaStr = cell; // Guarda la última encontrada (la más abajo)
+                        }
+                    }
+
+                    const unidad = row[7] ? row[7].trim() : ''; // Columna H (índice 7)
                     if (!unidad) continue;
 
                     const unidadUpper = unidad.toUpperCase();
@@ -145,8 +135,9 @@
                         continue;
                     }
 
-                    maquinasData.push({
-                        unidad: unidad,
+                    todosLosRegistros.push({
+                        fechaOriginal: fechaActualFila,
+                        unidad: unidad,                                   // Nombre completo intacto
                         operador: row[6] ? row[6].trim() : 'No asignado', // Columna G
                         hInicial: row[8] ? row[8].trim() : '-',          // Columna I
                         hFinal: row[9] ? row[9].trim() : '-',            // Columna J
@@ -155,7 +146,19 @@
                     });
                 }
 
-                renderizarBotones(maquinasData);
+                // Configurar el input date con la última fecha detectada por defecto
+                if (ultimaFechaDetectadaStr) {
+                    const partes = ultimaFechaDetectadaStr.split('/');
+                    if (partes.length === 3) {
+                        let dia = partes[0].padStart(2, '0');
+                        let mes = partes[1].padStart(2, '0');
+                        let anio = partes[2].length === 2 ? '20' + partes[2] : partes[2];
+                        document.getElementById('input-fecha').value = `${anio}-${mes}-${dia}`;
+                    }
+                }
+
+                // Renderizar los datos filtrados por la fecha seleccionada inicialmente
+                actualizarVista();
             },
             error: function(err) {
                 document.getElementById('loading').innerHTML = '<span class="text-red-400">Error al leer los datos de la hoja.</span>';
@@ -163,18 +166,53 @@
             }
         });
 
+        function convertirFechaInputAFormatos(inputVal) {
+            // inputVal viene en formato "YYYY-MM-DD"
+            if (!inputVal) return [];
+            const [anio, mes, dia] = inputVal.split('-');
+            const d = parseInt(dia, 10);
+            const m = parseInt(mes, 10);
+            const aFull = anio;
+            const aShort = anio.slice(-2);
+
+            // Retorna posibles formatos en los que puede estar escrito en el Google Sheet
+            return [
+                `${d}/${m}/${aFull}`,
+                `${d}/${m}/${aShort}`,
+                `${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')}/${aFull}`,
+                `${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')}/${aShort}`
+            ];
+        }
+
+        function actualizarVista() {
+            const fechaInputVal = document.getElementById('input-fecha').value;
+            const textoBusqueda = document.getElementById('buscador').value.toLowerCase();
+            const formatosValidos = convertirFechaInputAFormatos(fechaInputVal);
+
+            // Filtrar estrictamente por la fecha seleccionada y el texto de búsqueda
+            const filtrados = todosLosRegistros.filter(item => {
+                const coincideFecha = formatosValidos.includes(item.fechaOriginal) || item.fechaOriginal === "";
+                const coincideTexto = item.unidad.toLowerCase().includes(textoBusqueda);
+                return coincideFecha && coincideTexto;
+            });
+
+            renderizarBotones(filtrados);
+        }
+
         function renderizarBotones(datos) {
             const grid = document.getElementById('grid-maquinas');
             let html = '';
 
             if (datos.length === 0) {
-                grid.innerHTML = '<div class="col-span-2 text-center text-slate-500 py-8">No se encontraron unidades.</div>';
+                grid.innerHTML = '<div class="col-span-2 text-center text-slate-400 py-12 text-sm">No hay unidades registradas para esta fecha.</div>';
                 return;
             }
 
-            datos.forEach((item, index) => {
+            datos.forEach((item, indexOriginal) => {
+                // Buscamos el índice real dentro de todosLosRegistros para abrir el modal correcto
+                const indexReal = todosLosRegistros.indexOf(item);
                 html += `
-                    <button onclick="abrirDetalle(${index})" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 p-3.5 rounded-2xl shadow-md border border-emerald-500 flex flex-col justify-between items-start text-left transition transform active:scale-95 min-h-[110px]">
+                    <button onclick="abrirDetalle(${indexReal})" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 p-3.5 rounded-2xl shadow-md border border-emerald-500 flex flex-col justify-between items-start text-left transition transform active:scale-95 min-h-[110px]">
                         <span class="text-xl">🚜</span>
                         <span class="font-bold text-xs md:text-sm leading-tight text-slate-950">${item.unidad}</span>
                     </button>
@@ -185,7 +223,7 @@
         }
 
         function abrirDetalle(index) {
-            const m = maquinasData[index];
+            const m = todosLosRegistros[index];
             document.getElementById('modal-titulo').innerText = m.unidad;
             document.getElementById('modal-operador').innerText = m.operador || 'Sin registro';
             document.getElementById('modal-hinicial').innerText = m.hInicial;
@@ -200,12 +238,9 @@
             document.getElementById('modal-detalle').classList.add('hidden');
         }
 
-        // Filtro de búsqueda en tiempo real
-        document.getElementById('buscador').addEventListener('input', function(e) {
-            const texto = e.target.value.toLowerCase();
-            const filtrados = maquinasData.filter(m => m.unidad.toLowerCase().includes(texto));
-            renderizarBotones(filtrados);
-        });
+        // Eventos para actualizar la vista al cambiar fecha o buscar texto
+        document.getElementById('input-fecha').addEventListener('change', actualizarVista);
+        document.getElementById('buscador').addEventListener('input', actualizarVista);
     </script>
 </body>
 </html>
