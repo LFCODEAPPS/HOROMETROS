@@ -3,58 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizador de Lugares - Google Sheets</title>
-    <!-- Tailwind CSS para diseño moderno -->
+    <title>Reporte Diario de Maquinaria</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- PapaParse para procesar CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen p-4 md:p-8">
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-12">
 
-    <div class="max-w-7xl mx-auto">
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl font-extrabold text-indigo-600">Visualizador de Datos: Lugares</h1>
-            <p class="text-slate-500 mt-2">Los datos de Google Sheets se han separado en dos secciones según la primera columna.</p>
-        </header>
-
-        <!-- Indicador de carga -->
-        <div id="loading" class="text-center py-16 text-slate-500 font-medium">
-            Conectando con Google Sheets y procesando datos...
+    <!-- Encabezado principal -->
+    <header class="bg-slate-900 text-white p-4 shadow-md sticky top-0 z-20">
+        <div class="max-w-xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-lg font-bold">Reporte de Maquinaria</h1>
+                <p class="text-xs text-slate-400">Control de Horas, Combustible y MTTO</p>
+            </div>
+            <div id="fecha-badge" class="bg-amber-500 text-slate-950 font-extrabold text-sm px-3 py-1.5 rounded-lg shadow">
+                11/11/26
+            </div>
         </div>
+    </header>
 
-        <!-- Contenedor de las dos partes -->
-        <div id="dashboard" class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
+    <main class="max-w-xl mx-auto p-4 space-y-4">
+
+        <!-- Panel de Filtros (Estilo Tabla Dinámica para Móvil) -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3">
+            <h2 class="text-sm font-bold text-slate-700 flex items-center justify-between">
+                <span>Filtros Rápidos</span>
+                <span id="contador-resultados" class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-normal">Mostrando todo</span>
+            </h2>
             
-            <!-- PARTE 1 DE LA COLUMNA -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
-                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                    <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
-                        <span class="w-3 h-3 bg-indigo-500 rounded-full"></span> 
-                        Parte 1: Categoría / Zona Principal
-                    </h2>
-                    <span id="count-1" class="bg-indigo-50 text-indigo-700 text-xs font-semibold px-2.5 py-1 rounded-full">0</span>
+            <div class="grid grid-cols-1 gap-2">
+                <!-- Buscador por texto -->
+                <input type="text" id="filtro-texto" placeholder="Buscar unidad (Ej: Excavadora, CAT...)" 
+                    class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                
+                <!-- Filtros desplegables / categorías -->
+                <div class="flex gap-2">
+                    <select id="filtro-estado" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <option value="todos">Todos los estados</option>
+                        <option value="activo">Con Horas Trabajadas (> 0)</option>
+                        <option value="retrasado">Con MTTO Retrasado</option>
+                    </select>
                 </div>
-                <div id="list-1" class="space-y-3 overflow-y-auto max-h-[600px] pr-2"></div>
             </div>
-
-            <!-- PARTE 2 DE LA COLUMNA -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
-                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                    <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
-                        <span class="w-3 h-3 bg-emerald-500 rounded-full"></span> 
-                        Parte 2: Sub-lugar / Detalle
-                    </h2>
-                    <span id="count-2" class="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">0</span>
-                </div>
-                <div id="list-2" class="space-y-3 overflow-y-auto max-h-[600px] pr-2"></div>
-            </div>
-
         </div>
-    </div>
+
+        <!-- Indicador de Carga -->
+        <div id="loading" class="text-center py-10 text-slate-500 text-sm">
+            Cargando datos desde Google Sheets...
+        </div>
+
+        <!-- Contenedor de Tarjetas (Adaptado para Móvil) -->
+        <div id="lista-unidades" class="space-y-3 hidden">
+            <!-- Las tarjetas se inyectarán dinámicamente aquí -->
+        </div>
+
+    </main>
 
     <script>
-        // Enlace CSV generado a partir de tu enlace de Google Sheets publicado
+        // Enlace CSV de tu Google Sheet
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vReJl2BT_9uiaFmB-U1-UlhHKE9lSmhK8jB2bF1Pu1MlM0B15O2H5WxM_ot85WtTIol4_bVhuudvcHU/pub?gid=1193959640&single=true&output=csv";
+
+        let rawData = [];
 
         Papa.parse(SHEET_CSV_URL, {
             download: true,
@@ -64,75 +74,117 @@
                 if (!rows || rows.length === 0) return;
 
                 document.getElementById('loading').classList.add('hidden');
-                document.getElementById('dashboard').classList.remove('hidden');
+                document.getElementById('lista-unidades').classList.remove('hidden');
 
-                const container1 = document.getElementById('list-1');
-                const container2 = document.getElementById('list-2');
-
-                let html1 = '';
-                let html2 = '';
-                let validCount = 0;
-
-                // Empezamos desde i = 1 para saltar la cabecera
+                // Procesar filas (asumimos la estructura basada en tu imagen)
+                // Col 0: Unidad, Col 1: H. Inicial, Col 2: H. Final, Col 3: Total Horas, Col 4: MTTO, Col 5: Combustible Abastecido, Col 6: Combustible Aprox
                 for (let i = 1; i < rows.length; i++) {
                     const row = rows[i];
-                    if (!row || row.length === 0 || !row[0]) continue;
+                    if (!row || row.length === 0 || !row[0] || row[0].trim() === '') continue;
 
-                    validCount++;
-                    const lugarOriginal = row[0].trim();
-
-                    // Separar el texto de la primera columna en dos partes.
-                    // Si contiene un guion ("-"), divide por él. Si no, divide por el primer espacio.
-                    let parteA = lugarOriginal;
-                    let parteB = "Detalle general";
-
-                    if (lugarOriginal.includes('-')) {
-                        const partes = lugarOriginal.split('-');
-                        parteA = partes[0].trim();
-                        parteB = partes.slice(1).join('-').trim();
-                    } else if (lugarOriginal.includes(' ')) {
-                        const espacioIdx = lugarOriginal.indexOf(' ');
-                        parteA = lugarOriginal.substring(0, espacioIdx).trim();
-                        parteB = lugarOriginal.substring(espacioIdx + 1).trim();
-                    }
-
-                    // Recolectar el resto de columnas de esa fila para mostrarlas como información adicional
-                    let infoAdicional = '';
-                    for (let j = 1; j < row.length; j++) {
-                        if (row[j] && row[j].trim() !== '') {
-                            infoAdicional += `<span class="inline-block bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded mr-1 mb-1">Col ${j+1}: ${row[j]}</span>`;
-                        }
-                    }
-
-                    // Tarjeta para la Parte 1
-                    html1 += `
-                        <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition">
-                            <div class="font-bold text-indigo-900 text-base">${parteA}</div>
-                            <div class="text-xs text-slate-400 mt-0.5">Completo: ${lugarOriginal}</div>
-                            <div class="mt-2">${infoAdicional}</div>
-                        </div>
-                    `;
-
-                    // Tarjeta para la Parte 2
-                    html2 += `
-                        <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition">
-                            <div class="font-bold text-emerald-900 text-base">${parteB}</div>
-                            <div class="text-xs text-slate-400 mt-0.5">Categoría base: ${parteA}</div>
-                            <div class="mt-2">${infoAdicional}</div>
-                        </div>
-                    `;
+                    rawData.push({
+                        unidad: row[0] ? row[0].trim() : '',
+                        hInicial: row[1] ? row[1].trim() : '-',
+                        hFinal: row[2] ? row[2].trim() : '-',
+                        totalHoras: row[3] ? row[3].trim() : '0',
+                        mtto: row[4] ? row[4].trim() : '',
+                        combustibleAbastecido: row[5] ? row[5].trim() : '',
+                        combustibleAprox: row[6] ? row[6].trim() : '-'
+                    });
                 }
 
-                container1.innerHTML = html1;
-                container2.innerHTML = html2;
-                document.getElementById('count-1').innerText = `${validCount} ítems`;
-                document.getElementById('count-2').innerText = `${validCount} ítems`;
+                renderizarTarjetas(rawData);
             },
             error: function(err) {
-                document.getElementById('loading').innerHTML = `<span class="text-red-500">Error al leer los datos de la hoja. Verifica que esté publicada correctamente en la web.</span>`;
+                document.getElementById('loading').innerHTML = '<span class="text-red-500">Error al cargar los datos del reporte.</span>';
                 console.error(err);
             }
         });
+
+        function renderizarTarjetas(datos) {
+            const container = document.getElementById('lista-unidades');
+            let html = '';
+
+            if (datos.length === 0) {
+                container.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm">No se encontraron unidades con estos filtros.</div>';
+                document.getElementById('contador-resultados').innerText = '0 resultados';
+                return;
+            }
+
+            datos.forEach(item => {
+                const esRetrasado = item.mtto.toLowerCase().includes('retrasado');
+                const tieneHoras = parseFloat(item.totalHoras) > 0;
+                
+                // Color distintivo para el estado de mantenimiento
+                let mttoBadgeClass = "bg-slate-100 text-slate-700";
+                if (esRetrasado) {
+                    mttoBadgeClass = "bg-red-100 text-red-700 font-semibold";
+                } else if (item.mtto) {
+                    mttoBadgeClass = "bg-blue-50 text-blue-700";
+                }
+
+                html += `
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-slate-900 text-base">${item.unidad}</h3>
+                            <span class="text-xs font-semibold px-2 py-1 rounded-lg ${tieneHoras ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}">
+                                ${item.totalHoras} hrs tot.
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                            <div>
+                                <span class="text-slate-400 block">H. Inicial / Final:</span>
+                                <span class="font-medium text-slate-700">${item.hInicial} ➔ ${item.hFinal}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block">Combustible Aprox:</span>
+                                <span class="font-medium text-slate-700">${item.combustibleAprox} Gal</span>
+                            </div>
+                        </div>
+
+                        ${item.combustibleAbastecido ? `
+                            <div class="text-xs bg-amber-50 text-amber-800 px-2.5 py-1.5 rounded-lg font-medium flex items-center justify-between">
+                                <span>Abastecido:</span>
+                                <span class="font-bold">${item.combustibleAbastecido}</span>
+                            </div>
+                        ` : ''}
+
+                        <div class="text-xs px-2.5 py-1.5 rounded-lg ${mttoBadgeClass} flex items-center justify-between">
+                            <span class="text-slate-500">Estado MTTO:</span>
+                            <span class="text-right">${item.mtto || 'Al día / Sin registros'}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            document.getElementById('contador-resultados').innerText = `${datos.length} unidades`;
+        }
+
+        // Lógica de filtrado en tiempo real estilo tabla dinámica
+        function aplicarFiltros() {
+            const texto = document.getElementById('filtro-texto').value.toLowerCase();
+            const estado = document.getElementById('filtro-estado').value;
+
+            const filtrados = rawData.filter(item => {
+                const coincideTexto = item.unidad.toLowerCase().includes(texto);
+                
+                let coincideEstado = true;
+                if (estado === 'activo') {
+                    coincideEstado = parseFloat(item.totalHoras) > 0;
+                } else if (estado === 'retrasado') {
+                    coincideEstado = item.mtto.toLowerCase().includes('retrasado');
+                }
+
+                return coincideTexto && coincideEstado;
+            });
+
+            renderizarTarjetas(filtrados);
+        }
+
+        document.getElementById('filtro-texto').addEventListener('input', aplicarFiltros);
+        document.getElementById('filtro-estado').addEventListener('change', aplicarFiltros);
     </script>
 </body>
 </html>
