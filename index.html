@@ -23,7 +23,6 @@
                 <select id="selector-fecha" class="bg-emerald-500 text-slate-950 font-black text-xs px-3 py-2 rounded shadow border-none focus:ring-2 focus:ring-emerald-300 cursor-pointer outline-none text-center appearance-none pr-6">
                     <option value="">Cargando...</option>
                 </select>
-                <!-- Flechita para el select -->
                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-900">
                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                 </div>
@@ -66,6 +65,20 @@
                 </button>
             </div>
 
+            <!-- NUEVO: Controles de Navegación por Fecha -->
+            <div class="flex items-center justify-between bg-slate-900/60 p-2 rounded-xl border border-emerald-900/30">
+                <button id="btn-fecha-ant" class="p-2 text-emerald-500 hover:bg-slate-700 rounded-lg transition disabled:opacity-30 disabled:hover:bg-transparent">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <div class="text-center flex-1">
+                    <span class="block text-[10px] text-slate-400 uppercase tracking-widest">Fecha del Registro</span>
+                    <span id="modal-fecha-actual" class="font-bold text-emerald-400 text-sm">--/--/--</span>
+                </div>
+                <button id="btn-fecha-sig" class="p-2 text-emerald-500 hover:bg-slate-700 rounded-lg transition disabled:opacity-30 disabled:hover:bg-transparent">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+
             <!-- Datos Ordenados -->
             <div class="space-y-3 text-sm">
                 <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/50 flex justify-between items-center">
@@ -102,12 +115,15 @@
     </div>
 
     <script>
-        // Enlace CSV seguro
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vReJl2BT_9uiaFmB-U1-UlhHKE9lSmhK8jB2bF1Pu1MlM0B15O2H5WxM_ot85WtTIol4_bVhuudvcHU/pub?gid=1193959640&single=true&output=csv";
 
         let todosLosRegistros = [];
-        let fechasEncontradas = new Set();
-        let fechaVigente = "Sin Fecha";
+        let fechasUnicas = []; // Array ordenado de fechas disponibles
+        let fechaVigenteParseo = "Sin Fecha";
+        
+        // Variables para la navegación interna del modal
+        let maquinaActualModal = "";
+        let fechaActualModal = "";
 
         Papa.parse(SHEET_CSV_URL, {
             download: true,
@@ -118,57 +134,56 @@
 
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('grid-maquinas').classList.remove('hidden');
+                
+                let fechasEncontradasSet = new Set();
 
                 // Recorrer la tabla de arriba a abajo
                 for (let i = 0; i < rows.length; i++) {
                     const row = rows[i];
                     if (!row || row.length === 0) continue;
 
-                    // 1. Buscar si esta fila contiene una fecha (en las primeras 6 columnas)
+                    // 1. Detectar Fecha
                     for (let j = 0; j < Math.min(row.length, 6); j++) {
                         let celda = row[j] ? row[j].trim() : "";
-                        // Si se parece a una fecha (ej: 11/11/26, 22-09-2025)
                         if (/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/.test(celda)) {
-                            fechaVigente = celda;
-                            fechasEncontradas.add(celda);
+                            fechaVigenteParseo = celda;
+                            fechasEncontradasSet.add(celda);
                             break;
                         }
                     }
 
-                    // 2. Extraer datos de la maquinaria
+                    // 2. Extraer Máquina
                     if (row.length < 8) continue;
-                    const unidad = row[7] ? row[7].trim() : ''; // Columna H
+                    const unidad = row[7] ? row[7].trim() : ''; 
 
-                    // Ignorar celdas vacías o encabezados
                     if (!unidad || unidad.toUpperCase() === 'UNIDAD' || unidad.toUpperCase() === 'EQUIPO' || unidad.toUpperCase().includes('REPORTE')) {
                         continue;
                     }
 
                     todosLosRegistros.push({
-                        fechaFiltro: fechaVigente,
-                        unidad: unidad,                                   // AQUÍ SE GUARDA EL NOMBRE COMPLETO INTACTO
-                        operador: row[6] ? row[6].trim() : 'No asignado', // Col. G
-                        hInicial: row[8] ? row[8].trim() : '-',           // Col. I
-                        hFinal: row[9] ? row[9].trim() : '-',             // Col. J
-                        totalHoras: row[10] ? row[10].trim() : '0',       // Col. K
-                        combustible: row[12] ? row[12].trim() : '0 Gal'   // Col. M
+                        fechaFiltro: fechaVigenteParseo,
+                        unidad: unidad,                                   
+                        operador: row[6] ? row[6].trim() : 'No asignado', 
+                        hInicial: row[8] ? row[8].trim() : '-',           
+                        hFinal: row[9] ? row[9].trim() : '-',             
+                        totalHoras: row[10] ? row[10].trim() : '0',       
+                        combustible: row[12] ? row[12].trim() : '0 Gal'   
                     });
                 }
 
-                // 3. Llenar el selector de fechas
+                // 3. Preparar Selector
+                fechasUnicas = Array.from(fechasEncontradasSet);
                 const selector = document.getElementById('selector-fecha');
                 selector.innerHTML = '';
-                const arrayFechas = Array.from(fechasEncontradas);
 
-                if (arrayFechas.length > 0) {
-                    arrayFechas.forEach(f => {
+                if (fechasUnicas.length > 0) {
+                    fechasUnicas.forEach(f => {
                         const opt = document.createElement('option');
                         opt.value = f;
                         opt.innerText = f;
                         selector.appendChild(opt);
                     });
-                    // Seleccionar la última fecha encontrada en la hoja por defecto
-                    selector.value = arrayFechas[arrayFechas.length - 1];
+                    selector.value = fechasUnicas[fechasUnicas.length - 1]; // Selecciona la última
                 } else {
                     selector.innerHTML = '<option value="">No hay fechas</option>';
                 }
@@ -176,7 +191,7 @@
                 actualizarVista();
             },
             error: function(err) {
-                document.getElementById('loading').innerHTML = '<span class="text-red-400">Error al leer los datos de la hoja.</span>';
+                document.getElementById('loading').innerHTML = '<span class="text-red-400">Error al leer los datos.</span>';
             }
         });
 
@@ -184,11 +199,8 @@
             const fechaSeleccionada = document.getElementById('selector-fecha').value;
             const textoBusqueda = document.getElementById('buscador').value.toLowerCase();
 
-            // Filtrar estrictamente por la fecha del desplegable
             const filtrados = todosLosRegistros.filter(item => {
-                const coincideFecha = (item.fechaFiltro === fechaSeleccionada);
-                const coincideTexto = item.unidad.toLowerCase().includes(textoBusqueda);
-                return coincideFecha && coincideTexto;
+                return (item.fechaFiltro === fechaSeleccionada) && item.unidad.toLowerCase().includes(textoBusqueda);
             });
 
             renderizarBotones(filtrados);
@@ -216,16 +228,78 @@
             grid.innerHTML = html;
         }
 
-        function abrirDetalle(index) {
-            const m = todosLosRegistros[index];
+        function abrirDetalle(indexOriginal) {
+            const m = todosLosRegistros[indexOriginal];
+            maquinaActualModal = m.unidad;
+            fechaActualModal = m.fechaFiltro;
+            
+            cargarDatosEnModal(m);
+            actualizarBotonesNavegacionFecha();
+            document.getElementById('modal-detalle').classList.remove('hidden');
+        }
+
+        function cargarDatosEnModal(m) {
             document.getElementById('modal-titulo').innerText = m.unidad;
+            document.getElementById('modal-fecha-actual').innerText = m.fechaFiltro;
             document.getElementById('modal-operador').innerText = m.operador || 'Sin registro';
             document.getElementById('modal-hinicial').innerText = m.hInicial;
             document.getElementById('modal-hfinal').innerText = m.hFinal;
             document.getElementById('modal-totales').innerText = m.totalHoras + " hrs";
             document.getElementById('modal-combustible').innerText = m.combustible || '0 Gal';
+        }
 
-            document.getElementById('modal-detalle').classList.remove('hidden');
+        function actualizarBotonesNavegacionFecha() {
+            const idxFechaActual = fechasUnicas.indexOf(fechaActualModal);
+            const btnAnt = document.getElementById('btn-fecha-ant');
+            const btnSig = document.getElementById('btn-fecha-sig');
+
+            // Buscar si la máquina existe en fechas anteriores/siguientes
+            let indiceAnterior = -1;
+            for (let i = idxFechaActual - 1; i >= 0; i--) {
+                if (verificarSiMaquinaExisteEnFecha(maquinaActualModal, fechasUnicas[i])) {
+                    indiceAnterior = i;
+                    break;
+                }
+            }
+
+            let indiceSiguiente = -1;
+            for (let i = idxFechaActual + 1; i < fechasUnicas.length; i++) {
+                if (verificarSiMaquinaExisteEnFecha(maquinaActualModal, fechasUnicas[i])) {
+                    indiceSiguiente = i;
+                    break;
+                }
+            }
+
+            // Habilitar o deshabilitar botones según disponibilidad
+            if (indiceAnterior !== -1) {
+                btnAnt.disabled = false;
+                btnAnt.onclick = () => saltarAFecha(fechasUnicas[indiceAnterior]);
+            } else {
+                btnAnt.disabled = true;
+                btnAnt.onclick = null;
+            }
+
+            if (indiceSiguiente !== -1) {
+                btnSig.disabled = false;
+                btnSig.onclick = () => saltarAFecha(fechasUnicas[indiceSiguiente]);
+            } else {
+                btnSig.disabled = true;
+                btnSig.onclick = null;
+            }
+        }
+
+        function verificarSiMaquinaExisteEnFecha(nombreMaquina, fechaFiltro) {
+            return todosLosRegistros.some(r => r.unidad === nombreMaquina && r.fechaFiltro === fechaFiltro);
+        }
+
+        function saltarAFecha(nuevaFecha) {
+            // Buscar el registro exacto de esta máquina en la nueva fecha
+            const registroEncontrado = todosLosRegistros.find(r => r.unidad === maquinaActualModal && r.fechaFiltro === nuevaFecha);
+            if (registroEncontrado) {
+                fechaActualModal = nuevaFecha;
+                cargarDatosEnModal(registroEncontrado);
+                actualizarBotonesNavegacionFecha();
+            }
         }
 
         function cerrarModal() {
