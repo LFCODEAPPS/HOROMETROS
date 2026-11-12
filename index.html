@@ -36,7 +36,7 @@
 
         <!-- Indicador de Carga -->
         <div id="loading" class="text-center py-20 text-slate-400 text-sm">
-            Cargando unidades desde Google Sheets...
+            Cargando unidades con nombres completos desde Google Sheets...
         </div>
 
         <!-- Cuadrícula de Botones de Máquinas -->
@@ -96,6 +96,7 @@
     </div>
 
     <script>
+        // Enlace CSV directo para leer los textos completos sin alteraciones de HTML
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vReJl2BT_9uiaFmB-U1-UlhHKE9lSmhK8jB2bF1Pu1MlM0B15O2H5WxM_ot85WtTIol4_bVhuudvcHU/pub?gid=1193959640&single=true&output=csv";
 
         let maquinasData = [];
@@ -110,19 +111,17 @@
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('grid-maquinas').classList.remove('hidden');
 
-                // Encontrar la ÚLTIMA fecha escaneando toda la hoja hacia abajo
+                // Detección automática de la fecha más reciente (buscando en toda la hoja)
                 let ultimaFechaDetectada = "";
                 for (let i = 0; i < rows.length; i++) {
                     for (let j = 0; j < rows[i].length; j++) {
                         let cell = rows[i][j] ? rows[i][j].trim() : "";
-                        // Detectar formatos de fecha comunes (DD/MM/YY o similares)
                         if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(cell)) {
                             ultimaFechaDetectada = cell;
                         }
                     }
                 }
 
-                // Si encuentra una fecha válida, la asigna al selector de fecha en formato YYYY-MM-DD para el input type="date"
                 if (ultimaFechaDetectada) {
                     const partes = ultimaFechaDetectada.split('/');
                     if (partes.length === 3) {
@@ -133,7 +132,7 @@
                     }
                 }
 
-                // Cargar datos mapeando la Columna H (índice 7) y excluyendo encabezados como "EQUIPO" o "UNIDAD"
+                // Cargar datos mapeando la Columna H (índice 7) y evitando encabezados
                 for (let i = 0; i < rows.length; i++) {
                     const row = rows[i];
                     if (!row || row.length < 8) continue;
@@ -142,7 +141,6 @@
                     if (!unidad) continue;
 
                     const unidadUpper = unidad.toUpperCase();
-                    // Evitar que tome los títulos o encabezados de tabla
                     if (unidadUpper === 'UNIDAD' || unidadUpper === 'EQUIPO' || unidadUpper.includes('REPORTE DIARIO')) {
                         continue;
                     }
@@ -160,7 +158,7 @@
                 renderizarBotones(maquinasData);
             },
             error: function(err) {
-                document.getElementById('loading').innerHTML = '<span class="text-red-400">Error al leer los datos.</span>';
+                document.getElementById('loading').innerHTML = '<span class="text-red-400">Error al leer los datos de la hoja.</span>';
                 console.error(err);
             }
         });
@@ -176,9 +174,9 @@
 
             datos.forEach((item, index) => {
                 html += `
-                    <button onclick="abrirDetalle(${index})" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 p-4 rounded-2xl shadow-md border border-emerald-500 flex flex-col justify-between items-start text-left transition transform active:scale-95 h-28">
-                        <span class="text-2xl">🚜</span>
-                        <span class="font-black text-sm md:text-base leading-snug text-slate-950">${item.unidad}</span>
+                    <button onclick="abrirDetalle(${index})" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 p-3.5 rounded-2xl shadow-md border border-emerald-500 flex flex-col justify-between items-start text-left transition transform active:scale-95 min-h-[110px]">
+                        <span class="text-xl">🚜</span>
+                        <span class="font-bold text-xs md:text-sm leading-tight text-slate-950">${item.unidad}</span>
                     </button>
                 `;
             });
