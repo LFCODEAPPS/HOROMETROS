@@ -1,481 +1,455 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Control De Maquinaria Grupo Bautista</title>
-    
-    <!-- ÍCONOS PARA ACCESO DIRECTO EN iOS Y ANDROID -->
-    <link rel="icon" type="image/png" href="bautista.png">
-    <link rel="apple-touch-icon" href="bautista.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Grupo Bautista">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Control De Maquinaria Grupo Bautista</title>
+<link rel="icon" type="image/png" href="bautista.png">
+<link rel="apple-touch-icon" href="bautista.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Grupo Bautista">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+:root{
+  --bg:#E9E7E1; --card:#FAF9F6; --ink:#17181A; --mute:#6B6A66; --line:#CFCBC2;
+  --yellow:#FFC20E; --on-yellow:#17181A; --band:#17181A; --band-ink:#FAF9F6; --field:#FFFFFF;
+  --display:'Barlow Condensed','Arial Narrow',Impact,sans-serif;
+  --body:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{ --bg:#141516; --card:#222426; --ink:#F1EFE9; --mute:#9A9890; --line:#3A3C3F; --band:#0B0B0C; --field:#1B1C1E; }
+}
+*{box-sizing:border-box;margin:0}
+html{-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);min-height:100vh;padding-bottom:40px;touch-action:manipulation}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.hidden{display:none!important}
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <style>
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        body { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+/* Cabecera */
+.top{position:sticky;top:0;z-index:30;background:var(--band);color:var(--band-ink);padding-top:env(safe-area-inset-top,0px)}
+.top::after{content:"";display:block;height:8px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 12px,#17181A 12px 24px)}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px}
+.brand{display:flex;align-items:center;gap:12px;padding-top:14px}
+.logo{width:44px;height:44px;border-radius:10px;background:#FAF9F6;padding:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo img{max-width:100%;max-height:100%;object-fit:contain}
+.brand h1{font-family:var(--display);font-weight:800;font-size:27px;line-height:.95;letter-spacing:.2px}
+.brand p{font-size:12px;color:#B9B6AC;margin-top:3px;font-weight:500}
+.row{display:flex;gap:8px;margin-top:12px}
+.sel{position:relative;flex:1}
+.sel select{width:100%;appearance:none;-webkit-appearance:none;background:var(--yellow);color:var(--on-yellow);border:0;border-radius:8px;padding:11px 36px 11px 14px;font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:.4px;cursor:pointer}
+.sel svg{position:absolute;right:11px;top:50%;transform:translateY(-50%);width:18px;height:18px;pointer-events:none;color:var(--on-yellow)}
+#btn-recargar{display:flex;align-items:center;gap:6px;background:transparent;border:2px solid #4A4C50;color:var(--band-ink);border-radius:8px;padding:0 13px;font-weight:600;font-size:13px;cursor:pointer;transition:transform .15s,border-color .15s}
+#btn-recargar:hover{border-color:var(--yellow)}
+#btn-recargar:active{transform:scale(.95)}
+#icono-recargar{width:17px;height:17px;transition:transform .5s}
+#icono-recargar.rotate-180{transform:rotate(180deg)}
+.chips{display:flex;gap:8px;overflow-x:auto;margin-top:12px;scrollbar-width:none;-ms-overflow-style:none}
+.chips::-webkit-scrollbar{display:none}
+.btn-filtro{flex-shrink:0;background:transparent;color:#D8D5CB;border:2px solid #4A4C50;border-radius:8px;padding:6px 14px;font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:.4px;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.btn-filtro.activo{background:var(--band-ink);color:var(--band);border-color:var(--band-ink)}
+.search{position:relative;margin:12px 0 14px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#8D8B83}
+.search input{width:100%;background:#26282B;border:2px solid #26282B;border-radius:8px;padding:11px 14px 11px 40px;font-size:15px;color:#FAF9F6;outline:none}
+.search input::placeholder{color:#8D8B83}
+.search input:focus{border-color:var(--yellow)}
 
-        /* Animaciones de entrada y transición de pantallas */
-        @keyframes fadeSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(12px) scale(0.98);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
+/* Lista */
+main{max-width:560px;margin:0 auto;padding:16px}
+#loading{display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;padding:90px 0}
+#loading .logo{width:84px;height:84px;animation:bounce 1s infinite}
+#loading p{color:var(--mute);font-size:14px;font-weight:500}
+@keyframes bounce{50%{transform:translateY(-12px)}}
+.count{font-family:var(--display);font-weight:600;font-size:17px;color:var(--mute);margin-bottom:10px;letter-spacing:.3px}
+#grid-maquinas{display:flex;flex-direction:column;gap:8px}
+.ficha{display:flex;align-items:stretch;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;cursor:pointer;padding:0;transition:transform .12s,border-color .15s}
+.ficha:hover{border-color:var(--ink)}
+.ficha:active{transform:scale(.985)}
+.ficha .franja{width:10px;flex-shrink:0;background:var(--c)}
+.ficha .info{flex:1;min-width:0;padding:12px 14px}
+.ficha .nombre{font-family:var(--display);font-weight:700;font-size:22px;line-height:1.05;letter-spacing:.2px;overflow-wrap:anywhere}
+.ficha .lugar{display:flex;align-items:center;gap:6px;margin-top:5px;font-size:12.5px;color:var(--mute);font-weight:500}
+.ficha .lugar i{width:7px;height:7px;border-radius:50%;background:var(--c);flex-shrink:0}
+.ficha .flecha{display:flex;align-items:center;padding-right:12px;color:var(--mute)}
+.ficha .flecha svg{width:18px;height:18px}
+.vacio{text-align:center;color:var(--mute);padding:56px 20px;border:2px dashed var(--line);border-radius:10px;font-size:14px;line-height:1.5}
 
-        @keyframes modalPop {
-            from {
-                opacity: 0;
-                transform: scale(0.92) translateY(16px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        .anim-card {
-            animation: fadeSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            opacity: 0;
-        }
-
-        .anim-modal {
-            animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-    </style>
-    <script>
-        tailwind.config = {
-            darkMode: 'media',
-        }
-    </script>
+/* Hoja de detalle */
+#modal-detalle{position:fixed;inset:0;z-index:50;background:rgba(10,10,10,.6);display:flex;align-items:flex-end;justify-content:center}
+#modal-contenido{width:100%;max-width:560px;max-height:94vh;overflow-y:auto;background:var(--bg);border-radius:18px 18px 0 0;padding:0 0 calc(18px + env(safe-area-inset-bottom,0px));animation:subir .26s cubic-bezier(.16,1,.3,1)}
+@keyframes subir{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@media (min-width:600px){#modal-detalle{align-items:center;padding:16px}#modal-contenido{border-radius:18px}}
+.m-head{background:var(--band);color:var(--band-ink);padding:18px 16px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border-radius:18px 18px 0 0;position:relative}
+.m-head::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 10px,#17181A 10px 20px)}
+.m-head small{font-size:12px;color:#B9B6AC;font-weight:500}
+.m-head h2{font-family:var(--display);font-weight:800;font-size:30px;line-height:1;margin-top:4px;padding-bottom:6px;overflow-wrap:anywhere}
+.cerrar{width:36px;height:36px;border-radius:50%;border:2px solid #4A4C50;background:transparent;color:var(--band-ink);cursor:pointer;flex-shrink:0;font-size:15px;font-weight:700}
+.cerrar:active{transform:scale(.9)}
+.m-body{padding:14px 16px 0;display:flex;flex-direction:column;gap:10px}
+.nav{display:flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:4px}
+.nav button{width:46px;height:46px;border:0;background:transparent;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.nav button:not(:disabled):hover{background:var(--bg)}
+.nav button:not(:disabled):active{transform:scale(.9)}
+.nav button:disabled{opacity:.25;cursor:default}
+.nav svg{width:22px;height:22px}
+.nav div{flex:1;text-align:center}
+.nav small{display:block;font-size:11.5px;color:var(--mute);font-weight:500}
+#modal-fecha-actual{font-family:var(--display);font-weight:800;font-size:25px;line-height:1.1}
+#modal-datos-cuerpo{display:flex;flex-direction:column;gap:10px;transition:opacity .15s}
+.dato{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.dato .k{font-size:13px;color:var(--mute);font-weight:500;flex-shrink:0}
+.dato .v{font-weight:600;text-align:right;overflow-wrap:anywhere;font-size:15px}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dos .dato{flex-direction:column;align-items:flex-start;gap:2px}
+.dos .v{font-family:var(--display);font-weight:700;font-size:30px;line-height:1.1;text-align:left}
+.horas{background:var(--ink);color:var(--bg);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:baseline}
+.horas .k{font-size:13px;font-weight:500;opacity:.75}
+.horas .v{font-family:var(--display);font-weight:800;font-size:40px;line-height:1}
+.fuel{background:var(--yellow);color:var(--on-yellow);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:baseline}
+.fuel .k{font-size:13px;font-weight:600}
+.fuel .v{font-family:var(--display);font-weight:800;font-size:40px;line-height:1}
+.aceptar{margin:14px 16px 0;width:calc(100% - 32px);background:transparent;border:2px solid var(--ink);border-radius:10px;padding:13px;font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:.4px;cursor:pointer}
+.aceptar:active{transform:scale(.98)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen pb-14 font-sans transition-colors duration-300">
+<body>
 
-    <!-- BLOQUE SUPERIOR FIJO DESAHOGADO -->
-    <div class="sticky top-0 z-30 bg-white/90 dark:bg-slate-950/90 backdrop-blur-lg border-b border-slate-200/80 dark:border-slate-800/80 shadow-sm">
-        
-        <header class="max-w-xl mx-auto px-4 pt-4 pb-3 space-y-3">
-            <!-- Fila 1: Logo transparente + Título completo sin recortes -->
-            <div class="flex items-center gap-3">
-                <div class="h-9 w-9 flex items-center justify-center shrink-0">
-                    <img src="bautista.png" alt="Logo" class="h-full w-full object-contain mix-blend-multiply dark:mix-blend-normal dark:brightness-110 transition-transform duration-300 hover:scale-105" onerror="this.parentElement.style.display='none'">
-                </div>
-                <div class="flex-1 min-w-0">
-                    <h1 class="text-base sm:text-lg font-extrabold text-emerald-600 dark:text-emerald-400 tracking-tight leading-none">
-                        Control De Maquinaria
-                    </h1>
-                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1">
-                        Grupo Bautista
-                    </p>
-                </div>
-            </div>
-
-            <!-- Fila 2: Selector de fecha amplio + Botón de recarga -->
-            <div class="flex items-center justify-between gap-2.5 pt-0.5">
-                <div class="relative flex-1">
-                    <select id="selector-fecha" class="w-full bg-emerald-50/90 hover:bg-emerald-100/80 text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-300 font-bold text-xs px-3.5 py-2.5 rounded-xl border border-emerald-200/80 dark:border-emerald-800/60 focus:ring-2 focus:ring-emerald-400 cursor-pointer outline-none appearance-none transition">
-                        <option value="">Cargando fechas...</option>
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-emerald-700 dark:text-emerald-400">
-                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                    </div>
-                </div>
-
-                <button id="btn-recargar" onclick="recargarConAnimacion()" class="px-3.5 py-2.5 text-slate-600 hover:text-emerald-600 dark:text-slate-300 dark:hover:text-emerald-400 bg-slate-100 hover:bg-slate-200/70 dark:bg-slate-800/80 dark:hover:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700/80 flex items-center gap-1.5 text-xs font-semibold transition active:scale-95 shrink-0" title="Actualizar datos">
-                    <svg id="icono-recargar" class="w-4 h-4 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    <span>Actualizar</span>
-                </button>
-            </div>
-        </header>
-
-        <!-- Filtros por ubicación + Barra de búsqueda -->
-        <div class="max-w-xl mx-auto px-4 pb-3.5 space-y-3">
-            <div class="flex overflow-x-auto gap-2 hide-scrollbar" id="botones-categoria">
-                <button onclick="filtrarPorUbicacion('TODOS', this)" class="btn-filtro bg-emerald-500 text-white dark:text-slate-950 border-emerald-500 font-bold px-4 py-1.5 rounded-full text-xs shrink-0 transition-all duration-200 active:scale-95 shadow-sm border">TODOS</button>
-                <button onclick="filtrarPorUbicacion('CARRETERA CHIPULUC', this)" class="btn-filtro bg-slate-100/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 font-semibold px-4 py-1.5 rounded-full text-xs shrink-0 transition-all duration-200 active:scale-95 hover:bg-slate-200/70 dark:hover:bg-slate-700 border">CARRETERA CHIPULUC</button>
-                <button onclick="filtrarPorUbicacion('OLMOS', this)" class="btn-filtro bg-slate-100/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 font-semibold px-4 py-1.5 rounded-full text-xs shrink-0 transition-all duration-200 active:scale-95 hover:bg-slate-200/70 dark:hover:bg-slate-700 border">OLMOS</button>
-                <button onclick="filtrarPorUbicacion('OTROS', this)" class="btn-filtro bg-slate-100/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 font-semibold px-4 py-1.5 rounded-full text-xs shrink-0 transition-all duration-200 active:scale-95 hover:bg-slate-200/70 dark:hover:bg-slate-700 border">OTROS</button>
-            </div>
-
-            <div class="relative">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400 text-sm">🔍</span>
-                <input type="text" id="buscador" placeholder="Buscar equipo o maquinaria..." 
-                    class="w-full bg-slate-100/70 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-700/80 text-sm rounded-xl pl-10 pr-4 py-2.5 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-800 transition-all">
-            </div>
-        </div>
-
+<div class="top">
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo"><img src="bautista.png" alt="Logo" onerror="this.parentElement.style.display='none'"></div>
+      <div>
+        <h1>Control De Maquinaria</h1>
+        <p>Grupo Bautista</p>
+      </div>
     </div>
 
-    <!-- CONTENIDO DESPLAZABLE -->
-    <main class="max-w-xl mx-auto p-4">
+    <div class="row">
+      <div class="sel">
+        <select id="selector-fecha"><option value="">Cargando fechas...</option></select>
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5.5 7.5L10 12l4.5-4.5-1.4-1.4L10 9.2 6.9 6.1z"/></svg>
+      </div>
+      <button id="btn-recargar" onclick="recargarConAnimacion()" title="Actualizar datos">
+        <svg id="icono-recargar" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        <span>Actualizar</span>
+      </button>
+    </div>
 
-        <!-- Pantalla de Carga con Logo Transparente -->
-        <div id="loading" class="flex flex-col items-center justify-center py-24 text-center space-y-4">
-            <div class="w-20 h-20 flex items-center justify-center animate-bounce">
-                <img src="bautista.png" alt="Cargando Grupo Bautista" class="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" onerror="this.parentElement.style.display='none'">
-            </div>
-            <p class="text-slate-500 dark:text-slate-400 text-sm font-medium animate-pulse">
-                Espere unos segundos mientras carga el sistema...
-            </p>
+    <div class="chips" id="botones-categoria">
+      <button onclick="filtrarPorUbicacion('TODOS', this)" class="btn-filtro activo">Todos</button>
+      <button onclick="filtrarPorUbicacion('CARRETERA CHIPULUC', this)" class="btn-filtro">Carretera Chipuluc</button>
+      <button onclick="filtrarPorUbicacion('OLMOS', this)" class="btn-filtro">Olmos</button>
+      <button onclick="filtrarPorUbicacion('OTROS', this)" class="btn-filtro">Otros</button>
+    </div>
+
+    <div class="search">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke-width="2.2"/><path stroke-linecap="round" stroke-width="2.2" d="M20 20l-3.5-3.5"/></svg>
+      <input type="text" id="buscador" placeholder="Buscar equipo o maquinaria...">
+    </div>
+  </div>
+</div>
+
+<main>
+  <div id="loading">
+    <div class="logo"><img src="bautista.png" alt="Cargando Grupo Bautista" onerror="this.parentElement.style.display='none'"></div>
+    <p>Espere unos segundos mientras carga el sistema...</p>
+  </div>
+  <div id="contador" class="count hidden"></div>
+  <div id="grid-maquinas" class="hidden"></div>
+</main>
+
+<div id="modal-detalle" class="hidden">
+  <div id="modal-contenido" role="dialog" aria-modal="true">
+    <div class="m-head">
+      <div>
+        <small>Detalle de unidad</small>
+        <h2 id="modal-titulo">Nombre de máquina</h2>
+      </div>
+      <button class="cerrar" onclick="cerrarModal()" aria-label="Cerrar">✕</button>
+    </div>
+
+    <div class="m-body">
+      <div class="nav">
+        <button id="btn-fecha-ant" aria-label="Fecha anterior"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="M15 19l-7-7 7-7"/></svg></button>
+        <div><small>Fecha del registro</small><span id="modal-fecha-actual">--/--/--</span></div>
+        <button id="btn-fecha-sig" aria-label="Fecha siguiente"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+
+      <div id="modal-datos-cuerpo">
+        <div class="dato"><span class="k">Lugar</span><span id="modal-lugar" class="v">--</span></div>
+        <div class="dato"><span class="k">Operador</span><span id="modal-operador" class="v">--</span></div>
+        <div class="dos">
+          <div class="dato"><span class="k">Horómetro inicial</span><span id="modal-hinicial" class="v">--</span></div>
+          <div class="dato"><span class="k">Horómetro final</span><span id="modal-hfinal" class="v">--</span></div>
         </div>
+        <div class="horas"><span class="k">Horas totales</span><span id="modal-totales" class="v">--</span></div>
+        <div class="fuel"><span class="k">Combustible</span><span id="modal-combustible" class="v">--</span></div>
+      </div>
+    </div>
 
-        <!-- Cuadrícula de Botones de Máquinas -->
-        <div id="grid-maquinas" class="grid grid-cols-2 gap-3 hidden">
-            <!-- Los botones se inyectarán aquí -->
-        </div>
+    <button class="aceptar" onclick="cerrarModal()">Aceptar / Cerrar</button>
+  </div>
+</div>
 
-    </main>
+<script>
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vReJl2BT_9uiaFmB-U1-UlhHKE9lSmhK8jB2bF1Pu1MlM0B15O2H5WxM_ot85WtTIol4_bVhuudvcHU/pub?gid=1193959640&single=true&output=csv";
 
-    <!-- Modal / Tarjeta de Detalle -->
-    <div id="modal-detalle" class="fixed inset-0 bg-slate-900/50 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200">
-        <div id="modal-contenido" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl w-full max-w-sm p-5 shadow-2xl space-y-4 relative anim-modal">
-            
-            <div class="flex justify-between items-start border-b border-slate-100 dark:border-slate-700/80 pb-3.5">
-                <div>
-                    <span class="text-[10px] uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-bold">Detalle de Unidad</span>
-                    <h2 id="modal-titulo" class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5 leading-snug">Nombre de Máquina</h2>
-                </div>
-                <button onclick="cerrarModal()" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition active:scale-90 shrink-0 ml-2">
-                    ✕
-                </button>
-            </div>
+let todosLosRegistros = [];
+let fechasUnicas = [];
+let fechaVigenteParseo = "Sin Fecha";
 
-            <!-- Controles de Navegación por Fecha -->
-            <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-900/70 p-2 rounded-2xl border border-slate-200/80 dark:border-emerald-900/30">
-                <button id="btn-fecha-ant" class="p-2 text-emerald-600 dark:text-emerald-400 hover:bg-slate-200/70 dark:hover:bg-slate-700 rounded-xl transition active:scale-90 disabled:opacity-30 disabled:hover:bg-transparent">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
-                </button>
-                <div class="text-center flex-1">
-                    <span class="block text-[9px] text-slate-400 uppercase tracking-widest mb-0.5">Fecha del Registro</span>
-                    <span id="modal-fecha-actual" class="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">--/--/--</span>
-                </div>
-                <button id="btn-fecha-sig" class="p-2 text-emerald-600 dark:text-emerald-400 hover:bg-slate-200/70 dark:hover:bg-slate-700 rounded-xl transition active:scale-90 disabled:opacity-30 disabled:hover:bg-transparent">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-                </button>
-            </div>
+let maquinaActualModal = "";
+let fechaActualModal = "";
+let filtroUbicacionActual = "TODOS";
 
-            <!-- Datos Ordenados -->
-            <div id="modal-datos-cuerpo" class="space-y-2.5 text-xs md:text-sm transition-opacity duration-150">
-                
-                <div class="bg-slate-50 dark:bg-slate-900/80 p-3 rounded-2xl border border-slate-100 dark:border-slate-700/50 flex justify-between items-center gap-2">
-                    <span class="text-slate-500 dark:text-slate-400 text-xs shrink-0">📍 Lugar:</span>
-                    <span id="modal-lugar" class="font-semibold text-slate-800 dark:text-white text-right break-words">--</span>
-                </div>
+// Un color de franja por lugar
+const paletaLugares = ['#FFC20E', '#3E86C6', '#E2572B', '#4FA36A', '#9B6BC9', '#14A3A3'];
+let mapaColoresLugar = {};
+let contadorLugares = 0;
 
-                <div class="bg-slate-50 dark:bg-slate-900/80 p-3 rounded-2xl border border-slate-100 dark:border-slate-700/50 flex justify-between items-center gap-2">
-                    <span class="text-slate-500 dark:text-slate-400 text-xs shrink-0">👤 Operador:</span>
-                    <span id="modal-operador" class="font-semibold text-slate-800 dark:text-white text-right truncate">--</span>
-                </div>
+function recargarConAnimacion() {
+    const icono = document.getElementById('icono-recargar');
+    icono.classList.add('rotate-180');
+    setTimeout(() => { location.reload(); }, 250);
+}
 
-                <div class="grid grid-cols-2 gap-2.5">
-                    <div class="bg-slate-50 dark:bg-slate-900/80 p-3 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                        <span class="text-slate-500 dark:text-slate-400 text-[11px] block mb-1">⏱️ H. Inicial:</span>
-                        <span id="modal-hinicial" class="font-extrabold text-emerald-600 dark:text-emerald-300 text-sm">--</span>
-                    </div>
-                    <div class="bg-slate-50 dark:bg-slate-900/80 p-3 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                        <span class="text-slate-500 dark:text-slate-400 text-[11px] block mb-1">⏱️ H. Final:</span>
-                        <span id="modal-hfinal" class="font-extrabold text-emerald-600 dark:text-emerald-300 text-sm">--</span>
-                    </div>
-                </div>
+Papa.parse(SHEET_CSV_URL, {
+    download: true,
+    header: false,
+    complete: function(results) {
+        const rows = results.data;
+        if (!rows || rows.length === 0) return;
 
-                <div class="bg-slate-50 dark:bg-slate-900/80 p-3 rounded-2xl border border-slate-100 dark:border-slate-700/50 flex justify-between items-center">
-                    <span class="text-slate-500 dark:text-slate-400 text-xs">📊 Horas Totales:</span>
-                    <span id="modal-totales" class="font-extrabold text-blue-600 dark:text-blue-400 text-sm">--</span>
-                </div>
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('grid-maquinas').classList.remove('hidden');
+        document.getElementById('contador').classList.remove('hidden');
 
-                <div class="bg-amber-50/90 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/40 p-3 rounded-2xl flex justify-between items-center">
-                    <span class="text-amber-800 dark:text-amber-300/90 text-xs font-medium">⛽ Combustible:</span>
-                    <span id="modal-combustible" class="font-black text-amber-600 dark:text-amber-400 text-sm">--</span>
-                </div>
-            </div>
+        let fechasEncontradasSet = new Set();
 
-            <button onclick="cerrarModal()" class="w-full bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white dark:text-slate-950 font-bold py-3 rounded-2xl transition-all active:scale-95 text-sm shadow-md mt-2">
-                Aceptar / Cerrar
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            if (!row || row.length === 0) continue;
+
+            for (let j = 0; j < Math.min(row.length, 6); j++) {
+                let celda = row[j] ? row[j].trim() : "";
+                if (/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/.test(celda)) {
+                    fechaVigenteParseo = celda;
+                    fechasEncontradasSet.add(celda);
+                    break;
+                }
+            }
+
+            if (row.length < 8) continue;
+
+            const lugar = row[0] ? row[0].trim() : 'Sin ubicación';
+            const unidad = row[7] ? row[7].trim() : '';
+
+            if (!unidad || unidad.toUpperCase() === 'UNIDAD' || unidad.toUpperCase() === 'EQUIPO' || unidad.toUpperCase().includes('REPORTE')) {
+                continue;
+            }
+
+            todosLosRegistros.push({
+                fechaFiltro: fechaVigenteParseo,
+                lugar: lugar,
+                unidad: unidad,
+                operador: row[6] ? row[6].trim() : 'No asignado',
+                hInicial: row[8] ? row[8].trim() : '-',
+                hFinal: row[9] ? row[9].trim() : '-',
+                totalHoras: row[10] ? row[10].trim() : '0',
+                combustible: row[12] ? row[12].trim() : '0 Gal'
+            });
+        }
+
+        fechasUnicas = Array.from(fechasEncontradasSet);
+        const selector = document.getElementById('selector-fecha');
+        selector.innerHTML = '';
+
+        if (fechasUnicas.length > 0) {
+            fechasUnicas.forEach(f => {
+                const opt = document.createElement('option');
+                opt.value = f;
+                opt.innerText = f;
+                selector.appendChild(opt);
+            });
+            selector.value = fechasUnicas[fechasUnicas.length - 1];
+        } else {
+            selector.innerHTML = '<option value="">No hay fechas</option>';
+        }
+
+        actualizarVista();
+    },
+    error: function(err) {
+        document.getElementById('loading').innerHTML = '<p style="color:#E2572B;font-weight:600">Error al leer los datos.</p>';
+    }
+});
+
+function filtrarPorUbicacion(categoria, botonClickado) {
+    filtroUbicacionActual = categoria;
+    document.querySelectorAll('.btn-filtro').forEach(btn => btn.classList.remove('activo'));
+    botonClickado.classList.add('activo');
+    actualizarVista();
+}
+
+function actualizarVista() {
+    const fechaSeleccionada = document.getElementById('selector-fecha').value;
+    const textoBusqueda = document.getElementById('buscador').value.toLowerCase();
+
+    const filtrados = todosLosRegistros.filter(item => {
+        const coincideBasico = (item.fechaFiltro === fechaSeleccionada) && item.unidad.toLowerCase().includes(textoBusqueda);
+        if (!coincideBasico) return false;
+
+        const lugarUpper = item.lugar.toUpperCase();
+        if (filtroUbicacionActual === "TODOS") {
+            return true;
+        } else if (filtroUbicacionActual === "CARRETERA CHIPULUC") {
+            return lugarUpper.includes("CARRETERA CHIPULUC");
+        } else if (filtroUbicacionActual === "OLMOS") {
+            return lugarUpper.includes("OLMOS");
+        } else if (filtroUbicacionActual === "OTROS") {
+            return !lugarUpper.includes("CARRETERA CHIPULUC") && !lugarUpper.includes("OLMOS");
+        }
+        return true;
+    });
+
+    renderizarBotones(filtrados);
+}
+
+function renderizarBotones(datos) {
+    const grid = document.getElementById('grid-maquinas');
+    const contador = document.getElementById('contador');
+    let html = '';
+
+    if (datos.length === 0) {
+        contador.innerText = '';
+        grid.innerHTML = '<div class="vacio">No se encontraron máquinas en esta vista.<br>Cambia la fecha, el filtro o la búsqueda.</div>';
+        return;
+    }
+
+    contador.innerText = datos.length + (datos.length === 1 ? ' máquina' : ' máquinas');
+
+    datos.forEach((item) => {
+        const indexReal = todosLosRegistros.indexOf(item);
+
+        if (!mapaColoresLugar[item.lugar]) {
+            mapaColoresLugar[item.lugar] = paletaLugares[contadorLugares % paletaLugares.length];
+            contadorLugares++;
+        }
+        const color = mapaColoresLugar[item.lugar];
+
+        html += `
+            <button class="ficha" style="--c:${color}" onclick="abrirDetalle(${indexReal})">
+                <span class="franja"></span>
+                <span class="info">
+                    <span class="nombre" style="display:block">${item.unidad}</span>
+                    <span class="lugar"><i></i>${item.lugar}</span>
+                </span>
+                <span class="flecha"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M9 5l7 7-7 7"/></svg></span>
             </button>
-        </div>
-    </div>
+        `;
+    });
 
-    <script>
-        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vReJl2BT_9uiaFmB-U1-UlhHKE9lSmhK8jB2bF1Pu1MlM0B15O2H5WxM_ot85WtTIol4_bVhuudvcHU/pub?gid=1193959640&single=true&output=csv";
+    grid.innerHTML = html;
+}
 
-        let todosLosRegistros = [];
-        let fechasUnicas = []; 
-        let fechaVigenteParseo = "Sin Fecha";
-        
-        let maquinaActualModal = "";
-        let fechaActualModal = "";
-        let filtroUbicacionActual = "TODOS";
+function abrirDetalle(indexOriginal) {
+    const m = todosLosRegistros[indexOriginal];
+    maquinaActualModal = m.unidad;
+    fechaActualModal = m.fechaFiltro;
 
-        const paletaLugares = [
-            'bg-emerald-50/90 border-emerald-200/90 text-emerald-950 dark:bg-emerald-950/40 dark:border-emerald-800/70 dark:text-emerald-100',
-            'bg-blue-50/90 border-blue-200/90 text-blue-950 dark:bg-blue-950/40 dark:border-blue-800/70 dark:text-blue-100',
-            'bg-amber-50/90 border-amber-200/90 text-amber-950 dark:bg-amber-950/40 dark:border-amber-800/70 dark:text-amber-100',
-            'bg-purple-50/90 border-purple-200/90 text-purple-950 dark:bg-purple-950/40 dark:border-purple-800/70 dark:text-purple-100'
-        ];
-        
-        let mapaColoresLugar = {};
-        let contadorLugares = 0;
+    cargarDatosEnModal(m);
+    actualizarBotonesNavegacionFecha();
 
-        function recargarConAnimacion() {
-            const icono = document.getElementById('icono-recargar');
-            icono.classList.add('rotate-180');
-            setTimeout(() => {
-                location.reload();
-            }, 250);
+    const contenido = document.getElementById('modal-contenido');
+    document.getElementById('modal-detalle').classList.remove('hidden');
+    contenido.style.animation = 'none';
+    void contenido.offsetWidth;
+    contenido.style.animation = '';
+}
+
+function cargarDatosEnModal(m) {
+    const cuerpo = document.getElementById('modal-datos-cuerpo');
+    cuerpo.style.opacity = '0.4';
+
+    setTimeout(() => {
+        document.getElementById('modal-titulo').innerText = m.unidad;
+        document.getElementById('modal-fecha-actual').innerText = m.fechaFiltro;
+        document.getElementById('modal-lugar').innerText = m.lugar;
+        document.getElementById('modal-operador').innerText = m.operador || 'Sin registro';
+        document.getElementById('modal-hinicial').innerText = m.hInicial;
+        document.getElementById('modal-hfinal').innerText = m.hFinal;
+        document.getElementById('modal-totales').innerText = m.totalHoras + " hrs";
+        document.getElementById('modal-combustible').innerText = m.combustible || '0 Gal';
+        cuerpo.style.opacity = '1';
+    }, 90);
+}
+
+function actualizarBotonesNavegacionFecha() {
+    const idxFechaActual = fechasUnicas.indexOf(fechaActualModal);
+    const btnAnt = document.getElementById('btn-fecha-ant');
+    const btnSig = document.getElementById('btn-fecha-sig');
+
+    let indiceAnterior = -1;
+    for (let i = idxFechaActual - 1; i >= 0; i--) {
+        if (verificarSiMaquinaExisteEnFecha(maquinaActualModal, fechasUnicas[i])) {
+            indiceAnterior = i;
+            break;
         }
+    }
 
-        Papa.parse(SHEET_CSV_URL, {
-            download: true,
-            header: false,
-            complete: function(results) {
-                const rows = results.data;
-                if (!rows || rows.length === 0) return;
-
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('grid-maquinas').classList.remove('hidden');
-                
-                let fechasEncontradasSet = new Set();
-
-                for (let i = 0; i < rows.length; i++) {
-                    const row = rows[i];
-                    if (!row || row.length === 0) continue;
-
-                    for (let j = 0; j < Math.min(row.length, 6); j++) {
-                        let celda = row[j] ? row[j].trim() : "";
-                        if (/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/.test(celda)) {
-                            fechaVigenteParseo = celda;
-                            fechasEncontradasSet.add(celda);
-                            break;
-                        }
-                    }
-
-                    if (row.length < 8) continue;
-
-                    const lugar = row[0] ? row[0].trim() : 'Sin ubicación'; 
-                    const unidad = row[7] ? row[7].trim() : '';             
-
-                    if (!unidad || unidad.toUpperCase() === 'UNIDAD' || unidad.toUpperCase() === 'EQUIPO' || unidad.toUpperCase().includes('REPORTE')) {
-                        continue;
-                    }
-
-                    todosLosRegistros.push({
-                        fechaFiltro: fechaVigenteParseo,
-                        lugar: lugar,                                     
-                        unidad: unidad,                                   
-                        operador: row[6] ? row[6].trim() : 'No asignado', 
-                        hInicial: row[8] ? row[8].trim() : '-',           
-                        hFinal: row[9] ? row[9].trim() : '-',             
-                        totalHoras: row[10] ? row[10].trim() : '0',       
-                        combustible: row[12] ? row[12].trim() : '0 Gal'   
-                    });
-                }
-
-                fechasUnicas = Array.from(fechasEncontradasSet);
-                const selector = document.getElementById('selector-fecha');
-                selector.innerHTML = '';
-
-                if (fechasUnicas.length > 0) {
-                    fechasUnicas.forEach(f => {
-                        const opt = document.createElement('option');
-                        opt.value = f;
-                        opt.innerText = f;
-                        selector.appendChild(opt);
-                    });
-                    selector.value = fechasUnicas[fechasUnicas.length - 1]; 
-                } else {
-                    selector.innerHTML = '<option value="">No hay fechas</option>';
-                }
-
-                actualizarVista();
-            },
-            error: function(err) {
-                document.getElementById('loading').innerHTML = '<span class="text-red-500">Error al leer los datos.</span>';
-            }
-        });
-
-        function filtrarPorUbicacion(categoria, botonClickado) {
-            filtroUbicacionActual = categoria;
-            
-            const botones = document.querySelectorAll('.btn-filtro');
-            botones.forEach(btn => {
-                btn.classList.remove('bg-emerald-500', 'text-white', 'dark:text-slate-950', 'border-emerald-500', 'font-bold');
-                btn.classList.add('bg-slate-100/80', 'dark:bg-slate-800/80', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-700', 'font-semibold', 'hover:bg-slate-200/70', 'dark:hover:bg-slate-700');
-            });
-
-            botonClickado.classList.remove('bg-slate-100/80', 'dark:bg-slate-800/80', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-700', 'font-semibold', 'hover:bg-slate-200/70', 'dark:hover:bg-slate-700');
-            botonClickado.classList.add('bg-emerald-500', 'text-white', 'dark:text-slate-950', 'border-emerald-500', 'font-bold');
-
-            actualizarVista();
+    let indiceSiguiente = -1;
+    for (let i = idxFechaActual + 1; i < fechasUnicas.length; i++) {
+        if (verificarSiMaquinaExisteEnFecha(maquinaActualModal, fechasUnicas[i])) {
+            indiceSiguiente = i;
+            break;
         }
+    }
 
-        function actualizarVista() {
-            const fechaSeleccionada = document.getElementById('selector-fecha').value;
-            const textoBusqueda = document.getElementById('buscador').value.toLowerCase();
+    if (indiceAnterior !== -1) {
+        btnAnt.disabled = false;
+        btnAnt.onclick = () => saltarAFecha(fechasUnicas[indiceAnterior]);
+    } else {
+        btnAnt.disabled = true;
+        btnAnt.onclick = null;
+    }
 
-            const filtrados = todosLosRegistros.filter(item => {
-                const coincideBasico = (item.fechaFiltro === fechaSeleccionada) && item.unidad.toLowerCase().includes(textoBusqueda);
-                if (!coincideBasico) return false;
+    if (indiceSiguiente !== -1) {
+        btnSig.disabled = false;
+        btnSig.onclick = () => saltarAFecha(fechasUnicas[indiceSiguiente]);
+    } else {
+        btnSig.disabled = true;
+        btnSig.onclick = null;
+    }
+}
 
-                const lugarUpper = item.lugar.toUpperCase();
-                if (filtroUbicacionActual === "TODOS") {
-                    return true;
-                } else if (filtroUbicacionActual === "CARRETERA CHIPULUC") {
-                    return lugarUpper.includes("CARRETERA CHIPULUC");
-                } else if (filtroUbicacionActual === "OLMOS") {
-                    return lugarUpper.includes("OLMOS");
-                } else if (filtroUbicacionActual === "OTROS") {
-                    return !lugarUpper.includes("CARRETERA CHIPULUC") && !lugarUpper.includes("OLMOS");
-                }
-                return true;
-            });
+function verificarSiMaquinaExisteEnFecha(nombreMaquina, fechaFiltro) {
+    return todosLosRegistros.some(r => r.unidad === nombreMaquina && r.fechaFiltro === fechaFiltro);
+}
 
-            renderizarBotones(filtrados);
-        }
+function saltarAFecha(nuevaFecha) {
+    const registroEncontrado = todosLosRegistros.find(r => r.unidad === maquinaActualModal && r.fechaFiltro === nuevaFecha);
+    if (registroEncontrado) {
+        fechaActualModal = nuevaFecha;
+        cargarDatosEnModal(registroEncontrado);
+        actualizarBotonesNavegacionFecha();
+    }
+}
 
-        function renderizarBotones(datos) {
-            const grid = document.getElementById('grid-maquinas');
-            let html = '';
+function cerrarModal() {
+    document.getElementById('modal-detalle').classList.add('hidden');
+}
 
-            if (datos.length === 0) {
-                grid.innerHTML = '<div class="col-span-2 text-center text-slate-500 dark:text-slate-400 py-16 text-sm bg-white dark:bg-slate-800/30 rounded-2xl border border-slate-200 dark:border-slate-800 anim-card">No se encontraron máquinas en esta vista.</div>';
-                return;
-            }
+document.getElementById('modal-detalle').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModal();
+});
 
-            datos.forEach((item, idx) => {
-                const indexReal = todosLosRegistros.indexOf(item);
-                
-                if (!mapaColoresLugar[item.lugar]) {
-                    mapaColoresLugar[item.lugar] = paletaLugares[contadorLugares % paletaLugares.length];
-                    contadorLugares++;
-                }
-                const colorClase = mapaColoresLugar[item.lugar];
-                // Retraso escalonado suave para el efecto cascada al cambiar de pantalla/filtro
-                const delay = Math.min(idx * 25, 300);
-
-                html += `
-                    <button onclick="abrirDetalle(${indexReal})" style="animation-delay: ${delay}ms;" class="anim-card ${colorClase} p-3.5 rounded-2xl shadow-sm border flex flex-col justify-between items-start text-left transition-all duration-200 hover:shadow-md active:scale-95 min-h-[96px] relative overflow-hidden group">
-                        <div class="flex justify-between items-start w-full mb-2 gap-2">
-                            <span class="text-xl shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">🚜</span>
-                            <!-- Etiqueta de ubicación redondeada tipo píldora -->
-                            <span class="text-[9px] font-bold bg-white/80 dark:bg-black/40 border border-black/10 dark:border-white/10 px-2.5 py-1 rounded-full text-center leading-tight max-w-[75%] line-clamp-2 shadow-2xs">${item.lugar}</span>
-                        </div>
-                        <span class="font-extrabold text-[11px] md:text-xs leading-snug pr-1 tracking-tight">${item.unidad}</span>
-                    </button>
-                `;
-            });
-
-            grid.innerHTML = html;
-        }
-
-        function abrirDetalle(indexOriginal) {
-            const m = todosLosRegistros[indexOriginal];
-            maquinaActualModal = m.unidad;
-            fechaActualModal = m.fechaFiltro;
-            
-            cargarDatosEnModal(m);
-            actualizarBotonesNavegacionFecha();
-            
-            const modal = document.getElementById('modal-detalle');
-            const contenido = document.getElementById('modal-contenido');
-            
-            modal.classList.remove('hidden');
-            // Reiniciar animación del modal al abrir
-            contenido.classList.remove('anim-modal');
-            void contenido.offsetWidth; 
-            contenido.classList.add('anim-modal');
-        }
-
-        function cargarDatosEnModal(m) {
-            const cuerpo = document.getElementById('modal-datos-cuerpo');
-            cuerpo.style.opacity = '0.4';
-            
-            setTimeout(() => {
-                document.getElementById('modal-titulo').innerText = m.unidad;
-                document.getElementById('modal-fecha-actual').innerText = m.fechaFiltro;
-                document.getElementById('modal-lugar').innerText = m.lugar;
-                document.getElementById('modal-operador').innerText = m.operador || 'Sin registro';
-                document.getElementById('modal-hinicial').innerText = m.hInicial;
-                document.getElementById('modal-hfinal').innerText = m.hFinal;
-                document.getElementById('modal-totales').innerText = m.totalHoras + " hrs";
-                document.getElementById('modal-combustible').innerText = m.combustible || '0 Gal';
-                cuerpo.style.opacity = '1';
-            }, 90);
-        }
-
-        function actualizarBotonesNavegacionFecha() {
-            const idxFechaActual = fechasUnicas.indexOf(fechaActualModal);
-            const btnAnt = document.getElementById('btn-fecha-ant');
-            const btnSig = document.getElementById('btn-fecha-sig');
-
-            let indiceAnterior = -1;
-            for (let i = idxFechaActual - 1; i >= 0; i--) {
-                if (verificarSiMaquinaExisteEnFecha(maquinaActualModal, fechasUnicas[i])) {
-                    indiceAnterior = i;
-                    break;
-                }
-            }
-
-            let indiceSiguiente = -1;
-            for (let i = idxFechaActual + 1; i < fechasUnicas.length; i++) {
-                if (verificarSiMaquinaExisteEnFecha(maquinaActualModal, fechasUnicas[i])) {
-                    indiceSiguiente = i;
-                    break;
-                }
-            }
-
-            if (indiceAnterior !== -1) {
-                btnAnt.disabled = false;
-                btnAnt.onclick = () => saltarAFecha(fechasUnicas[indiceAnterior]);
-            } else {
-                btnAnt.disabled = true;
-                btnAnt.onclick = null;
-            }
-
-            if (indiceSiguiente !== -1) {
-                btnSig.disabled = false;
-                btnSig.onclick = () => saltarAFecha(fechasUnicas[indiceSiguiente]);
-            } else {
-                btnSig.disabled = true;
-                btnSig.onclick = null;
-            }
-        }
-
-        function verificarSiMaquinaExisteEnFecha(nombreMaquina, fechaFiltro) {
-            return todosLosRegistros.some(r => r.unidad === nombreMaquina && r.fechaFiltro === fechaFiltro);
-        }
-
-        function saltarAFecha(nuevaFecha) {
-            const registroEncontrado = todosLosRegistros.find(r => r.unidad === maquinaActualModal && r.fechaFiltro === nuevaFecha);
-            if (registroEncontrado) {
-                fechaActualModal = nuevaFecha;
-                cargarDatosEnModal(registroEncontrado);
-                actualizarBotonesNavegacionFecha();
-            }
-        }
-
-        function cerrarModal() {
-            document.getElementById('modal-detalle').classList.add('hidden');
-        }
-
-        // Cerrar modal al tocar fuera de la tarjeta
-        document.getElementById('modal-detalle').addEventListener('click', function(e) {
-            if (e.target === this) {
-                cerrarModal();
-            }
-        });
-
-        document.getElementById('selector-fecha').addEventListener('change', actualizarVista);
-        document.getElementById('buscador').addEventListener('input', actualizarVista);
-    </script>
+document.getElementById('selector-fecha').addEventListener('change', actualizarVista);
+document.getElementById('buscador').addEventListener('input', actualizarVista);
+</script>
 </body>
 </html>
