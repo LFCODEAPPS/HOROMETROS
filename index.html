@@ -2,14 +2,13 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <!-- BLOQUEO DE ZOOM: maximum-scale=1.0 y user-scalable=no -->
+    <!-- BLOQUEO DE ZOOM -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Control De Maquinaria Grupo Bautista</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
-        /* Ocultar scrollbar para los botones de categoría */
         .hide-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -17,67 +16,88 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        /* Bloquear el zoom de doble toque en móviles */
         body {
             touch-action: manipulation;
         }
     </style>
-    <!-- Configuración para habilitar modo oscuro automático según el sistema -->
     <script>
         tailwind.config = {
-            darkMode: 'media', // Automático según el sistema del teléfono
+            darkMode: 'media',
         }
     </script>
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen pb-12 font-sans transition-colors duration-300">
 
-    <!-- Encabezado -->
-    <header class="bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30 shadow-sm p-4">
-        <div class="max-w-xl mx-auto flex justify-between items-center gap-2">
-            <div class="flex-1">
-                <h1 class="text-base font-extrabold text-emerald-600 dark:text-emerald-400 leading-tight">Control De Maquinaria <br>Grupo Bautista</h1>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Despliega para cambiar de fecha 👉</p>
+    <!-- BLOQUE SUPERIOR FIJO COMPLETO (Cabecera + Filtros + Barra de Búsqueda) -->
+    <div class="sticky top-0 z-30 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+        
+        <!-- 1. Encabezado Principal -->
+        <header class="max-w-xl mx-auto px-4 pt-3.5 pb-2.5 flex justify-between items-center gap-2">
+            <div class="flex-1 min-w-0">
+                <h1 class="text-sm sm:text-base font-extrabold text-emerald-600 dark:text-emerald-400 leading-tight truncate">
+                    Control De Maquinaria
+                </h1>
+                <p class="text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight">
+                    Grupo Bautista
+                </p>
+                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Despliega para cambiar fecha 👉</p>
             </div>
             
+            <!-- Controles Superiores Derechos + Logo -->
             <div class="flex items-center gap-2 shrink-0">
                 <!-- Botón minimalista de recarga -->
                 <button onclick="location.reload()" class="p-1.5 text-slate-400 hover:text-emerald-600 dark:text-slate-500 dark:hover:text-emerald-400 transition bg-slate-100 dark:bg-slate-800 rounded-full" title="Actualizar datos">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                 </button>
 
                 <!-- Selector de Fecha -->
                 <div class="relative">
-                    <select id="selector-fecha" class="bg-emerald-100 text-emerald-900 dark:bg-emerald-600 dark:text-slate-950 font-black text-xs px-3 py-2 rounded-lg shadow-sm border-none focus:ring-2 focus:ring-emerald-400 cursor-pointer outline-none text-center appearance-none pr-6">
+                    <select id="selector-fecha" class="bg-emerald-100 text-emerald-900 dark:bg-emerald-600 dark:text-slate-950 font-black text-xs px-2.5 py-1.5 rounded-lg shadow-sm border-none focus:ring-2 focus:ring-emerald-400 cursor-pointer outline-none text-center appearance-none pr-6">
                         <option value="">Cargando...</option>
                     </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-emerald-800 dark:text-slate-900">
-                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 text-emerald-800 dark:text-slate-900">
+                        <svg class="fill-current h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                     </div>
                 </div>
+
+                <!-- Logo Grupo Bautista -->
+                <div class="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1 flex items-center justify-center overflow-hidden shadow-sm">
+                    <img src="bautista.png" alt="Logo Grupo Bautista" class="h-full w-full object-contain" onerror="this.style.display='none'">
+                </div>
+            </div>
+        </header>
+
+        <!-- 2. Filtros y Barra de Búsqueda (Dentro del bloque fijo) -->
+        <div class="max-w-xl mx-auto px-4 pb-3 space-y-2.5">
+            <!-- Botones de Filtro por Ubicación -->
+            <div class="flex overflow-x-auto gap-1.5 hide-scrollbar" id="botones-categoria">
+                <button onclick="filtrarPorUbicacion('TODOS', this)" class="btn-filtro bg-emerald-500 text-white dark:text-slate-900 border-emerald-500 font-bold px-3.5 py-1.5 rounded-full text-[11px] shrink-0 transition shadow-sm border">TODOS</button>
+                <button onclick="filtrarPorUbicacion('CARRETERA CHIPULUC', this)" class="btn-filtro bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 font-semibold px-3.5 py-1.5 rounded-full text-[11px] shrink-0 transition hover:bg-slate-200 dark:hover:bg-slate-700 border">CARRETERA CHIPULUC</button>
+                <button onclick="filtrarPorUbicacion('OLMOS', this)" class="btn-filtro bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 font-semibold px-3.5 py-1.5 rounded-full text-[11px] shrink-0 transition hover:bg-slate-200 dark:hover:bg-slate-700 border">OLMOS</button>
+                <button onclick="filtrarPorUbicacion('OTROS', this)" class="btn-filtro bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 font-semibold px-3.5 py-1.5 rounded-full text-[11px] shrink-0 transition hover:bg-slate-200 dark:hover:bg-slate-700 border">OTROS</button>
+            </div>
+
+            <!-- Buscador de Equipos -->
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400 text-sm">🔍</span>
+                <input type="text" id="buscador" placeholder="Buscar equipo o maquinaria..." 
+                    class="w-full bg-slate-100/80 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-sm rounded-xl pl-10 pr-4 py-2 text-slate-800 dark:text-white focus:outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-800 transition">
             </div>
         </div>
-    </header>
 
-    <main class="max-w-xl mx-auto p-4 space-y-4">
+    </div>
 
-        <!-- Botones de Filtro por Ubicación (Scroll Horizontal) -->
-        <div class="flex overflow-x-auto gap-2 pb-1 hide-scrollbar" id="botones-categoria">
-            <button onclick="filtrarPorUbicacion('TODOS', this)" class="btn-filtro bg-emerald-500 text-white dark:text-slate-900 border-emerald-500 font-bold px-4 py-2 rounded-full text-xs shrink-0 transition shadow-sm border">TODOS</button>
-            <button onclick="filtrarPorUbicacion('CARRETERA CHIPULUC', this)" class="btn-filtro bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 font-semibold px-4 py-2 rounded-full text-xs shrink-0 transition hover:bg-slate-50 dark:hover:bg-slate-700 border">CARRETERA CHIPULUC</button>
-            <button onclick="filtrarPorUbicacion('OLMOS', this)" class="btn-filtro bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 font-semibold px-4 py-2 rounded-full text-xs shrink-0 transition hover:bg-slate-50 dark:hover:bg-slate-700 border">OLMOS</button>
-            <button onclick="filtrarPorUbicacion('OTROS', this)" class="btn-filtro bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 font-semibold px-4 py-2 rounded-full text-xs shrink-0 transition hover:bg-slate-50 dark:hover:bg-slate-700 border">OTROS</button>
-        </div>
+    <!-- CONTENIDO DESPLAZABLE -->
+    <main class="max-w-xl mx-auto p-4">
 
-        <!-- Buscador de Equipos -->
-        <div class="relative">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">🔍</span>
-            <input type="text" id="buscador" placeholder="Buscar equipo o maquinaria..." 
-                class="w-full bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80 text-sm rounded-xl pl-10 pr-4 py-2.5 text-slate-800 dark:text-white focus:outline-none focus:border-emerald-500 dark:focus:border-emerald-500 shadow-sm transition">
-        </div>
-
-        <!-- Indicador de Carga -->
-        <div id="loading" class="text-center py-24 text-slate-500 dark:text-slate-400 text-sm font-medium animate-pulse">
-            Espere unos segundos mientras carga el sistema...
+        <!-- Pantalla de Carga con Logo -->
+        <div id="loading" class="flex flex-col items-center justify-center py-20 text-center space-y-4">
+            <div class="w-24 h-24 rounded-2xl bg-white dark:bg-slate-800 p-3 shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center animate-pulse">
+                <img src="bautista.png" alt="Cargando Grupo Bautista" class="max-h-full max-w-full object-contain" onerror="this.parentElement.style.display='none'">
+            </div>
+            <p class="text-slate-500 dark:text-slate-400 text-sm font-medium animate-pulse">
+                Espere unos segundos mientras carga el sistema...
+            </p>
         </div>
 
         <!-- Cuadrícula de Botones de Máquinas -->
@@ -167,12 +187,11 @@
         let fechaActualModal = "";
         let filtroUbicacionActual = "TODOS";
 
-        // Paleta de colores adaptable (Claro/Oscuro) asignada por Lugar
         const paletaLugares = [
-            'bg-emerald-100 border-emerald-300 text-emerald-900 dark:bg-emerald-900/40 dark:border-emerald-700 dark:text-emerald-100', // Variante 1
-            'bg-blue-100 border-blue-300 text-blue-900 dark:bg-blue-900/40 dark:border-blue-700 dark:text-blue-100',          // Variante 2
-            'bg-amber-100 border-amber-300 text-amber-900 dark:bg-amber-900/40 dark:border-amber-700 dark:text-amber-100',        // Repuesto 3
-            'bg-purple-100 border-purple-300 text-purple-900 dark:bg-purple-900/40 dark:border-purple-700 dark:text-purple-100'     // Repuesto 4
+            'bg-emerald-100 border-emerald-300 text-emerald-900 dark:bg-emerald-900/40 dark:border-emerald-700 dark:text-emerald-100',
+            'bg-blue-100 border-blue-300 text-blue-900 dark:bg-blue-900/40 dark:border-blue-700 dark:text-blue-100',
+            'bg-amber-100 border-amber-300 text-amber-900 dark:bg-amber-900/40 dark:border-amber-700 dark:text-amber-100',
+            'bg-purple-100 border-purple-300 text-purple-900 dark:bg-purple-900/40 dark:border-purple-700 dark:text-purple-100'
         ];
         
         let mapaColoresLugar = {};
@@ -253,10 +272,10 @@
             const botones = document.querySelectorAll('.btn-filtro');
             botones.forEach(btn => {
                 btn.classList.remove('bg-emerald-500', 'text-white', 'dark:text-slate-900', 'border-emerald-500', 'font-bold');
-                btn.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-700', 'font-semibold', 'hover:bg-slate-50', 'dark:hover:bg-slate-700');
+                btn.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-700', 'font-semibold', 'hover:bg-slate-200', 'dark:hover:bg-slate-700');
             });
 
-            botonClickado.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-700', 'font-semibold', 'hover:bg-slate-50', 'dark:hover:bg-slate-700');
+            botonClickado.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-700', 'font-semibold', 'hover:bg-slate-200', 'dark:hover:bg-slate-700');
             botonClickado.classList.add('bg-emerald-500', 'text-white', 'dark:text-slate-900', 'border-emerald-500', 'font-bold');
 
             actualizarVista();
@@ -308,7 +327,6 @@
                     <button onclick="abrirDetalle(${indexReal})" class="${colorClase} p-3 rounded-2xl shadow-sm border flex flex-col justify-between items-start text-left transition transform hover:opacity-80 active:scale-95 min-h-[90px] relative overflow-hidden group">
                         <div class="flex justify-between items-start w-full mb-1.5 pl-1.5 gap-2">
                             <span class="text-lg shrink-0 opacity-90 group-hover:scale-110 transition-transform pt-0.5">🚜</span>
-                            <!-- MODIFICACIÓN: line-clamp-2 permite 2 líneas, luego puntos suspensivos -->
                             <span class="text-[9px] font-bold bg-white/60 dark:bg-black/30 border border-black/10 dark:border-white/10 px-1.5 py-0.5 rounded text-right leading-tight max-w-[75%] line-clamp-2">${item.lugar}</span>
                         </div>
                         <span class="font-bold text-[11px] md:text-xs leading-snug pl-1.5 pr-1">${item.unidad}</span>
