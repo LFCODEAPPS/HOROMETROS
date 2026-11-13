@@ -119,7 +119,7 @@
                     </div>
                 </div>
 
-                <!-- Botón Recarga en Móvil (se oculta en PC porque pasa a la derecha del selector) -->
+                <!-- Botón Recarga en Móvil -->
                 <button onclick="recargarConAnimacion(this)" class="md:hidden h-10 px-3.5 text-stone-700 hover:text-amber-600 dark:text-stone-300 dark:hover:text-amber-400 bg-stone-100 hover:bg-stone-200/70 dark:bg-stone-800/90 dark:hover:bg-slate-800 rounded-xl border border-stone-200 dark:border-stone-700 flex items-center gap-1.5 text-xs font-bold transition active:scale-95 shrink-0" title="Actualizar datos">
                     <svg class="icono-recargar w-4 h-4 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     <span class="hidden sm:inline">Actualizar</span>
@@ -148,7 +148,7 @@
             </div>
         </header>
 
-        <!-- Filtros + Buscador: 2 filas en móvil, 1 fila lado a lado en escritorio (md:flex-row) -->
+        <!-- Filtros + Buscador -->
         <div class="max-w-xl md:max-w-6xl mx-auto px-4 md:px-8 pb-3.5 md:pb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2.5 md:gap-4">
             <div class="flex overflow-x-auto gap-1.5 md:gap-2 hide-scrollbar py-0.5" id="botones-categoria">
                 <button onclick="filtrarPorUbicacion('TODOS', this)" class="btn-filtro bg-stone-900 dark:bg-amber-500 text-amber-400 dark:text-stone-950 border-stone-900 dark:border-amber-500 font-bold px-4 py-1.5 md:py-2 rounded-full text-[11px] md:text-xs shrink-0 transition-all duration-200 active:scale-95 shadow-sm border cursor-pointer">TODOS</button>
@@ -168,7 +168,7 @@
 
     </div>
 
-    <!-- CONTENIDO DESPLAZABLE: 2 COLUMNAS EN MÓVIL -> 3 EN TABLET -> 4 EN WEB -->
+    <!-- CONTENIDO DESPLAZABLE -->
     <main class="max-w-xl md:max-w-6xl mx-auto p-4 md:px-8 md:py-6">
 
         <!-- Pantalla de Carga con Logo Original -->
@@ -187,7 +187,7 @@
             </div>
         </div>
 
-        <!-- Cuadrícula Adaptativa (2 cols móvil, 3 cols tablet, 4 cols web) -->
+        <!-- Cuadrícula Adaptativa -->
         <div id="grid-maquinas" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 hidden">
             <!-- Los botones se inyectarán aquí -->
         </div>
@@ -232,7 +232,7 @@
             <!-- Datos Ordenados -->
             <div id="modal-datos-cuerpo" class="space-y-2.5 text-xs md:text-sm transition-opacity duration-150">
                 
-                <!-- Ubicación y Operador -->
+                <!-- Ubicación, Operador y Estado para Mtto -->
                 <div class="bg-stone-50 dark:bg-stone-900/80 p-3.5 rounded-2xl border border-stone-200/70 dark:border-stone-800 space-y-2.5">
                     <div class="flex justify-between items-start gap-3">
                         <span class="text-stone-400 text-xs font-medium flex items-center gap-1.5 shrink-0">
@@ -247,6 +247,14 @@
                             Operador
                         </span>
                         <span id="modal-operador" class="font-bold text-stone-800 dark:text-stone-100 text-right truncate text-xs md:text-sm">--</span>
+                    </div>
+                    <!-- NUEVA FILA: Estado para Mtto (Columna K) -->
+                    <div class="border-t border-stone-200/70 dark:border-stone-800 pt-2.5 flex justify-between items-center gap-3">
+                        <span class="text-stone-400 text-xs font-medium flex items-center gap-1.5 shrink-0">
+                            <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                            Estado para Mtto
+                        </span>
+                        <span id="modal-estado-mtto" class="font-bold text-stone-800 dark:text-stone-100 text-right break-words text-xs md:text-sm">--</span>
                     </div>
                 </div>
 
@@ -363,13 +371,14 @@
 
                     todosLosRegistros.push({
                         fechaFiltro: fechaVigenteParseo,
-                        lugar: lugar,                                     
-                        unidad: unidad,                                   
-                        operador: row[6] ? row[6].trim() : 'No asignado', 
-                        hInicial: row[8] ? row[8].trim() : '-',           
-                        hFinal: row[9] ? row[9].trim() : '-',             
-                        totalHoras: row[10] ? row[10].trim() : '0',       
-                        combustible: row[12] ? row[12].trim() : '0 Gal'   
+                        lugar: lugar,                                     // Columna A (0)
+                        unidad: unidad,                                   // Columna H (7)
+                        operador: row[6] ? row[6].trim() : 'No asignado', // Columna G (6)
+                        hInicial: row[8] ? row[8].trim() : '-',           // Columna I (8)
+                        hFinal: row[9] ? row[9].trim() : '-',             // Columna J (9)
+                        estadoMtto: row[10] ? row[10].trim() : 'Sin registro', // Columna K (10)
+                        totalHoras: row[10] ? row[10].trim() : '0',       // Columna K (10)
+                        combustible: row[12] ? row[12].trim() : '0 Gal'   // Columna M (12)
                     });
                 }
 
@@ -515,6 +524,7 @@
                 document.getElementById('modal-fecha-actual').innerText = m.fechaFiltro;
                 document.getElementById('modal-lugar').innerText = m.lugar;
                 document.getElementById('modal-operador').innerText = m.operador || 'Sin registro';
+                document.getElementById('modal-estado-mtto').innerText = m.estadoMtto || 'Sin registro';
                 document.getElementById('modal-hinicial').innerText = m.hInicial;
                 document.getElementById('modal-hfinal').innerText = m.hFinal;
                 document.getElementById('modal-totales').innerText = m.totalHoras + " hrs";
@@ -584,7 +594,6 @@
             }
         });
 
-        // Cerrar modal con tecla Escape en computadora
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 cerrarModal();
