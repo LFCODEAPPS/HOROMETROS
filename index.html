@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Control De Maquinaria Grupo Bautista</title>
     
     <!-- ÍCONOS PARA ACCESO DIRECTO EN iOS Y ANDROID -->
@@ -10,23 +10,261 @@
     <link rel="apple-touch-icon" href="bautista.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Grupo Bautista">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script><style>
-:root{color-scheme:light;--paper:#f5f3ec;--panel:#fffefa;--ink:#162e37;--muted:#51666d;--line:#c9d1cd;--soft:#e8ece6;--gold:#ffca50}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px 'Helvetica Neue',Arial,sans-serif}button,input,select{font:inherit;color:inherit}button,select{cursor:pointer}button{border:0}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #c58b17;outline-offset:2px}.hidden{display:none!important}.wrap{width:min(1152px,calc(100% - 48px));margin:auto}
-header{background:#142e38;color:white;border-bottom:5px solid var(--gold);position:relative;overflow:hidden}header:after{content:'';position:absolute;inset:0 0 0 55%;background:repeating-linear-gradient(122deg,transparent 0 26px,#ffffff13 27px 28px,transparent 29px 58px);pointer-events:none}header .wrap{position:relative;z-index:1;padding:28px 0 36px}.brand{display:flex;align-items:center;gap:12px;font-size:12px;font-weight:750;text-transform:uppercase;letter-spacing:.18em}.brandmark{display:grid;place-items:center;width:40px;height:40px;background:var(--gold);color:#152c35;font:bold 18px monospace;letter-spacing:-.12em;position:relative;border-radius:4px}.brandmark img{position:absolute;width:100%;height:100%;object-fit:contain;background:white;border-radius:4px}h1{font-size:clamp(32px,5vw,64px);letter-spacing:-.055em;line-height:1;margin:22px 0 0}
-.tools{position:sticky;top:0;z-index:2;background:var(--panel);border-bottom:1px solid var(--line)}.bar{padding:18px 0 0}.inputs{display:grid;grid-template-columns:200px 1fr auto;gap:12px;align-items:end}label{display:grid;gap:6px;font-size:11px;letter-spacing:.08em;font-weight:700;text-transform:uppercase;color:var(--muted)}input,select,.reload{height:43px;border-radius:5px;border:1px solid var(--line);padding:0 12px;background:var(--panel);color:var(--ink);width:100%;font-size:15px}.reload,.primary{background:var(--gold);border:0;color:#172d34;font-weight:700}.reload{display:flex;align-items:center;gap:8px}#icono-recargar{display:inline-block;transition:transform .25s}.rotate-180{transform:rotate(180deg)}nav{display:flex;gap:20px;overflow:auto}nav button{white-space:nowrap;padding:15px 0 12px;background:transparent;color:var(--muted);font-size:13px;border-bottom:3px solid transparent}.btn-filtro.bg-emerald-500{border-color:#c88908;color:var(--ink);font-weight:bold}
-main{padding:32px 0 68px}h2{font-size:26px;letter-spacing:-.045em;margin:0 0 17px}#grid-maquinas{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(225px,100%),1fr));gap:12px}.unit{--stripe:#448771;text-align:left;position:relative;display:flex;flex-direction:column;gap:20px;align-items:flex-start;padding:18px 34px 18px 17px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--stripe);border-radius:6px;min-width:0}.unit[class*="bg-blue"]{--stripe:#5184a2}.unit[class*="bg-amber"]{--stripe:#ad7d2c}.unit[class*="bg-purple"]{--stripe:#866696}.unit:hover{border-color:var(--stripe);box-shadow:0 3px 10px #112b3312}.place{font:700 10px/1.4 monospace;letter-spacing:.055em;text-transform:uppercase;color:var(--muted)}.unit strong{font-size:20px;letter-spacing:-.035em;overflow-wrap:anywhere}.arrow{position:absolute;right:12px;top:15px;color:var(--muted)}#loading,#grid-maquinas>div{grid-column:1/-1;padding:38px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:6px}
-#modal-detalle{position:fixed;inset:0;z-index:5;display:grid;place-items:center;padding:14px;background:#071a22ad;backdrop-filter:blur(4px)}#modal-contenido{width:min(420px,100%);max-height:92dvh;overflow:auto;border-radius:12px;background:var(--panel);box-shadow:0 24px 80px #0004}.sheet-head{display:flex;align-items:flex-start;justify-content:space-between;background:#142e38;color:white;padding:23px;gap:12px}.sheet-head small{color:var(--gold);letter-spacing:.12em;text-transform:uppercase}.sheet-head h2{margin:6px 0 0;overflow-wrap:anywhere}.sheet-head button,.dates button{width:40px;height:40px;border-radius:5px;background:var(--soft);color:var(--ink);flex:none}.dates{margin:18px;display:flex;justify-content:space-between;text-align:center;align-items:center}.dates small,.field span{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}.dates button:disabled{opacity:.35}.facts{margin:0 18px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr}.field{padding:14px 6px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}.field strong,.dates b{font-variant-numeric:tabular-nums}.primary{margin:16px 18px;width:calc(100% - 36px);padding:13px;border-radius:5px}
-@media(max-width:640px){.wrap{width:calc(100% - 32px)}header .wrap{padding:16px 0 22px}h1{margin-top:14px}.bar{padding-top:11px}.inputs{grid-template-columns:1fr auto;gap:8px}.search{grid-column:1/-1;grid-row:2}.search span{display:none}nav{gap:16px}main{padding-top:20px}#grid-maquinas{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.unit{padding:12px 19px 14px 10px;gap:14px}.unit strong{font-size:16px}.arrow{top:10px;right:5px}}
-@media(prefers-color-scheme:dark){:root{color-scheme:dark;--paper:#12232a;--panel:#1b3038;--ink:#f0f3ed;--muted:#bccbc9;--line:#41555a;--soft:#334950}}
-@media(prefers-reduced-motion:no-preference){.anim-card,.anim-modal{animation:appear .22s backwards}@keyframes appear{from{opacity:0;transform:translateY(5px)}}}
-</style></head><body><header><div class="wrap"><div class="brand"><span class="brandmark">GB<img src="bautista.png" alt="" onerror="this.hidden=true"></span>Grupo Bautista</div><h1>Control de maquinaria</h1></div></header>
-<section class="tools"><div class="wrap bar"><div class="inputs"><label>Fecha de registro<select id="selector-fecha"><option value="">Cargando fechas…</option></select></label><label class="search"><span>Buscar equipo</span><input id="buscador" aria-label="Buscar equipo o maquinaria" placeholder="Buscar equipo o maquinaria…"></label><button class="reload" id="btn-recargar" onclick="recargarConAnimacion()"><span id="icono-recargar" aria-hidden="true">↻</span>Actualizar</button></div><nav id="botones-categoria" aria-label="Filtrar por ubicación"><button class="btn-filtro bg-emerald-500" onclick="filtrarPorUbicacion('TODOS',this)">Todos</button><button class="btn-filtro " onclick="filtrarPorUbicacion('CARRETERA CHIPULUC',this)">Carretera chipuluc</button><button class="btn-filtro " onclick="filtrarPorUbicacion('OLMOS',this)">Olmos</button><button class="btn-filtro " onclick="filtrarPorUbicacion('OTROS',this)">Otros</button></nav></div></section>
-<main class="wrap"><h2>Equipos por ubicación</h2><div id="loading">Cargando registros de maquinaria…</div><div id="grid-maquinas" class="hidden"></div></main>
-<div id="modal-detalle" class="hidden"><section id="modal-contenido" role="dialog" aria-modal="true" aria-labelledby="modal-titulo"><header class="sheet-head"><div><small>Detalle de unidad</small><h2 id="modal-titulo">Equipo</h2></div><button onclick="cerrarModal()" aria-label="Cerrar">×</button></header><div class="dates"><button id="btn-fecha-ant" aria-label="Registro anterior">‹</button><div><small>Fecha del registro</small><b id="modal-fecha-actual"></b></div><button id="btn-fecha-sig" aria-label="Registro siguiente">›</button></div><div class="facts" id="modal-datos-cuerpo"><div class="field"><span>Lugar</span><strong id="modal-lugar">—</strong></div><div class="field"><span>Operador</span><strong id="modal-operador">—</strong></div><div class="field"><span>H. inicial</span><strong id="modal-hinicial">—</strong></div><div class="field"><span>H. final</span><strong id="modal-hfinal">—</strong></div><div class="field"><span>Horas totales</span><strong id="modal-totales">—</strong></div><div class="field"><span>Combustible</span><strong id="modal-combustible">—</strong></div></div><button class="primary" onclick="cerrarModal()">Cerrar detalle</button></section></div>    <script>
+    <!-- Fuente moderna Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'media',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body { 
+            touch-action: manipulation; 
+            -webkit-tap-highlight-color: transparent;
+            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px) scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes sheetUp {
+            from {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (min-width: 640px) {
+            @keyframes sheetUp {
+                from {
+                    opacity: 0;
+                    transform: scale(0.94) translateY(12px);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1) translateY(0);
+                }
+            }
+        }
+
+        .anim-card {
+            animation: fadeSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        .anim-modal {
+            animation: sheetUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-[#F4F6F9] dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 min-h-screen pb-16 font-sans transition-colors duration-300 antialiased">
+
+    <!-- BLOQUE SUPERIOR FIJO PREMIUM -->
+    <div class="sticky top-0 z-30 bg-white/85 dark:bg-[#0F1522]/85 backdrop-blur-xl border-b border-slate-200/70 dark:border-slate-800/80 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.08)]">
+        
+        <header class="max-w-xl mx-auto px-4 pt-4 pb-3 space-y-3.5">
+            <!-- Fila 1: Marca + Estado en vivo -->
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="h-10 w-10 rounded-2xl bg-gradient-to-br from-emerald-500/15 to-teal-500/15 dark:from-emerald-500/20 dark:to-teal-500/10 border border-emerald-500/20 p-1.5 flex items-center justify-center shrink-0">
+                        <img src="bautista.png" alt="Logo" class="h-full w-full object-contain mix-blend-multiply dark:mix-blend-normal dark:brightness-110" onerror="this.parentElement.style.display='none'">
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Grupo Bautista</span>
+                        </div>
+                        <h1 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight truncate">
+                            Control De Maquinaria
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Botón Recarga Minimalista -->
+                <button id="btn-recargar" onclick="recargarConAnimacion()" class="h-10 px-3.5 text-slate-600 hover:text-emerald-600 dark:text-slate-300 dark:hover:text-emerald-400 bg-slate-100/90 hover:bg-slate-200/70 dark:bg-slate-800/90 dark:hover:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 flex items-center gap-1.5 text-xs font-bold transition active:scale-95 shrink-0" title="Actualizar datos">
+                    <svg id="icono-recargar" class="w-4 h-4 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    <span class="hidden sm:inline">Actualizar</span>
+                </button>
+            </div>
+
+            <!-- Fila 2: Selector de Fecha Estilo Cápsula -->
+            <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-emerald-600 dark:text-emerald-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </div>
+                <select id="selector-fecha" class="w-full bg-emerald-500/10 hover:bg-emerald-500/15 dark:bg-emerald-500/15 dark:hover:bg-emerald-500/20 text-emerald-950 dark:text-emerald-300 font-extrabold text-xs pl-10 pr-9 py-2.5 rounded-2xl border border-emerald-500/25 focus:ring-2 focus:ring-emerald-500/40 cursor-pointer outline-none appearance-none transition">
+                    <option value="">Cargando fechas...</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-emerald-700 dark:text-emerald-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+        </header>
+
+        <!-- Filtros por ubicación + Buscador -->
+        <div class="max-w-xl mx-auto px-4 pb-3.5 space-y-2.5">
+            <div class="flex overflow-x-auto gap-1.5 hide-scrollbar py-0.5" id="botones-categoria">
+                <button onclick="filtrarPorUbicacion('TODOS', this)" class="btn-filtro bg-slate-900 dark:bg-emerald-500 text-white dark:text-slate-950 border-slate-900 dark:border-emerald-500 font-bold px-4 py-1.5 rounded-full text-[11px] shrink-0 transition-all duration-200 active:scale-95 shadow-sm border">TODOS</button>
+                <button onclick="filtrarPorUbicacion('CARRETERA CHIPULUC', this)" class="btn-filtro bg-white dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200/90 dark:border-slate-700/80 font-semibold px-4 py-1.5 rounded-full text-[11px] shrink-0 transition-all duration-200 active:scale-95 hover:bg-slate-100 dark:hover:bg-slate-800 border">CARRETERA CHIPULUC</button>
+                <button onclick="filtrarPorUbicacion('OLMOS', this)" class="btn-filtro bg-white dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200/90 dark:border-slate-700/80 font-semibold px-4 py-1.5 rounded-full text-[11px] shrink-0 transition-all duration-200 active:scale-95 hover:bg-slate-100 dark:hover:bg-slate-800 border">OLMOS</button>
+                <button onclick="filtrarPorUbicacion('OTROS', this)" class="btn-filtro bg-white dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200/90 dark:border-slate-700/80 font-semibold px-4 py-1.5 rounded-full text-[11px] shrink-0 transition-all duration-200 active:scale-95 hover:bg-slate-100 dark:hover:bg-slate-800 border">OTROS</button>
+            </div>
+
+            <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <input type="text" id="buscador" placeholder="Buscar equipo o maquinaria..." 
+                    class="w-full bg-slate-100/80 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 text-xs sm:text-sm rounded-2xl pl-10 pr-4 py-2.5 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-800 transition-all">
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CONTENIDO DESPLAZABLE -->
+    <main class="max-w-xl mx-auto p-4">
+
+        <!-- Pantalla de Carga con Logo Transparente -->
+        <div id="loading" class="flex flex-col items-center justify-center py-24 text-center space-y-5">
+            <div class="relative">
+                <div class="absolute inset-0 bg-emerald-500/20 rounded-full blur-xl animate-pulse"></div>
+                <div class="relative w-20 h-20 flex items-center justify-center animate-bounce">
+                    <img src="bautista.png" alt="Cargando Grupo Bautista" class="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" onerror="this.parentElement.style.display='none'">
+                </div>
+            </div>
+            <p class="text-slate-500 dark:text-slate-400 text-sm font-semibold animate-pulse">
+                Espere unos segundos mientras carga el sistema...
+            </p>
+        </div>
+
+        <!-- Cuadrícula de Botones de Máquinas -->
+        <div id="grid-maquinas" class="grid grid-cols-2 gap-3 hidden">
+            <!-- Los botones se inyectarán aquí -->
+        </div>
+
+    </main>
+
+    <!-- Modal / Bottom Sheet de Detalle -->
+    <div id="modal-detalle" class="fixed inset-0 bg-slate-950/60 dark:bg-black/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden transition-opacity duration-200">
+        <div id="modal-contenido" class="bg-white dark:bg-[#131A29] border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-5 pb-7 sm:pb-5 shadow-2xl space-y-4 relative anim-modal">
+            
+            <!-- Indicador táctil superior para móvil -->
+            <div class="w-10 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-1 sm:hidden"></div>
+
+            <!-- Cabecera del Modal -->
+            <div class="flex justify-between items-start border-b border-slate-100 dark:border-slate-800 pb-3.5">
+                <div class="pr-2">
+                    <span class="inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-extrabold">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        Ficha de Unidad
+                    </span>
+                    <h2 id="modal-titulo" class="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5 leading-snug">Nombre de Máquina</h2>
+                </div>
+                <button onclick="cerrarModal()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 w-9 h-9 rounded-full flex items-center justify-center transition active:scale-90 shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Controles de Navegación por Fecha -->
+            <div class="flex items-center justify-between bg-slate-100/80 dark:bg-slate-900/90 p-1.5 rounded-2xl border border-slate-200/70 dark:border-slate-800">
+                <button id="btn-fecha-ant" class="w-10 h-10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-800 shadow-xs hover:bg-emerald-50 dark:hover:bg-slate-700 rounded-xl transition active:scale-90 disabled:opacity-30 disabled:shadow-none disabled:hover:bg-white dark:disabled:hover:bg-slate-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <div class="text-center flex-1">
+                    <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-widest">Fecha del Registro</span>
+                    <span id="modal-fecha-actual" class="font-extrabold text-slate-900 dark:text-white text-sm">--/--/--</span>
+                </div>
+                <button id="btn-fecha-sig" class="w-10 h-10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-800 shadow-xs hover:bg-emerald-50 dark:hover:bg-slate-700 rounded-xl transition active:scale-90 disabled:opacity-30 disabled:shadow-none disabled:hover:bg-white dark:disabled:hover:bg-slate-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+
+            <!-- Datos Ordenados (Estilo Bento Cards) -->
+            <div id="modal-datos-cuerpo" class="space-y-2.5 text-xs md:text-sm transition-opacity duration-150">
+                
+                <!-- Ubicación y Operador -->
+                <div class="bg-slate-50 dark:bg-slate-900/70 p-3.5 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-2.5">
+                    <div class="flex justify-between items-start gap-3">
+                        <span class="text-slate-400 text-xs font-medium flex items-center gap-1.5 shrink-0">
+                            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            Ubicación
+                        </span>
+                        <span id="modal-lugar" class="font-bold text-slate-800 dark:text-slate-100 text-right break-words text-xs">--</span>
+                    </div>
+                    <div class="border-t border-slate-200/60 dark:border-slate-800 pt-2.5 flex justify-between items-center gap-3">
+                        <span class="text-slate-400 text-xs font-medium flex items-center gap-1.5 shrink-0">
+                            <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            Operador
+                        </span>
+                        <span id="modal-operador" class="font-bold text-slate-800 dark:text-slate-100 text-right truncate text-xs">--</span>
+                    </div>
+                </div>
+
+                <!-- Horómetros (2 columnas) -->
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div class="bg-slate-50 dark:bg-slate-900/70 p-3.5 rounded-2xl border border-slate-200/60 dark:border-slate-800">
+                        <span class="text-slate-400 text-[11px] font-medium block mb-1">Horómetro Inicial</span>
+                        <span id="modal-hinicial" class="font-extrabold text-slate-900 dark:text-white text-base tracking-tight">--</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-900/70 p-3.5 rounded-2xl border border-slate-200/60 dark:border-slate-800">
+                        <span class="text-slate-400 text-[11px] font-medium block mb-1">Horómetro Final</span>
+                        <span id="modal-hfinal" class="font-extrabold text-slate-900 dark:text-white text-base tracking-tight">--</span>
+                    </div>
+                </div>
+
+                <!-- Horas Totales y Combustible (2 columnas destacadas) -->
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div class="bg-blue-50/80 dark:bg-blue-950/30 p-3.5 rounded-2xl border border-blue-200/70 dark:border-blue-800/40">
+                        <span class="text-blue-600/80 dark:text-blue-400 text-[11px] font-bold block mb-1">Horas Totales</span>
+                        <span id="modal-totales" class="font-black text-blue-700 dark:text-blue-300 text-base">--</span>
+                    </div>
+                    <div class="bg-amber-50/90 dark:bg-amber-950/30 p-3.5 rounded-2xl border border-amber-200/80 dark:border-amber-800/40">
+                        <span class="text-amber-700/80 dark:text-amber-400 text-[11px] font-bold block mb-1">Combustible</span>
+                        <span id="modal-combustible" class="font-black text-amber-600 dark:text-amber-300 text-base">--</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <button onclick="cerrarModal()" class="w-full bg-slate-900 hover:bg-slate-800 dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white dark:text-slate-950 font-extrabold py-3.5 rounded-2xl transition-all active:scale-95 text-sm shadow-lg shadow-slate-900/10 dark:shadow-emerald-500/20 mt-1">
+                Listo
+            </button>
+        </div>
+    </div>
+
+    <script>
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vReJl2BT_9uiaFmB-U1-UlhHKE9lSmhK8jB2bF1Pu1MlM0B15O2H5WxM_ot85WtTIol4_bVhuudvcHU/pub?gid=1193959640&single=true&output=csv";
 
         let todosLosRegistros = [];
@@ -37,11 +275,28 @@ main{padding:32px 0 68px}h2{font-size:26px;letter-spacing:-.045em;margin:0 0 17p
         let fechaActualModal = "";
         let filtroUbicacionActual = "TODOS";
 
+        // Paleta refinada por ubicación con indicador de color lateral y contraste nítido
         const paletaLugares = [
-            'bg-emerald-50/90 border-emerald-200/90 text-emerald-950 dark:bg-emerald-950/40 dark:border-emerald-800/70 dark:text-emerald-100',
-            'bg-blue-50/90 border-blue-200/90 text-blue-950 dark:bg-blue-950/40 dark:border-blue-800/70 dark:text-blue-100',
-            'bg-amber-50/90 border-amber-200/90 text-amber-950 dark:bg-amber-950/40 dark:border-amber-800/70 dark:text-amber-100',
-            'bg-purple-50/90 border-purple-200/90 text-purple-950 dark:bg-purple-950/40 dark:border-purple-800/70 dark:text-purple-100'
+            {
+                card: 'bg-white dark:bg-[#131A29] border-emerald-200/90 dark:border-emerald-800/50 text-slate-900 dark:text-slate-100',
+                badge: 'bg-emerald-50 text-emerald-700 border-emerald-200/80 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30',
+                accent: 'bg-emerald-500'
+            },
+            {
+                card: 'bg-white dark:bg-[#131A29] border-blue-200/90 dark:border-blue-800/50 text-slate-900 dark:text-slate-100',
+                badge: 'bg-blue-50 text-blue-700 border-blue-200/80 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-500/30',
+                accent: 'bg-blue-500'
+            },
+            {
+                card: 'bg-white dark:bg-[#131A29] border-amber-200/90 dark:border-amber-800/50 text-slate-900 dark:text-slate-100',
+                badge: 'bg-amber-50 text-amber-700 border-amber-200/80 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30',
+                accent: 'bg-amber-500'
+            },
+            {
+                card: 'bg-white dark:bg-[#131A29] border-purple-200/90 dark:border-purple-800/50 text-slate-900 dark:text-slate-100',
+                badge: 'bg-purple-50 text-purple-700 border-purple-200/80 dark:bg-purple-500/15 dark:text-purple-300 dark:border-purple-500/30',
+                accent: 'bg-purple-500'
+            }
         ];
         
         let mapaColoresLugar = {};
@@ -120,7 +375,7 @@ main{padding:32px 0 68px}h2{font-size:26px;letter-spacing:-.045em;margin:0 0 17p
                 actualizarVista();
             },
             error: function(err) {
-                document.getElementById('loading').innerHTML = '<span class="text-red-500">Error al leer los datos.</span>';
+                document.getElementById('loading').innerHTML = '<span class="text-red-500 font-semibold">Error al leer los datos.</span>';
             }
         });
 
@@ -129,12 +384,12 @@ main{padding:32px 0 68px}h2{font-size:26px;letter-spacing:-.045em;margin:0 0 17p
             
             const botones = document.querySelectorAll('.btn-filtro');
             botones.forEach(btn => {
-                btn.classList.remove('bg-emerald-500', 'text-white', 'dark:text-slate-950', 'border-emerald-500', 'font-bold');
-                btn.classList.add('bg-slate-100/80', 'dark:bg-slate-800/80', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-700', 'font-semibold', 'hover:bg-slate-200/70', 'dark:hover:bg-slate-700');
+                btn.classList.remove('bg-slate-900', 'dark:bg-emerald-500', 'text-white', 'dark:text-slate-950', 'border-slate-900', 'dark:border-emerald-500', 'font-bold');
+                btn.classList.add('bg-white', 'dark:bg-slate-800/80', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200/90', 'dark:border-slate-700/80', 'font-semibold', 'hover:bg-slate-100', 'dark:hover:bg-slate-800');
             });
 
-            botonClickado.classList.remove('bg-slate-100/80', 'dark:bg-slate-800/80', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-700', 'font-semibold', 'hover:bg-slate-200/70', 'dark:hover:bg-slate-700');
-            botonClickado.classList.add('bg-emerald-500', 'text-white', 'dark:text-slate-950', 'border-emerald-500', 'font-bold');
+            botonClickado.classList.remove('bg-white', 'dark:bg-slate-800/80', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200/90', 'dark:border-slate-700/80', 'font-semibold', 'hover:bg-slate-100', 'dark:hover:bg-slate-800');
+            botonClickado.classList.add('bg-slate-900', 'dark:bg-emerald-500', 'text-white', 'dark:text-slate-950', 'border-slate-900', 'dark:border-emerald-500', 'font-bold');
 
             actualizarVista();
         }
@@ -168,7 +423,7 @@ main{padding:32px 0 68px}h2{font-size:26px;letter-spacing:-.045em;margin:0 0 17p
             let html = '';
 
             if (datos.length === 0) {
-                grid.innerHTML = '<div class="col-span-2 text-center text-slate-500 dark:text-slate-400 py-16 text-sm bg-white dark:bg-slate-800/30 rounded-2xl border border-slate-200 dark:border-slate-800 anim-card">No se encontraron máquinas en esta vista.</div>';
+                grid.innerHTML = '<div class="col-span-2 text-center text-slate-400 py-16 text-sm bg-white dark:bg-[#131A29] rounded-3xl border border-slate-200/70 dark:border-slate-800 anim-card">No se encontraron máquinas en esta vista.</div>';
                 return;
             }
 
@@ -179,14 +434,26 @@ main{padding:32px 0 68px}h2{font-size:26px;letter-spacing:-.045em;margin:0 0 17p
                     mapaColoresLugar[item.lugar] = paletaLugares[contadorLugares % paletaLugares.length];
                     contadorLugares++;
                 }
-                const colorClase = mapaColoresLugar[item.lugar];
-                // Retraso escalonado suave para el efecto cascada al cambiar de pantalla/filtro
+                const estilo = mapaColoresLugar[item.lugar];
                 const delay = Math.min(idx * 25, 300);
 
                 html += `
-                    <button onclick="abrirDetalle(${indexReal})" style="animation-delay: ${delay}ms" class="unit anim-card ${colorClase}">
-                        <span class="place">${item.lugar}</span>
-                        <strong>${item.unidad}</strong><span class="arrow" aria-hidden="true">↗</span>
+                    <button onclick="abrirDetalle(${indexReal})" style="animation-delay: ${delay}ms;" class="anim-card ${estilo.card} p-3.5 rounded-3xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.06)] border flex flex-col justify-between items-start text-left transition-all duration-200 hover:shadow-md active:scale-95 min-h-[104px] relative overflow-hidden group">
+                        
+                        <!-- Barra lateral de acento por ubicación -->
+                        <div class="absolute left-0 top-3.5 bottom-3.5 w-1 rounded-r-full ${estilo.accent} opacity-85"></div>
+
+                        <div class="flex justify-between items-start w-full mb-2.5 pl-1.5 gap-2">
+                            <div class="w-7 h-7 rounded-xl bg-slate-100 dark:bg-slate-800/90 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110">
+                                <svg class="w-4 h-4 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            </div>
+                            <!-- Etiqueta de ubicación tipo píldora -->
+                            <span class="text-[9px] font-extrabold ${estilo.badge} border px-2.5 py-0.5 rounded-full text-center leading-tight max-w-[74%] line-clamp-2">${item.lugar}</span>
+                        </div>
+
+                        <div class="pl-1.5 w-full">
+                            <span class="font-extrabold text-xs leading-snug block text-slate-900 dark:text-white tracking-tight">${item.unidad}</span>
+                        </div>
                     </button>
                 `;
             });
@@ -206,7 +473,6 @@ main{padding:32px 0 68px}h2{font-size:26px;letter-spacing:-.045em;margin:0 0 17p
             const contenido = document.getElementById('modal-contenido');
             
             modal.classList.remove('hidden');
-            // Reiniciar animación del modal al abrir
             contenido.classList.remove('anim-modal');
             void contenido.offsetWidth; 
             contenido.classList.add('anim-modal');
@@ -284,7 +550,6 @@ main{padding:32px 0 68px}h2{font-size:26px;letter-spacing:-.045em;margin:0 0 17p
             document.getElementById('modal-detalle').classList.add('hidden');
         }
 
-        // Cerrar modal al tocar fuera de la tarjeta
         document.getElementById('modal-detalle').addEventListener('click', function(e) {
             if (e.target === this) {
                 cerrarModal();
@@ -293,4 +558,6 @@ main{padding:32px 0 68px}h2{font-size:26px;letter-spacing:-.045em;margin:0 0 17p
 
         document.getElementById('selector-fecha').addEventListener('change', actualizarVista);
         document.getElementById('buscador').addEventListener('input', actualizarVista);
-    </script></body></html>
+    </script>
+</body>
+</html>
