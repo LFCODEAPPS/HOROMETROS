@@ -3,24 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Maquinaria por Fecha</title>
+    <title>Control De Maquinaria Grupo Bautista</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        /* Ocultar scrollbar para los botones de categoría */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen pb-12">
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-12 font-sans">
 
     <!-- Encabezado -->
-    <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-30 shadow-md p-4">
+    <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-30 shadow-lg p-4">
         <div class="max-w-xl mx-auto flex justify-between items-center gap-2">
             <div>
-                <h1 class="text-base font-bold text-emerald-400">Selección de Maquinaria</h1>
-                <p class="text-[10px] text-slate-400">Despliega para cambiar de fecha 👉</p>
+                <h1 class="text-base font-extrabold text-emerald-400">Control De Maquinaria Grupo Bautista</h1>
+                <p class="text-[10px] text-slate-400 mt-0.5">Despliega para cambiar de fecha 👉</p>
             </div>
             
             <!-- Selector de Fecha Seguro (Desplegable) -->
             <div class="relative shrink-0">
-                <select id="selector-fecha" class="bg-emerald-500 text-slate-950 font-black text-xs px-3 py-2 rounded shadow border-none focus:ring-2 focus:ring-emerald-300 cursor-pointer outline-none text-center appearance-none pr-6">
+                <select id="selector-fecha" class="bg-emerald-500 text-slate-950 font-black text-xs px-3 py-2 rounded-lg shadow-sm border-none focus:ring-2 focus:ring-emerald-300 cursor-pointer outline-none text-center appearance-none pr-6">
                     <option value="">Cargando...</option>
                 </select>
                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-900">
@@ -32,35 +42,43 @@
 
     <main class="max-w-xl mx-auto p-4 space-y-4">
 
+        <!-- Botones de Filtro por Ubicación (Scroll Horizontal) -->
+        <div class="flex overflow-x-auto gap-2 pb-1 hide-scrollbar" id="botones-categoria">
+            <button onclick="filtrarPorUbicacion('TODOS', this)" class="btn-filtro bg-emerald-500 text-slate-900 font-bold px-4 py-2 rounded-full text-xs shrink-0 transition shadow-sm border border-emerald-500">TODOS</button>
+            <button onclick="filtrarPorUbicacion('CARRETERA CHIPULUC', this)" class="btn-filtro bg-slate-800 text-slate-300 font-semibold px-4 py-2 rounded-full text-xs shrink-0 transition hover:bg-slate-700 border border-slate-700">CARRETERA CHIPULUC</button>
+            <button onclick="filtrarPorUbicacion('OLMOS', this)" class="btn-filtro bg-slate-800 text-slate-300 font-semibold px-4 py-2 rounded-full text-xs shrink-0 transition hover:bg-slate-700 border border-slate-700">OLMOS</button>
+            <button onclick="filtrarPorUbicacion('OTROS', this)" class="btn-filtro bg-slate-800 text-slate-300 font-semibold px-4 py-2 rounded-full text-xs shrink-0 transition hover:bg-slate-700 border border-slate-700">OTROS</button>
+        </div>
+
         <!-- Buscador de Equipos -->
         <div class="relative">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">🔍</span>
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">🔍</span>
             <input type="text" id="buscador" placeholder="Buscar equipo o maquinaria..." 
-                class="w-full bg-slate-800 border border-slate-700 text-sm rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-emerald-500 shadow-sm">
+                class="w-full bg-slate-800/50 border border-slate-700/80 text-sm rounded-xl pl-10 pr-4 py-2.5 text-white focus:outline-none focus:border-emerald-500 focus:bg-slate-800 shadow-sm transition">
         </div>
 
         <!-- Indicador de Carga -->
-        <div id="loading" class="text-center py-20 text-slate-400 text-sm">
-            Leyendo registros y fechas desde Google Sheets...
+        <div id="loading" class="text-center py-24 text-slate-400 text-sm font-medium animate-pulse">
+            Espere unos segundos mientras carga el sistema...
         </div>
 
-        <!-- Cuadrícula de Botones de Máquinas -->
-        <div id="grid-maquinas" class="grid grid-cols-2 gap-3 hidden">
+        <!-- Cuadrícula de Botones de Máquinas (Más pequeñas y compactas) -->
+        <div id="grid-maquinas" class="grid grid-cols-2 gap-2.5 hidden">
             <!-- Los botones se inyectarán aquí -->
         </div>
 
     </main>
 
     <!-- Modal / Tarjeta de Detalle -->
-    <div id="modal-detalle" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4 relative">
+    <div id="modal-detalle" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-sm p-5 shadow-2xl space-y-4 relative">
             
             <div class="flex justify-between items-start border-b border-slate-700 pb-3">
                 <div>
-                    <span class="text-xs uppercase tracking-wider text-emerald-400 font-bold">Detalle de Unidad</span>
-                    <h2 id="modal-titulo" class="text-lg font-extrabold text-white mt-0.5">Nombre de Máquina</h2>
+                    <span class="text-[10px] uppercase tracking-wider text-emerald-400 font-bold">Detalle de Unidad</span>
+                    <h2 id="modal-titulo" class="text-base font-extrabold text-white mt-0.5 leading-tight">Nombre de Máquina</h2>
                 </div>
-                <button onclick="cerrarModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition">
+                <button onclick="cerrarModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition shrink-0 ml-2">
                     ✕
                 </button>
             </div>
@@ -71,7 +89,7 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
                 </button>
                 <div class="text-center flex-1">
-                    <span class="block text-[10px] text-slate-400 uppercase tracking-widest">Fecha del Registro</span>
+                    <span class="block text-[9px] text-slate-400 uppercase tracking-widest mb-0.5">Fecha del Registro</span>
                     <span id="modal-fecha-actual" class="font-bold text-emerald-400 text-sm">--/--/--</span>
                 </div>
                 <button id="btn-fecha-sig" class="p-2 text-emerald-500 hover:bg-slate-700 rounded-lg transition disabled:opacity-30 disabled:hover:bg-transparent">
@@ -80,41 +98,41 @@
             </div>
 
             <!-- Datos Ordenados -->
-            <div class="space-y-3 text-sm">
+            <div class="space-y-2.5 text-xs md:text-sm">
                 
-                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/50 flex justify-between items-center">
+                <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/50 flex justify-between items-center">
                     <span class="text-slate-400 text-xs">📍 Lugar:</span>
                     <span id="modal-lugar" class="font-semibold text-white text-right break-words max-w-[70%]">--</span>
                 </div>
 
-                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/50 flex justify-between items-center">
+                <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/50 flex justify-between items-center">
                     <span class="text-slate-400 text-xs">👤 Operador:</span>
-                    <span id="modal-operador" class="font-semibold text-white text-right">--</span>
+                    <span id="modal-operador" class="font-semibold text-white text-right truncate pl-2">--</span>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/50">
-                        <span class="text-slate-400 text-xs block mb-1">⏱️ H. Inicial:</span>
-                        <span id="modal-hinicial" class="font-bold text-emerald-300 text-base">--</span>
+                    <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/50">
+                        <span class="text-slate-400 text-[11px] block mb-1">⏱️ H. Inicial:</span>
+                        <span id="modal-hinicial" class="font-bold text-emerald-300 text-sm">--</span>
                     </div>
-                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/50">
-                        <span class="text-slate-400 text-xs block mb-1">⏱️ H. Final:</span>
-                        <span id="modal-hfinal" class="font-bold text-emerald-300 text-base">--</span>
+                    <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/50">
+                        <span class="text-slate-400 text-[11px] block mb-1">⏱️ H. Final:</span>
+                        <span id="modal-hfinal" class="font-bold text-emerald-300 text-sm">--</span>
                     </div>
                 </div>
 
-                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/50 flex justify-between items-center">
+                <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/50 flex justify-between items-center">
                     <span class="text-slate-400 text-xs">📊 Horas Totales:</span>
-                    <span id="modal-totales" class="font-bold text-blue-400 text-base">--</span>
+                    <span id="modal-totales" class="font-bold text-blue-400 text-sm">--</span>
                 </div>
 
-                <div class="bg-amber-950/40 border border-amber-800/50 p-3 rounded-xl flex justify-between items-center">
-                    <span class="text-amber-300 text-xs font-medium">⛽ Combustible:</span>
-                    <span id="modal-combustible" class="font-black text-amber-400 text-base">--</span>
+                <div class="bg-amber-950/30 border border-amber-800/40 p-2.5 rounded-xl flex justify-between items-center">
+                    <span class="text-amber-300/80 text-xs font-medium">⛽ Combustible:</span>
+                    <span id="modal-combustible" class="font-black text-amber-400 text-sm">--</span>
                 </div>
             </div>
 
-            <button onclick="cerrarModal()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold py-2.5 rounded-xl transition text-sm">
+            <button onclick="cerrarModal()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold py-2.5 rounded-xl transition text-sm shadow-md mt-2">
                 Aceptar / Cerrar
             </button>
         </div>
@@ -129,17 +147,9 @@
         
         let maquinaActualModal = "";
         let fechaActualModal = "";
-
-        // Paleta de colores reservada para clasificar por Lugar (Columna A)
-        const paletaLugares = [
-            'bg-emerald-600 border-emerald-500 hover:bg-emerald-500', // Variante 1
-            'bg-indigo-600 border-indigo-500 hover:bg-indigo-500',    // Variante 2
-            'bg-amber-600 border-amber-500 hover:bg-amber-500',       // Repuesto (si surge una 3ra variante)
-            'bg-rose-600 border-rose-500 hover:bg-rose-500'           // Repuesto (si surge una 4ta variante)
-        ];
         
-        let mapaColoresLugar = {};
-        let contadorLugares = 0;
+        // Filtro actual seleccionado
+        let filtroUbicacionActual = "TODOS";
 
         Papa.parse(SHEET_CSV_URL, {
             download: true,
@@ -157,7 +167,7 @@
                     const row = rows[i];
                     if (!row || row.length === 0) continue;
 
-                    // 1. Detectar Fecha
+                    // Detectar Fecha
                     for (let j = 0; j < Math.min(row.length, 6); j++) {
                         let celda = row[j] ? row[j].trim() : "";
                         if (/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/.test(celda)) {
@@ -211,12 +221,47 @@
             }
         });
 
+        // Función para cambiar los estilos de los botones de filtro
+        function filtrarPorUbicacion(categoria, botonClickado) {
+            filtroUbicacionActual = categoria;
+            
+            // Reiniciar estilos de todos los botones
+            const botones = document.querySelectorAll('.btn-filtro');
+            botones.forEach(btn => {
+                btn.classList.remove('bg-emerald-500', 'text-slate-900', 'border-emerald-500', 'font-bold');
+                btn.classList.add('bg-slate-800', 'text-slate-300', 'border-slate-700', 'font-semibold', 'hover:bg-slate-700');
+            });
+
+            // Activar el botón clickado
+            botonClickado.classList.remove('bg-slate-800', 'text-slate-300', 'border-slate-700', 'font-semibold', 'hover:bg-slate-700');
+            botonClickado.classList.add('bg-emerald-500', 'text-slate-900', 'border-emerald-500', 'font-bold');
+
+            actualizarVista();
+        }
+
         function actualizarVista() {
             const fechaSeleccionada = document.getElementById('selector-fecha').value;
             const textoBusqueda = document.getElementById('buscador').value.toLowerCase();
 
             const filtrados = todosLosRegistros.filter(item => {
-                return (item.fechaFiltro === fechaSeleccionada) && item.unidad.toLowerCase().includes(textoBusqueda);
+                // 1. Filtrar por fecha y búsqueda de texto
+                const coincideBasico = (item.fechaFiltro === fechaSeleccionada) && item.unidad.toLowerCase().includes(textoBusqueda);
+                if (!coincideBasico) return false;
+
+                // 2. Filtrar por la categoría de ubicación seleccionada
+                const lugarUpper = item.lugar.toUpperCase();
+                
+                if (filtroUbicacionActual === "TODOS") {
+                    return true;
+                } else if (filtroUbicacionActual === "CARRETERA CHIPULUC") {
+                    return lugarUpper.includes("CARRETERA CHIPULUC");
+                } else if (filtroUbicacionActual === "OLMOS") {
+                    return lugarUpper.includes("OLMOS");
+                } else if (filtroUbicacionActual === "OTROS") {
+                    // Si no es ni Chipuluc ni Olmos, va a Otros
+                    return !lugarUpper.includes("CARRETERA CHIPULUC") && !lugarUpper.includes("OLMOS");
+                }
+                return true;
             });
 
             renderizarBotones(filtrados);
@@ -227,28 +272,27 @@
             let html = '';
 
             if (datos.length === 0) {
-                grid.innerHTML = '<div class="col-span-2 text-center text-slate-400 py-12 text-sm">No hay unidades para esta fecha.</div>';
+                grid.innerHTML = '<div class="col-span-2 text-center text-slate-400 py-16 text-sm bg-slate-800/30 rounded-xl border border-slate-800">No se encontraron máquinas.</div>';
                 return;
             }
 
             datos.forEach(item => {
                 const indexReal = todosLosRegistros.indexOf(item);
                 
-                // Agrupación dinámica de colores basada en el texto exacto de la Columna A
-                if (!mapaColoresLugar[item.lugar]) {
-                    mapaColoresLugar[item.lugar] = paletaLugares[contadorLugares % paletaLugares.length];
-                    contadorLugares++;
-                }
-                const colorClase = mapaColoresLugar[item.lugar];
-
+                // Color elegante por defecto para todas las tarjetas (ya no son un arcoíris)
+                // Se usa un verde oscuro muy profesional que hace resaltar las letras
                 html += `
-                    <button onclick="abrirDetalle(${indexReal})" class="${colorClase} text-white p-3 rounded-2xl shadow-md border flex flex-col justify-between items-start text-left transition transform active:scale-95 min-h-[115px]">
-                        <div class="flex justify-between items-start w-full mb-1 gap-1">
-                            <span class="text-xl shrink-0">🚜</span>
-                            <!-- Etiqueta de ubicación adaptativa (sin cortarse) -->
-                            <span class="text-[9px] font-bold bg-black/30 px-1.5 py-1 rounded text-white/90 text-right leading-tight break-words max-w-[80%]">${item.lugar}</span>
+                    <button onclick="abrirDetalle(${indexReal})" class="bg-slate-800 text-slate-200 p-3 rounded-2xl shadow-sm border border-slate-700/80 flex flex-col justify-between items-start text-left transition transform hover:bg-slate-700 active:scale-95 min-h-[90px] relative overflow-hidden group">
+                        
+                        <!-- Acento de color sutil a la izquierda -->
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 opacity-80"></div>
+                        
+                        <div class="flex justify-between items-start w-full mb-1.5 pl-1.5 gap-1">
+                            <span class="text-lg shrink-0 opacity-90 group-hover:scale-110 transition-transform">🚜</span>
+                            <!-- Etiqueta de ubicación más sutil -->
+                            <span class="text-[8px] font-bold bg-slate-900/60 border border-slate-700 text-emerald-400/90 px-1.5 py-0.5 rounded text-right leading-tight truncate max-w-[75%]">${item.lugar}</span>
                         </div>
-                        <span class="font-bold text-xs md:text-sm leading-tight mt-1">${item.unidad}</span>
+                        <span class="font-bold text-[11px] md:text-xs leading-snug pl-1.5 pr-1 text-slate-100">${item.unidad}</span>
                     </button>
                 `;
             });
