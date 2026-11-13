@@ -237,7 +237,7 @@
                 <!-- Datos Ordenados de la Fecha Actual -->
                 <div id="modal-datos-cuerpo" class="space-y-2.5 text-xs md:text-sm transition-opacity duration-150">
                     
-                    <!-- Ubicación, Operador y Estado para Mtto -->
+                    <!-- Ubicación, Operador y Estado para Mtto (Columna L) -->
                     <div class="bg-stone-50 dark:bg-stone-900/80 p-3.5 rounded-2xl border border-stone-200/70 dark:border-stone-800 space-y-2.5">
                         <div class="flex justify-between items-start gap-3">
                             <span class="text-stone-400 text-xs font-medium flex items-center gap-1.5 shrink-0">
@@ -288,7 +288,7 @@
 
                 </div>
 
-                <!-- SECCIÓN EXPANDIBLE: TODOS LOS REGISTROS DE ESTA UNIDAD -->
+                <!-- SECCIÓN EXPANDIBLE: MISMOS DATOS QUE EN INFO CONTRAÍDA -->
                 <div id="seccion-expandida" class="hidden pt-3 border-t border-stone-200 dark:border-stone-800 space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-[11px] font-extrabold uppercase tracking-wider text-stone-700 dark:text-stone-200 flex items-center gap-1.5">
@@ -299,7 +299,7 @@
                     </div>
 
                     <div id="lista-registros-completos" class="space-y-2.5">
-                        <!-- Aquí se inyectan todos los registros históricos y columnas completas de esta unidad -->
+                        <!-- Aquí se inyectan los registros históricos con los mismos campos que la ficha contraída -->
                     </div>
                 </div>
 
@@ -405,10 +405,9 @@
                         operador: row[6] ? row[6].trim() : 'No asignado',      // Columna G (6)
                         hInicial: row[8] ? row[8].trim() : '-',                // Columna I (8)
                         hFinal: row[9] ? row[9].trim() : '-',                  // Columna J (9)
-                        estadoMtto: row[10] ? row[10].trim() : 'Sin registro', // Columna K (10)
                         totalHoras: row[10] ? row[10].trim() : '0',            // Columna K (10)
-                        combustible: row[12] ? row[12].trim() : '0 Gal',       // Columna M (12)
-                        filaCompleta: row.map(c => c ? c.trim() : '')
+                        estadoMtto: row[11] ? row[11].trim() : 'Sin registro', // Columna L (11)
+                        combustible: row[12] ? row[12].trim() : '0 Gal'        // Columna M (12)
                     });
                 }
 
@@ -618,30 +617,13 @@
 
             let html = '';
             registrosUnidad.forEach(reg => {
-                // Extraer datos extra de otras columnas de la fila (si existen y no están vacías)
-                const columnasExtra = [];
-                if (reg.filaCompleta && reg.filaCompleta.length > 0) {
-                    reg.filaCompleta.forEach((val, colIdx) => {
-                        // Omitir columnas ya mostradas explícitamente: A(0), G(6), H(7), I(8), J(9), K(10), M(12)
-                        const indicesYaMostrados = [0, 6, 7, 8, 9, 10, 12];
-                        if (!indicesYaMostrados.includes(colIdx) && val && val !== reg.fechaFiltro) {
-                            const letraCol = String.fromCharCode(65 + colIdx);
-                            columnasExtra.push(`<span class="inline-block bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 px-2 py-0.5 rounded-md text-[10px] text-stone-600 dark:text-stone-300"><b>Col ${letraCol}:</b> ${val}</span>`);
-                        }
-                    });
-                }
-
-                const extraHtml = columnasExtra.length > 0 
-                    ? `<div class="pt-2 mt-2 border-t border-stone-200/70 dark:border-stone-800 flex flex-wrap gap-1.5">${columnasExtra.join('')}</div>` 
-                    : '';
-
                 html += `
-                    <div class="bg-stone-50 dark:bg-stone-900/90 p-3.5 rounded-2xl border border-stone-200/80 dark:border-stone-800 space-y-2 text-xs">
+                    <div class="bg-stone-50 dark:bg-stone-900/90 p-3.5 rounded-2xl border border-stone-200/80 dark:border-stone-800 space-y-2.5 text-xs">
                         <div class="flex items-center justify-between gap-2 border-b border-stone-200/70 dark:border-stone-800 pb-2">
                             <span class="font-extrabold text-amber-600 dark:text-amber-400">${reg.fechaFiltro}</span>
                             <span class="text-[10px] font-extrabold text-stone-950 dark:text-stone-100 border border-stone-950 dark:border-stone-400 px-2 py-0.5 rounded-full">${reg.lugar}</span>
                         </div>
-                        <div class="grid grid-cols-2 gap-x-3 gap-y-1.5 text-[11px]">
+                        <div class="grid grid-cols-2 gap-x-3 gap-y-2 text-[11px]">
                             <div>
                                 <span class="text-stone-400 block">Operador</span>
                                 <span class="font-bold text-stone-800 dark:text-stone-100">${reg.operador || 'Sin registro'}</span>
@@ -651,15 +633,22 @@
                                 <span class="font-bold text-stone-800 dark:text-stone-100">${reg.estadoMtto || 'Sin registro'}</span>
                             </div>
                             <div>
-                                <span class="text-stone-400 block">H. Inicial / Final</span>
-                                <span class="font-bold text-stone-800 dark:text-stone-100">${reg.hInicial} → ${reg.hFinal}</span>
+                                <span class="text-stone-400 block">Horómetro Inicial</span>
+                                <span class="font-bold text-stone-800 dark:text-stone-100">${reg.hInicial}</span>
                             </div>
                             <div>
-                                <span class="text-stone-400 block">Horas / Combustible</span>
-                                <span class="font-bold text-stone-900 dark:text-amber-300">${reg.totalHoras} hrs • ${reg.combustible || '0 Gal'}</span>
+                                <span class="text-stone-400 block">Horómetro Final</span>
+                                <span class="font-bold text-stone-800 dark:text-stone-100">${reg.hFinal}</span>
+                            </div>
+                            <div>
+                                <span class="text-stone-400 block">Horas Totales</span>
+                                <span class="font-bold text-stone-900 dark:text-white">${reg.totalHoras} hrs</span>
+                            </div>
+                            <div>
+                                <span class="text-stone-400 block">Combustible</span>
+                                <span class="font-bold text-amber-600 dark:text-amber-300">${reg.combustible || '0 Gal'}</span>
                             </div>
                         </div>
-                        ${extraHtml}
                     </div>
                 `;
             });
