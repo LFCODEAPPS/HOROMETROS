@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <!-- BLOQUEO DE ZOOM -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Control De Maquinaria Grupo Bautista</title>
     
@@ -18,15 +17,40 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+        /* Animaciones de entrada y transición de pantallas */
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+
+        @keyframes modalPop {
+            from {
+                opacity: 0;
+                transform: scale(0.92) translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
-        body {
-            touch-action: manipulation;
+
+        .anim-card {
+            animation: fadeSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        .anim-modal {
+            animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
     </style>
     <script>
@@ -35,62 +59,58 @@
         }
     </script>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen pb-12 font-sans transition-colors duration-300">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen pb-14 font-sans transition-colors duration-300">
 
-    <!-- BLOQUE SUPERIOR FIJO COMPLETO CON MÁS ESPACIO -->
-    <div class="sticky top-0 z-30 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+    <!-- BLOQUE SUPERIOR FIJO DESAHOGADO -->
+    <div class="sticky top-0 z-30 bg-white/90 dark:bg-slate-950/90 backdrop-blur-lg border-b border-slate-200/80 dark:border-slate-800/80 shadow-sm">
         
-        <!-- 1. Encabezado Principal Amplio -->
-        <header class="max-w-xl mx-auto px-4 pt-4 pb-3.5 flex justify-between items-center gap-3">
-            
-            <!-- Izquierda: Logo + Título -->
-            <div class="flex items-center gap-3 flex-1 min-w-0">
-                <div class="h-12 w-12 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 flex items-center justify-center overflow-hidden shadow-sm shrink-0">
-                    <img src="bautista.png" alt="Logo Grupo Bautista" class="h-full w-full object-contain" onerror="this.parentElement.style.display='none'">
+        <header class="max-w-xl mx-auto px-4 pt-4 pb-3 space-y-3">
+            <!-- Fila 1: Logo transparente + Título completo sin recortes -->
+            <div class="flex items-center gap-3">
+                <div class="h-9 w-9 flex items-center justify-center shrink-0">
+                    <img src="bautista.png" alt="Logo" class="h-full w-full object-contain mix-blend-multiply dark:mix-blend-normal dark:brightness-110 transition-transform duration-300 hover:scale-105" onerror="this.parentElement.style.display='none'">
                 </div>
-                <div class="min-w-0">
-                    <h1 class="text-sm sm:text-base font-extrabold text-emerald-600 dark:text-emerald-400 leading-snug truncate">
+                <div class="flex-1 min-w-0">
+                    <h1 class="text-base sm:text-lg font-extrabold text-emerald-600 dark:text-emerald-400 tracking-tight leading-none">
                         Control De Maquinaria
                     </h1>
-                    <p class="text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight">
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1">
                         Grupo Bautista
                     </p>
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">Cambia de fecha 👉</p>
                 </div>
             </div>
-            
-            <!-- Derecha: Botón Recarga + Selector de Fecha -->
-            <div class="flex items-center gap-2 shrink-0">
-                <button onclick="location.reload()" class="p-2 text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 transition bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700" title="Actualizar datos">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                </button>
 
-                <div class="relative">
-                    <select id="selector-fecha" class="bg-emerald-100 text-emerald-900 dark:bg-emerald-600 dark:text-slate-950 font-black text-xs px-3 py-2.5 rounded-xl shadow-sm border border-emerald-200 dark:border-emerald-500 focus:ring-2 focus:ring-emerald-400 cursor-pointer outline-none text-center appearance-none pr-7">
-                        <option value="">Cargando...</option>
+            <!-- Fila 2: Selector de fecha amplio + Botón de recarga -->
+            <div class="flex items-center justify-between gap-2.5 pt-0.5">
+                <div class="relative flex-1">
+                    <select id="selector-fecha" class="w-full bg-emerald-50/90 hover:bg-emerald-100/80 text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-300 font-bold text-xs px-3.5 py-2.5 rounded-xl border border-emerald-200/80 dark:border-emerald-800/60 focus:ring-2 focus:ring-emerald-400 cursor-pointer outline-none appearance-none transition">
+                        <option value="">Cargando fechas...</option>
                     </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-emerald-800 dark:text-slate-900">
-                        <svg class="fill-current h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-emerald-700 dark:text-emerald-400">
+                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                     </div>
                 </div>
+
+                <button id="btn-recargar" onclick="recargarConAnimacion()" class="px-3.5 py-2.5 text-slate-600 hover:text-emerald-600 dark:text-slate-300 dark:hover:text-emerald-400 bg-slate-100 hover:bg-slate-200/70 dark:bg-slate-800/80 dark:hover:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700/80 flex items-center gap-1.5 text-xs font-semibold transition active:scale-95 shrink-0" title="Actualizar datos">
+                    <svg id="icono-recargar" class="w-4 h-4 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    <span>Actualizar</span>
+                </button>
             </div>
         </header>
 
-        <!-- 2. Filtros y Barra de Búsqueda con más aire -->
-        <div class="max-w-xl mx-auto px-4 pb-4 space-y-3">
-            <!-- Botones de Filtro por Ubicación -->
+        <!-- Filtros por ubicación + Barra de búsqueda -->
+        <div class="max-w-xl mx-auto px-4 pb-3.5 space-y-3">
             <div class="flex overflow-x-auto gap-2 hide-scrollbar" id="botones-categoria">
-                <button onclick="filtrarPorUbicacion('TODOS', this)" class="btn-filtro bg-emerald-500 text-white dark:text-slate-900 border-emerald-500 font-bold px-4 py-2 rounded-full text-xs shrink-0 transition shadow-sm border">TODOS</button>
-                <button onclick="filtrarPorUbicacion('CARRETERA CHIPULUC', this)" class="btn-filtro bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 font-semibold px-4 py-2 rounded-full text-xs shrink-0 transition hover:bg-slate-200 dark:hover:bg-slate-700 border">CARRETERA CHIPULUC</button>
-                <button onclick="filtrarPorUbicacion('OLMOS', this)" class="btn-filtro bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 font-semibold px-4 py-2 rounded-full text-xs shrink-0 transition hover:bg-slate-200 dark:hover:bg-slate-700 border">OLMOS</button>
-                <button onclick="filtrarPorUbicacion('OTROS', this)" class="btn-filtro bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 font-semibold px-4 py-2 rounded-full text-xs shrink-0 transition hover:bg-slate-200 dark:hover:bg-slate-700 border">OTROS</button>
+                <button onclick="filtrarPorUbicacion('TODOS', this)" class="btn-filtro bg-emerald-500 text-white dark:text-slate-950 border-emerald-500 font-bold px-4 py-1.5 rounded-full text-xs shrink-0 transition-all duration-200 active:scale-95 shadow-sm border">TODOS</button>
+                <button onclick="filtrarPorUbicacion('CARRETERA CHIPULUC', this)" class="btn-filtro bg-slate-100/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 font-semibold px-4 py-1.5 rounded-full text-xs shrink-0 transition-all duration-200 active:scale-95 hover:bg-slate-200/70 dark:hover:bg-slate-700 border">CARRETERA CHIPULUC</button>
+                <button onclick="filtrarPorUbicacion('OLMOS', this)" class="btn-filtro bg-slate-100/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 font-semibold px-4 py-1.5 rounded-full text-xs shrink-0 transition-all duration-200 active:scale-95 hover:bg-slate-200/70 dark:hover:bg-slate-700 border">OLMOS</button>
+                <button onclick="filtrarPorUbicacion('OTROS', this)" class="btn-filtro bg-slate-100/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 font-semibold px-4 py-1.5 rounded-full text-xs shrink-0 transition-all duration-200 active:scale-95 hover:bg-slate-200/70 dark:hover:bg-slate-700 border">OTROS</button>
             </div>
 
-            <!-- Buscador de Equipos -->
             <div class="relative">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400 text-sm">🔍</span>
                 <input type="text" id="buscador" placeholder="Buscar equipo o maquinaria..." 
-                    class="w-full bg-slate-100/80 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-sm rounded-xl pl-10 pr-4 py-2.5 text-slate-800 dark:text-white focus:outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-800 transition">
+                    class="w-full bg-slate-100/70 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-700/80 text-sm rounded-xl pl-10 pr-4 py-2.5 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-800 transition-all">
             </div>
         </div>
 
@@ -99,10 +119,10 @@
     <!-- CONTENIDO DESPLAZABLE -->
     <main class="max-w-xl mx-auto p-4">
 
-        <!-- Pantalla de Carga con Logo -->
-        <div id="loading" class="flex flex-col items-center justify-center py-20 text-center space-y-4">
-            <div class="w-24 h-24 rounded-2xl bg-white dark:bg-slate-800 p-3 shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center animate-pulse">
-                <img src="bautista.png" alt="Cargando Grupo Bautista" class="max-h-full max-w-full object-contain" onerror="this.parentElement.style.display='none'">
+        <!-- Pantalla de Carga con Logo Transparente -->
+        <div id="loading" class="flex flex-col items-center justify-center py-24 text-center space-y-4">
+            <div class="w-20 h-20 flex items-center justify-center animate-bounce">
+                <img src="bautista.png" alt="Cargando Grupo Bautista" class="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" onerror="this.parentElement.style.display='none'">
             </div>
             <p class="text-slate-500 dark:text-slate-400 text-sm font-medium animate-pulse">
                 Espere unos segundos mientras carga el sistema...
@@ -110,76 +130,76 @@
         </div>
 
         <!-- Cuadrícula de Botones de Máquinas -->
-        <div id="grid-maquinas" class="grid grid-cols-2 gap-2.5 hidden">
+        <div id="grid-maquinas" class="grid grid-cols-2 gap-3 hidden">
             <!-- Los botones se inyectarán aquí -->
         </div>
 
     </main>
 
     <!-- Modal / Tarjeta de Detalle -->
-    <div id="modal-detalle" class="fixed inset-0 bg-slate-900/40 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-sm p-5 shadow-2xl space-y-4 relative">
+    <div id="modal-detalle" class="fixed inset-0 bg-slate-900/50 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200">
+        <div id="modal-contenido" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl w-full max-w-sm p-5 shadow-2xl space-y-4 relative anim-modal">
             
-            <div class="flex justify-between items-start border-b border-slate-100 dark:border-slate-700 pb-3">
+            <div class="flex justify-between items-start border-b border-slate-100 dark:border-slate-700/80 pb-3.5">
                 <div>
                     <span class="text-[10px] uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-bold">Detalle de Unidad</span>
-                    <h2 id="modal-titulo" class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5 leading-tight">Nombre de Máquina</h2>
+                    <h2 id="modal-titulo" class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5 leading-snug">Nombre de Máquina</h2>
                 </div>
-                <button onclick="cerrarModal()" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition shrink-0 ml-2">
+                <button onclick="cerrarModal()" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition active:scale-90 shrink-0 ml-2">
                     ✕
                 </button>
             </div>
 
             <!-- Controles de Navegación por Fecha -->
-            <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-900/60 p-2 rounded-xl border border-slate-200 dark:border-emerald-900/30">
-                <button id="btn-fecha-ant" class="p-2 text-emerald-600 dark:text-emerald-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition disabled:opacity-30 disabled:hover:bg-transparent">
+            <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-900/70 p-2 rounded-2xl border border-slate-200/80 dark:border-emerald-900/30">
+                <button id="btn-fecha-ant" class="p-2 text-emerald-600 dark:text-emerald-400 hover:bg-slate-200/70 dark:hover:bg-slate-700 rounded-xl transition active:scale-90 disabled:opacity-30 disabled:hover:bg-transparent">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
                 </button>
                 <div class="text-center flex-1">
-                    <span class="block text-[9px] text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-0.5">Fecha del Registro</span>
-                    <span id="modal-fecha-actual" class="font-bold text-emerald-600 dark:text-emerald-400 text-sm">--/--/--</span>
+                    <span class="block text-[9px] text-slate-400 uppercase tracking-widest mb-0.5">Fecha del Registro</span>
+                    <span id="modal-fecha-actual" class="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">--/--/--</span>
                 </div>
-                <button id="btn-fecha-sig" class="p-2 text-emerald-600 dark:text-emerald-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition disabled:opacity-30 disabled:hover:bg-transparent">
+                <button id="btn-fecha-sig" class="p-2 text-emerald-600 dark:text-emerald-400 hover:bg-slate-200/70 dark:hover:bg-slate-700 rounded-xl transition active:scale-90 disabled:opacity-30 disabled:hover:bg-transparent">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                 </button>
             </div>
 
             <!-- Datos Ordenados -->
-            <div class="space-y-2.5 text-xs md:text-sm">
+            <div id="modal-datos-cuerpo" class="space-y-2.5 text-xs md:text-sm transition-opacity duration-150">
                 
-                <div class="bg-slate-50 dark:bg-slate-900/80 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50 flex justify-between items-center">
-                    <span class="text-slate-500 dark:text-slate-400 text-xs">📍 Lugar:</span>
-                    <span id="modal-lugar" class="font-semibold text-slate-800 dark:text-white text-right break-words max-w-[70%]">--</span>
+                <div class="bg-slate-50 dark:bg-slate-900/80 p-3 rounded-2xl border border-slate-100 dark:border-slate-700/50 flex justify-between items-center gap-2">
+                    <span class="text-slate-500 dark:text-slate-400 text-xs shrink-0">📍 Lugar:</span>
+                    <span id="modal-lugar" class="font-semibold text-slate-800 dark:text-white text-right break-words">--</span>
                 </div>
 
-                <div class="bg-slate-50 dark:bg-slate-900/80 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50 flex justify-between items-center">
-                    <span class="text-slate-500 dark:text-slate-400 text-xs">👤 Operador:</span>
-                    <span id="modal-operador" class="font-semibold text-slate-800 dark:text-white text-right truncate pl-2">--</span>
+                <div class="bg-slate-50 dark:bg-slate-900/80 p-3 rounded-2xl border border-slate-100 dark:border-slate-700/50 flex justify-between items-center gap-2">
+                    <span class="text-slate-500 dark:text-slate-400 text-xs shrink-0">👤 Operador:</span>
+                    <span id="modal-operador" class="font-semibold text-slate-800 dark:text-white text-right truncate">--</span>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2">
-                    <div class="bg-slate-50 dark:bg-slate-900/80 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div class="bg-slate-50 dark:bg-slate-900/80 p-3 rounded-2xl border border-slate-100 dark:border-slate-700/50">
                         <span class="text-slate-500 dark:text-slate-400 text-[11px] block mb-1">⏱️ H. Inicial:</span>
-                        <span id="modal-hinicial" class="font-bold text-emerald-600 dark:text-emerald-300 text-sm">--</span>
+                        <span id="modal-hinicial" class="font-extrabold text-emerald-600 dark:text-emerald-300 text-sm">--</span>
                     </div>
-                    <div class="bg-slate-50 dark:bg-slate-900/80 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                    <div class="bg-slate-50 dark:bg-slate-900/80 p-3 rounded-2xl border border-slate-100 dark:border-slate-700/50">
                         <span class="text-slate-500 dark:text-slate-400 text-[11px] block mb-1">⏱️ H. Final:</span>
-                        <span id="modal-hfinal" class="font-bold text-emerald-600 dark:text-emerald-300 text-sm">--</span>
+                        <span id="modal-hfinal" class="font-extrabold text-emerald-600 dark:text-emerald-300 text-sm">--</span>
                     </div>
                 </div>
 
-                <div class="bg-slate-50 dark:bg-slate-900/80 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50 flex justify-between items-center">
+                <div class="bg-slate-50 dark:bg-slate-900/80 p-3 rounded-2xl border border-slate-100 dark:border-slate-700/50 flex justify-between items-center">
                     <span class="text-slate-500 dark:text-slate-400 text-xs">📊 Horas Totales:</span>
-                    <span id="modal-totales" class="font-bold text-blue-600 dark:text-blue-400 text-sm">--</span>
+                    <span id="modal-totales" class="font-extrabold text-blue-600 dark:text-blue-400 text-sm">--</span>
                 </div>
 
-                <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 p-2.5 rounded-xl flex justify-between items-center">
-                    <span class="text-amber-800 dark:text-amber-300/80 text-xs font-medium">⛽ Combustible:</span>
+                <div class="bg-amber-50/90 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/40 p-3 rounded-2xl flex justify-between items-center">
+                    <span class="text-amber-800 dark:text-amber-300/90 text-xs font-medium">⛽ Combustible:</span>
                     <span id="modal-combustible" class="font-black text-amber-600 dark:text-amber-400 text-sm">--</span>
                 </div>
             </div>
 
-            <button onclick="cerrarModal()" class="w-full bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white dark:text-slate-950 font-bold py-2.5 rounded-xl transition text-sm shadow-md mt-2">
+            <button onclick="cerrarModal()" class="w-full bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white dark:text-slate-950 font-bold py-3 rounded-2xl transition-all active:scale-95 text-sm shadow-md mt-2">
                 Aceptar / Cerrar
             </button>
         </div>
@@ -197,14 +217,22 @@
         let filtroUbicacionActual = "TODOS";
 
         const paletaLugares = [
-            'bg-emerald-100 border-emerald-300 text-emerald-900 dark:bg-emerald-900/40 dark:border-emerald-700 dark:text-emerald-100',
-            'bg-blue-100 border-blue-300 text-blue-900 dark:bg-blue-900/40 dark:border-blue-700 dark:text-blue-100',
-            'bg-amber-100 border-amber-300 text-amber-900 dark:bg-amber-900/40 dark:border-amber-700 dark:text-amber-100',
-            'bg-purple-100 border-purple-300 text-purple-900 dark:bg-purple-900/40 dark:border-purple-700 dark:text-purple-100'
+            'bg-emerald-50/90 border-emerald-200/90 text-emerald-950 dark:bg-emerald-950/40 dark:border-emerald-800/70 dark:text-emerald-100',
+            'bg-blue-50/90 border-blue-200/90 text-blue-950 dark:bg-blue-950/40 dark:border-blue-800/70 dark:text-blue-100',
+            'bg-amber-50/90 border-amber-200/90 text-amber-950 dark:bg-amber-950/40 dark:border-amber-800/70 dark:text-amber-100',
+            'bg-purple-50/90 border-purple-200/90 text-purple-950 dark:bg-purple-950/40 dark:border-purple-800/70 dark:text-purple-100'
         ];
         
         let mapaColoresLugar = {};
         let contadorLugares = 0;
+
+        function recargarConAnimacion() {
+            const icono = document.getElementById('icono-recargar');
+            icono.classList.add('rotate-180');
+            setTimeout(() => {
+                location.reload();
+            }, 250);
+        }
 
         Papa.parse(SHEET_CSV_URL, {
             download: true,
@@ -280,12 +308,12 @@
             
             const botones = document.querySelectorAll('.btn-filtro');
             botones.forEach(btn => {
-                btn.classList.remove('bg-emerald-500', 'text-white', 'dark:text-slate-900', 'border-emerald-500', 'font-bold');
-                btn.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-700', 'font-semibold', 'hover:bg-slate-200', 'dark:hover:bg-slate-700');
+                btn.classList.remove('bg-emerald-500', 'text-white', 'dark:text-slate-950', 'border-emerald-500', 'font-bold');
+                btn.classList.add('bg-slate-100/80', 'dark:bg-slate-800/80', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-700', 'font-semibold', 'hover:bg-slate-200/70', 'dark:hover:bg-slate-700');
             });
 
-            botonClickado.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-700', 'font-semibold', 'hover:bg-slate-200', 'dark:hover:bg-slate-700');
-            botonClickado.classList.add('bg-emerald-500', 'text-white', 'dark:text-slate-900', 'border-emerald-500', 'font-bold');
+            botonClickado.classList.remove('bg-slate-100/80', 'dark:bg-slate-800/80', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-700', 'font-semibold', 'hover:bg-slate-200/70', 'dark:hover:bg-slate-700');
+            botonClickado.classList.add('bg-emerald-500', 'text-white', 'dark:text-slate-950', 'border-emerald-500', 'font-bold');
 
             actualizarVista();
         }
@@ -319,11 +347,11 @@
             let html = '';
 
             if (datos.length === 0) {
-                grid.innerHTML = '<div class="col-span-2 text-center text-slate-500 dark:text-slate-400 py-16 text-sm bg-white dark:bg-slate-800/30 rounded-xl border border-slate-200 dark:border-slate-800">No se encontraron máquinas.</div>';
+                grid.innerHTML = '<div class="col-span-2 text-center text-slate-500 dark:text-slate-400 py-16 text-sm bg-white dark:bg-slate-800/30 rounded-2xl border border-slate-200 dark:border-slate-800 anim-card">No se encontraron máquinas en esta vista.</div>';
                 return;
             }
 
-            datos.forEach(item => {
+            datos.forEach((item, idx) => {
                 const indexReal = todosLosRegistros.indexOf(item);
                 
                 if (!mapaColoresLugar[item.lugar]) {
@@ -331,14 +359,17 @@
                     contadorLugares++;
                 }
                 const colorClase = mapaColoresLugar[item.lugar];
+                // Retraso escalonado suave para el efecto cascada al cambiar de pantalla/filtro
+                const delay = Math.min(idx * 25, 300);
 
                 html += `
-                    <button onclick="abrirDetalle(${indexReal})" class="${colorClase} p-3 rounded-2xl shadow-sm border flex flex-col justify-between items-start text-left transition transform hover:opacity-80 active:scale-95 min-h-[90px] relative overflow-hidden group">
-                        <div class="flex justify-between items-start w-full mb-1.5 pl-1.5 gap-2">
-                            <span class="text-lg shrink-0 opacity-90 group-hover:scale-110 transition-transform pt-0.5">🚜</span>
-                            <span class="text-[9px] font-bold bg-white/60 dark:bg-black/30 border border-black/10 dark:border-white/10 px-1.5 py-0.5 rounded text-right leading-tight max-w-[75%] line-clamp-2">${item.lugar}</span>
+                    <button onclick="abrirDetalle(${indexReal})" style="animation-delay: ${delay}ms;" class="anim-card ${colorClase} p-3.5 rounded-2xl shadow-sm border flex flex-col justify-between items-start text-left transition-all duration-200 hover:shadow-md active:scale-95 min-h-[96px] relative overflow-hidden group">
+                        <div class="flex justify-between items-start w-full mb-2 gap-2">
+                            <span class="text-xl shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">🚜</span>
+                            <!-- Etiqueta de ubicación redondeada tipo píldora -->
+                            <span class="text-[9px] font-bold bg-white/80 dark:bg-black/40 border border-black/10 dark:border-white/10 px-2.5 py-1 rounded-full text-center leading-tight max-w-[75%] line-clamp-2 shadow-2xs">${item.lugar}</span>
                         </div>
-                        <span class="font-bold text-[11px] md:text-xs leading-snug pl-1.5 pr-1">${item.unidad}</span>
+                        <span class="font-extrabold text-[11px] md:text-xs leading-snug pr-1 tracking-tight">${item.unidad}</span>
                     </button>
                 `;
             });
@@ -353,18 +384,32 @@
             
             cargarDatosEnModal(m);
             actualizarBotonesNavegacionFecha();
-            document.getElementById('modal-detalle').classList.remove('hidden');
+            
+            const modal = document.getElementById('modal-detalle');
+            const contenido = document.getElementById('modal-contenido');
+            
+            modal.classList.remove('hidden');
+            // Reiniciar animación del modal al abrir
+            contenido.classList.remove('anim-modal');
+            void contenido.offsetWidth; 
+            contenido.classList.add('anim-modal');
         }
 
         function cargarDatosEnModal(m) {
-            document.getElementById('modal-titulo').innerText = m.unidad;
-            document.getElementById('modal-fecha-actual').innerText = m.fechaFiltro;
-            document.getElementById('modal-lugar').innerText = m.lugar;
-            document.getElementById('modal-operador').innerText = m.operador || 'Sin registro';
-            document.getElementById('modal-hinicial').innerText = m.hInicial;
-            document.getElementById('modal-hfinal').innerText = m.hFinal;
-            document.getElementById('modal-totales').innerText = m.totalHoras + " hrs";
-            document.getElementById('modal-combustible').innerText = m.combustible || '0 Gal';
+            const cuerpo = document.getElementById('modal-datos-cuerpo');
+            cuerpo.style.opacity = '0.4';
+            
+            setTimeout(() => {
+                document.getElementById('modal-titulo').innerText = m.unidad;
+                document.getElementById('modal-fecha-actual').innerText = m.fechaFiltro;
+                document.getElementById('modal-lugar').innerText = m.lugar;
+                document.getElementById('modal-operador').innerText = m.operador || 'Sin registro';
+                document.getElementById('modal-hinicial').innerText = m.hInicial;
+                document.getElementById('modal-hfinal').innerText = m.hFinal;
+                document.getElementById('modal-totales').innerText = m.totalHoras + " hrs";
+                document.getElementById('modal-combustible').innerText = m.combustible || '0 Gal';
+                cuerpo.style.opacity = '1';
+            }, 90);
         }
 
         function actualizarBotonesNavegacionFecha() {
@@ -421,6 +466,13 @@
         function cerrarModal() {
             document.getElementById('modal-detalle').classList.add('hidden');
         }
+
+        // Cerrar modal al tocar fuera de la tarjeta
+        document.getElementById('modal-detalle').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModal();
+            }
+        });
 
         document.getElementById('selector-fecha').addEventListener('change', actualizarVista);
         document.getElementById('buscador').addEventListener('input', actualizarVista);
