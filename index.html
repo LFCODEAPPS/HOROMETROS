@@ -225,7 +225,8 @@ select option{background:var(--card);color:var(--tx)}
 </div>
 
 <script>
-const URL_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vReJl2BT_9uiaFmB-U1-UlhHKE9lSmhK8jB2bF1Pu1MlM0B15O2H5WxM_ot85WtTIol4_bVhuudvcHU/pub?gid=1193959640&single=true&output=csv";
+const URL_GVIZ="https://docs.google.com/spreadsheets/d/1YL5wIhK9Po-Je5P96Nm0m4cqiLqx0FrhiRCttU3wA7Y/gviz/tq?tqx=out:csv&gid=1193959640&headers=0";
+const URL_PUB="https://docs.google.com/spreadsheets/d/e/2PACX-1vReJl2BT_9uiaFmB-U1-UlhHKE9lSmhK8jB2bF1Pu1MlM0B15O2H5WxM_ot85WtTIol4_bVhuudvcHU/pub?gid=1193959640&single=true&output=csv";
 const CACHE_KEY="gb_csv_v1";
 const $=id=>document.getElementById(id);
 const DIAS=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
@@ -357,7 +358,19 @@ function procesarCSV(csvText,fechaPrevia){
  return true;
 }
 
-/* ---------- Carga en tiempo real sin caché CDN ---------- */
+/* ---------- Descarga en tiempo real (GVIZ con respaldo PUB) ---------- */
+async function obtenerCSV(signal){
+ const ts=Date.now();
+ const r1=await fetch(`${URL_GVIZ}&_=${ts}`,{cache:'no-store',referrerPolicy:'no-referrer',signal});
+ if(r1.ok){
+  const txt=await r1.text();
+  if(txt&&!txt.trim().startsWith('<'))return txt;
+ }
+ const r2=await fetch(`${URL_PUB}&_=${ts}`,{cache:'no-store',referrerPolicy:'no-referrer',signal});
+ if(!r2.ok)throw new Error('HTTP '+r2.status);
+ return await r2.text();
+}
+
 async function cargarDatos(esRefresco=false,silencioso=false){
  if(cargando)return;
  cargando=true;
@@ -373,11 +386,11 @@ async function cargarDatos(esRefresco=false,silencioso=false){
  }
 
  const inicio=Date.now();
+ const ctrl=new AbortController();
+ const timer=setTimeout(()=>ctrl.abort(),10000);
+
  try{
-  const urlViva=`${URL_CSV}&_=${Date.now()}`;
-  const res=await fetch(urlViva,{cache:'no-store'});
-  if(!res.ok)throw new Error('HTTP '+res.status);
-  const csvText=await res.text();
+  const csvText=await obtenerCSV(ctrl.signal);
 
   if(!silencioso){
    const transcurrido=Date.now()-inicio;
@@ -400,7 +413,7 @@ async function cargarDatos(esRefresco=false,silencioso=false){
      const obj=JSON.parse(cached);
      if(obj&&obj.csv&&procesarCSV(obj.csv,fechaPrevia)){
       recuperado=true;
-      if(obj.hora)$('upd-txt').textContent=`Actualizado ${obj.hora}`;
+      if(obj.hora)$('upd-txt').textContent=`Sin red · ${obj.hora}`;
      }
     }
    }catch(__){}
@@ -413,6 +426,7 @@ async function cargarDatos(esRefresco=false,silencioso=false){
    }
   }
  }finally{
+  clearTimeout(timer);
   cargando=false;
   if(btnRef){btnRef.classList.remove('spin');btnRef.disabled=false}
  }
@@ -421,7 +435,7 @@ cargarDatos(false,false);
 
 /* Sincronización automática al volver a abrir la app desde segundo plano */
 document.addEventListener('visibilitychange',()=>{
- if(document.visibilityState==='visible'&&Date.now()-ultimaSync>15000){
+ if(document.visibilityState==='visible'&&Date.now()-ultimaSync>10000){
   cargarDatos(false,true);
  }
 });
