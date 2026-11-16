@@ -10,10 +10,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Grupo Bautista">
+<link rel="preconnect" href="https://docs.google.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script>
 (function(){var t=localStorage.getItem('gb_tema')||'auto';
 if(t==='dark'||(t==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');})();
@@ -29,19 +29,25 @@ button,select,input{font:inherit;color:inherit}button{cursor:pointer;background:
 .wrap{max-width:1152px;margin:0 auto;padding:0 16px}
 .top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--card) 94%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .top::before{content:"";display:block;height:3px;background:linear-gradient(90deg,var(--tx),var(--brand),var(--tx))}
-.head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding-top:12px;padding-bottom:8px}
+.head{display:flex;flex-direction:column;gap:10px;padding-top:12px;padding-bottom:8px}
+.brand-row{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%}
 .brand{display:flex;align-items:center;gap:12px;min-width:0}
-.brand img{height:44px;width:44px;object-fit:contain}
-.brand h1{font-size:17px;font-weight:800;letter-spacing:.01em;line-height:1.1}
-.brand p{font-size:12px;font-weight:600;color:var(--brand);margin-top:3px}
+.brand img{height:44px;width:44px;object-fit:contain;flex-shrink:0}
+.brand-txt{display:flex;flex-direction:column;justify-content:center;min-width:0}
+.brand h1{font-size:17px;font-weight:800;letter-spacing:.01em;line-height:1.15}
+.brand p{font-size:12px;font-weight:600;color:var(--brand);margin-top:2px;line-height:1.15}
+.upd-wrap{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
+.upd{font-size:11px;color:var(--mute);font-weight:600;text-align:right;white-space:nowrap}
+.sync-pill{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:var(--brand);background:var(--brandsoft);padding:3px 8px;border-radius:99px}
+.sync-pill img{width:13px;height:13px;object-fit:contain;animation:bounce .8s infinite}
 .tools{display:flex;align-items:center;gap:6px}
 .ibtn{height:40px;min-width:40px;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 10px;border:1px solid var(--line);border-radius:12px;background:var(--soft);font-size:12px;font-weight:700;transition:transform .15s}
 .ibtn:active{transform:scale(.94)}.ibtn:disabled{opacity:.35;cursor:not-allowed}
-.ibtn svg{width:18px;height:18px;transition:transform .5s}
-.ibtn.spin svg{transform:rotate(360deg)}
-select{height:40px;border:1px solid var(--line);border-radius:12px;background:var(--brandsoft);padding:0 10px;font-size:13px;font-weight:800;outline:none;min-width:118px;cursor:pointer}
+.ibtn svg{width:18px;height:18px}
+.ibtn.spin svg{animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+select{height:40px;border:1px solid var(--line);border-radius:12px;background:var(--brandsoft);padding:0 10px;font-size:13px;font-weight:800;outline:none;min-width:118px;cursor:pointer;flex:1}
 select option{background:var(--card);color:var(--tx)}
-.upd{display:block;font-size:11px;color:var(--mute);font-weight:600;margin-top:2px}
 .bar2{display:flex;flex-direction:column;gap:8px;padding-bottom:12px}
 .chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 0}.chips::-webkit-scrollbar{display:none}
 .chip{flex-shrink:0;padding:7px 15px;border-radius:99px;border:1px solid var(--line);background:var(--card);font-size:12px;font-weight:700;color:var(--mute);transition:.15s}
@@ -51,9 +57,16 @@ select option{background:var(--card);color:var(--tx)}
 .search input:focus{border-color:var(--brand);background:var(--card)}
 .search .ic{position:absolute;left:12px;top:12px;width:18px;height:18px;color:var(--mute)}
 #x{position:absolute;right:6px;top:6px;width:30px;height:30px;color:var(--mute)}
-@media(min-width:768px){.bar2{flex-direction:row;justify-content:space-between;align-items:center}.search{width:320px}.brand h1{font-size:20px}}
+@media(min-width:768px){
+ .head{flex-direction:row;align-items:center;justify-content:space-between}
+ .brand-row{width:auto;flex:1;margin-right:6px}
+ select{flex:none}
+ .bar2{flex-direction:row;justify-content:space-between;align-items:center}
+ .search{width:320px}
+ .brand h1{font-size:20px}
+}
 
-/* Pantalla de carga con logo saltando */
+/* Pantalla de carga inicial con logo saltando */
 .loader{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:88px 16px;gap:14px}
 .l-box{position:relative;width:88px;height:88px;display:flex;align-items:center;justify-content:center;animation:bounce 1s infinite}
 .l-glow{position:absolute;inset:0;border-radius:50%;background:var(--brand);opacity:.2;filter:blur(16px)}
@@ -63,8 +76,8 @@ select option{background:var(--card);color:var(--tx)}
 @keyframes bounce{0%,100%{transform:translateY(-15%);animation-timing-function:cubic-bezier(.8,0,1,1)}50%{transform:translateY(0);animation-timing-function:cubic-bezier(0,0,.2,1)}}
 
 /* KPIs compactos */
-.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0 12px}
-@media(min-width:768px){.kpis{grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:0 0 12px}
+@media(min-width:768px){.kpis{grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 14px}}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:9px 11px;box-shadow:var(--shadow)}
 @media(min-width:768px){.kpi{padding:11px 14px;border-radius:14px}}
 .kpi span{display:block;font-size:10.5px;font-weight:600;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -75,7 +88,7 @@ select option{background:var(--card);color:var(--tx)}
 .kpi em.bad{color:var(--bad)}.kpi em.ok{color:var(--ok)}
 
 .grp{display:flex;align-items:baseline;gap:8px;margin:16px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--line)}
-.grp h2{font-size:13px;font-weight:800}.grp span{font-size:11.5px;font-weight:700;color:var(--mute)}
+.grp h2{font-size:13.5px;font-weight:800}.grp span{font-size:11.5px;font-weight:700;color:var(--mute)}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 @media(min-width:768px){.grid{grid-template-columns:repeat(3,1fr);gap:12px}}
 @media(min-width:1024px){.grid{grid-template-columns:repeat(4,1fr)}}
@@ -149,9 +162,15 @@ select option{background:var(--card);color:var(--tx)}
 <div class="top">
  <div class="wrap">
   <header class="head">
-   <div class="brand">
-    <img src="bautista.png" alt="Grupo Bautista" onerror="this.style.display='none'">
-    <div><h1>GRUPO BAUTISTA</h1><p>Control de Maquinaria</p><span class="upd n" id="upd-txt"></span></div>
+   <div class="brand-row">
+    <div class="brand">
+     <img src="bautista.png" alt="Grupo Bautista" onerror="this.style.display='none'">
+     <div class="brand-txt"><h1>GRUPO BAUTISTA</h1><p>Control de Maquinaria</p></div>
+    </div>
+    <div class="upd-wrap">
+     <span id="sync-badge" class="sync-pill hidden"><img src="bautista.png" alt="" onerror="this.style.display='none'"><span>Actualizando...</span></span>
+     <span class="upd n" id="upd-txt"></span>
+    </div>
    </div>
    <div class="tools">
     <button class="ibtn" id="f-ant" aria-label="Día anterior"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></button>
@@ -181,7 +200,12 @@ select option{background:var(--card);color:var(--tx)}
   <small>GRUPO BAUTISTA</small>
   <p>Espere unos segundos mientras carga el sistema...</p>
  </div>
- <section class="kpis hidden" id="kpis"></section>
+
+ <div id="sec-resumen" class="hidden">
+  <div class="grp" style="margin-top:14px"><h2>Resumen del Día</h2><span id="res-sub"></span></div>
+  <section class="kpis" id="kpis"></section>
+ </div>
+
  <div id="lista" class="hidden"></div>
 </main>
 
@@ -205,6 +229,7 @@ select option{background:var(--card);color:var(--tx)}
 
 <script>
 const URL_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vReJl2BT_9uiaFmB-U1-UlhHKE9lSmhK8jB2bF1Pu1MlM0B15O2H5WxM_ot85WtTIol4_bVhuudvcHU/pub?gid=1193959640&single=true&output=csv";
+const CACHE_KEY="gb_csv_v1";
 const $=id=>document.getElementById(id);
 const DIAS=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 let regs=[],fechas=[],filtro='TODOS',mUnidad='',mFecha='';
@@ -217,6 +242,27 @@ const dia=f=>DIAS[pf(f).getDay()];
 const corta=f=>f.split(/[\/\-]/).slice(0,2).join('/');
 const normU=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s\u00A0]+/g,' ').trim();
 
+/* ---------- Parser CSV nativo (sin dependencias externas) ---------- */
+function parseCSV(text){
+ const rows=[];let row=[],cur='',inQ=false;
+ for(let i=0;i<text.length;i++){
+  const c=text[i],n=text[i+1];
+  if(inQ){
+   if(c==='"'&&n==='"'){cur+='"';i++}
+   else if(c==='"')inQ=false;
+   else cur+=c;
+  }else{
+   if(c==='"')inQ=true;
+   else if(c===','){row.push(cur);cur=''}
+   else if(c==='\r'&&n==='\n'){row.push(cur);rows.push(row);row=[];cur='';i++}
+   else if(c==='\n'||c==='\r'){row.push(cur);rows.push(row);row=[];cur=''}
+   else cur+=c;
+  }
+ }
+ if(cur.length||row.length){row.push(cur);rows.push(row)}
+ return rows;
+}
+
 /* ---------- Tema ---------- */
 function aplicarTema(m){
  const o=matchMedia('(prefers-color-scheme: dark)').matches;
@@ -227,7 +273,7 @@ document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{localStorage.set
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if((localStorage.getItem('gb_tema')||'auto')==='auto')aplicarTema('auto')});
 aplicarTema(localStorage.getItem('gb_tema')||'auto');
 
-/* ---------- Modales con animación de salida ---------- */
+/* ---------- Modales ---------- */
 function abrir(id){const m=$(id);m.classList.remove('out','hidden')}
 function cerrar(id){const m=$(id);if(m.classList.contains('hidden'))return;m.classList.add('out');setTimeout(()=>{m.classList.add('hidden');m.classList.remove('out')},200)}
 $('modal-config').addEventListener('click',e=>{if(e.target===e.currentTarget)cerrar('modal-config')});
@@ -255,57 +301,115 @@ function icono(n){
  return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
 }
 
-/* ---------- Carga de datos con animación de logo saltando ---------- */
-function cargarDatos(esRefresco=false){
- const btnRef=$('btn-ref');
- const fechaPrevia=esRefresco?$('selector-fecha').value:'';
- if(btnRef){btnRef.classList.add('spin');btnRef.disabled=true;}
- $('loader').classList.remove('hidden');
- $('kpis').classList.add('hidden');
- $('lista').classList.add('hidden');
+/* ---------- Procesamiento rápido e indexado ---------- */
+function procesarCSV(csvText,fechaPrevia){
+ const rows=parseCSV(csvText);
+ if(!rows||!rows.length)return false;
+ const nuevos=[];
+ const set=new Set();let vigente='Sin Fecha',tsVigente=0;
+ const rxFecha=/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/;
 
- const urlSinCache=`${URL_CSV}&_=${Date.now()}`;
- Papa.parse(urlSinCache,{download:true,header:false,
-  complete(res){
-   const rows=res.data;
-   if(!rows||!rows.length)return;
-   regs=[];
-   const set=new Set();let vigente='Sin Fecha';
-   rows.forEach(row=>{
-    if(!row||!row.length)return;
-    for(let j=0;j<Math.min(row.length,6);j++){
-     const c=row[j]?row[j].trim():'';
-     if(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/.test(c)){vigente=c;set.add(c);break}
-    }
-    if(row.length<8)return;
-    const u=row[7]?row[7].replace(/[\s\u00A0]+/g,' ').trim():'';
-    if(!u||/^(UNIDAD|EQUIPO)$/i.test(u)||u.toUpperCase().includes('REPORTE'))return;
-    regs.push({fechaFiltro:vigente,lugar:row[0]?row[0].trim():'Sin ubicación',unidad:u,
-     operador:row[6]?row[6].trim():'No asignado',hInicial:row[8]?row[8].trim():'-',hFinal:row[9]?row[9].trim():'-',
-     totalHoras:row[10]?row[10].trim():'0',estadoMtto:row[11]?row[11].trim():'Sin registro',combustible:row[12]?row[12].trim():'0 Gal'});
-   });
-   fechas=[...set];
-   const sel=$('selector-fecha');
-   sel.innerHTML=fechas.length?fechas.map(f=>`<option value="${f}">${dia(f)} ${f}</option>`).join(''):'<option value="">No hay fechas</option>';
-   if(fechas.length){
-    sel.value=(fechaPrevia&&fechas.includes(fechaPrevia))?fechaPrevia:fechas[fechas.length-1];
+ for(let i=0;i<rows.length;i++){
+  const row=rows[i];
+  if(!row||!row.length)continue;
+  for(let j=0;j<Math.min(row.length,6);j++){
+   const c=row[j]?row[j].trim():'';
+   if(rxFecha.test(c)){
+    vigente=c;
+    tsVigente=pf(c).getTime();
+    set.add(c);
+    break;
    }
+  }
+  if(row.length<8)continue;
+  const u=row[7]?row[7].replace(/[\s\u00A0]+/g,' ').trim():'';
+  if(!u||/^(UNIDAD|EQUIPO)$/i.test(u)||u.toUpperCase().includes('REPORTE'))continue;
+  const lugar=row[0]?row[0].trim():'Sin ubicación';
+  const totalHoras=row[10]?row[10].trim():'0';
+  const combustible=row[12]?row[12].trim():'0 Gal';
+  nuevos.push({
+   fechaFiltro:vigente,
+   ts:tsVigente,
+   lugar:lugar,
+   lugarUp:lugar.toUpperCase(),
+   unidad:u,
+   uNorm:normU(u),
+   operador:row[6]?row[6].trim():'No asignado',
+   hInicial:row[8]?row[8].trim():'-',
+   hFinal:row[9]?row[9].trim():'-',
+   totalHoras:totalHoras,
+   hrsNum:num(totalHoras),
+   estadoMtto:row[11]?row[11].trim():'Sin registro',
+   combustible:combustible,
+   combNum:num(combustible)
+  });
+ }
+
+ regs=nuevos;
+ fechas=[...set];
+ const sel=$('selector-fecha');
+ sel.innerHTML=fechas.length?fechas.map(f=>`<option value="${f}">${dia(f)} ${f}</option>`).join(''):'<option value="">No hay fechas</option>';
+ if(fechas.length){
+  sel.value=(fechaPrevia&&fechas.includes(fechaPrevia))?fechaPrevia:fechas[fechas.length-1];
+ }
+ $('loader').classList.add('hidden');
+ $('sec-resumen').classList.remove('hidden');
+ $('lista').classList.remove('hidden');
+ vista();
+ return true;
+}
+
+/* ---------- Carga de datos optimizada (Caché instantánea + Fetch sin bloqueo) ---------- */
+async function cargarDatos(esRefresco=false){
+ const btnRef=$('btn-ref');
+ const syncBadge=$('sync-badge');
+ const fechaPrevia=esRefresco?$('selector-fecha').value:'';
+
+ if(btnRef){btnRef.classList.add('spin');btnRef.disabled=true}
+
+ // Si hay datos en pantalla o en caché, mostramos inmediato y actualizamos en segundo plano
+ let tieneVista=regs.length>0;
+ if(!tieneVista){
+  try{
+   const cached=localStorage.getItem(CACHE_KEY);
+   if(cached){
+    const obj=JSON.parse(cached);
+    if(obj&&obj.csv&&procesarCSV(obj.csv,fechaPrevia)){
+     tieneVista=true;
+     if(obj.hora)$('upd-txt').textContent=`Actualizado ${obj.hora}`;
+    }
+   }
+  }catch(_){}
+ }
+
+ if(tieneVista){
+  syncBadge.classList.remove('hidden');
+ }else{
+  $('loader').classList.remove('hidden');
+ }
+
+ try{
+  const res=await fetch(URL_CSV,{cache:'reload'});
+  if(!res.ok)throw new Error('HTTP '+res.status);
+  const csvText=await res.text();
+  const fActual=$('selector-fecha').value||fechaPrevia;
+  if(procesarCSV(csvText,fActual)){
    const h=new Date();
-   $('upd-txt').textContent=`Actualizado ${String(h.getHours()).padStart(2,'0')}:${String(h.getMinutes()).padStart(2,'0')}`;
-   $('loader').classList.add('hidden');
-   $('kpis').classList.remove('hidden');
-   $('lista').classList.remove('hidden');
-   if(btnRef){btnRef.classList.remove('spin');btnRef.disabled=false;}
-   vista();
-  },
-  error(){
+   const horaStr=`${String(h.getHours()).padStart(2,'0')}:${String(h.getMinutes()).padStart(2,'0')}`;
+   $('upd-txt').textContent=`Actualizado ${horaStr}`;
+   try{localStorage.setItem(CACHE_KEY,JSON.stringify({csv:csvText,hora:horaStr}))}catch(_){}
+  }
+ }catch(_){
+  if(!tieneVista){
    $('loader').classList.add('hidden');
    $('lista').classList.remove('hidden');
-   if(btnRef){btnRef.classList.remove('spin');btnRef.disabled=false;}
-   $('kpis').innerHTML='';
+   $('sec-resumen').classList.add('hidden');
    $('lista').innerHTML='<div class="grid"><div class="empty"><b>No se pudieron leer los datos</b><p>Revisa tu conexión y toca «Refrescar datos».</p></div></div>';
   }
- });
+ }finally{
+  syncBadge.classList.add('hidden');
+  if(btnRef){btnRef.classList.remove('spin');btnRef.disabled=false}
+ }
 }
 cargarDatos(false);
 
@@ -327,21 +431,22 @@ function vista(){
  nav();
  const fecha=$('selector-fecha').value,q=$('buscador').value.toLowerCase();
  const delDia=regs.filter(r=>r.fechaFiltro===fecha);
- const lugares=[...new Set(delDia.map(r=>r.lugar.trim().toUpperCase()).filter(l=>l&&!/^SIN UBICACI/.test(l)))]
+ const lugares=[...new Set(delDia.map(r=>r.lugarUp).filter(l=>l&&!/^SIN UBICACI/.test(l)))]
   .sort((a,b)=>prio(a)-prio(b)||a.localeCompare(b,'es'));
  if(filtro!=='TODOS'&&!lugares.includes(filtro))filtro='TODOS';
  $('chips').innerHTML=['TODOS',...lugares].map(o=>`<button class="chip ${o===filtro?'on':''}" data-f="${esc(o)}">${esc(o)}</button>`).join('');
 
- const base=filtro==='TODOS'?delDia:delDia.filter(r=>r.lugar.trim().toUpperCase()===filtro);
+ const base=filtro==='TODOS'?delDia:delDia.filter(r=>r.lugarUp===filtro);
+ $('res-sub').textContent=fecha?`${dia(fecha)} ${fecha}${filtro!=='TODOS'?' · '+filtro:''}`:'';
  kpis(base);
- const lista=base.filter(r=>r.unidad.toLowerCase().includes(q));
+ const lista=q?base.filter(r=>r.unidad.toLowerCase().includes(q)):base;
  if(!lista.length){
   $('lista').innerHTML='<div class="grid"><div class="empty"><svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><b>No hay máquinas para esta búsqueda</b><p>Prueba con otro nombre, otra ubicación u otra fecha.</p></div></div>';
   return;
  }
- const maxH=Math.max(...lista.map(r=>num(r.totalHoras)),1);
+ const maxH=Math.max(...lista.map(r=>r.hrsNum),1);
  if(filtro==='TODOS'){
-  const g={};lista.forEach(r=>{(g[r.lugar.trim().toUpperCase()]=g[r.lugar.trim().toUpperCase()]||[]).push(r)});
+  const g={};lista.forEach(r=>{(g[r.lugarUp]=g[r.lugarUp]||[]).push(r)});
   $('lista').innerHTML=Object.keys(g).sort((a,b)=>prio(a)-prio(b)||a.localeCompare(b,'es')).map(k=>
    `<div class="grp"><h2>${esc(k)}</h2><span>${g[k].length} ${g[k].length===1?'equipo':'equipos'}</span></div><div class="grid">${g[k].map(r=>tarjeta(r,maxH,false)).join('')}</div>`).join('');
  }else{
@@ -350,9 +455,9 @@ function vista(){
 }
 
 function kpis(base){
- const conData=base.filter(r=>num(r.totalHoras)>0);
- const horas=conData.reduce((a,r)=>a+num(r.totalHoras),0);
- const comb=base.reduce((a,r)=>a+num(r.combustible),0);
+ const conData=base.filter(r=>r.hrsNum>0);
+ const horas=conData.reduce((a,r)=>a+r.hrsNum,0);
+ const comb=base.reduce((a,r)=>a+r.combNum,0);
  const sin=base.length-conData.length;
  $('kpis').innerHTML=`
   <div class="kpi"><span>Equipos operativos</span><b class="n">${conData.length} <small>/ ${base.length}</small></b><em class="${sin?'bad':'ok'}">${sin?sin+' sin data hoy':'Todos con data'}</em></div>
@@ -362,7 +467,7 @@ function kpis(base){
 }
 
 function tarjeta(r,maxH,ocultaLugar){
- const h=num(r.totalHoras),sin=h===0,e=estado(r.estadoMtto);
+ const h=r.hrsNum,sin=h===0,e=estado(r.estadoMtto);
  return`<button class="card ${sin?'nodata':''}" onclick="abrirDetalle(${regs.indexOf(r)})">
   <div class="ct"><div class="eq">${icono(r.unidad)}</div><span class="dot ${sin?'bad':e.c}" title="${esc(e.l)}"></span></div>
   <div><div class="cn">${esc(r.unidad)}</div>${ocultaLugar?'':`<div class="cl">${esc(r.lugar)}</div>`}</div>
@@ -377,13 +482,13 @@ function abrirDetalle(i){
  renderFicha();abrir('modal-detalle');$('m-cuerpo').scrollTop=0;
 }
 function renderFicha(){
- const u=mUnidad;
- const reg=regs.filter(r=>normU(r.unidad)===normU(u)).sort((a,b)=>pf(a.fechaFiltro)-pf(b.fechaFiltro));
+ const uNorm=normU(mUnidad);
+ const reg=regs.filter(r=>r.uNorm===uNorm).sort((a,b)=>a.ts-b.ts);
  const m=reg.find(r=>r.fechaFiltro===mFecha)||reg[reg.length-1];
  $('m-titulo').textContent=m.unidad;
  const fl=reg.map(r=>r.fechaFiltro),ix=fl.indexOf(mFecha);
  const ult=reg.slice(Math.max(0,ix-6),ix+1);
- const v=ult.map(r=>num(r.totalHoras)),max=Math.max(...v,1),avg=v.reduce((a,b)=>a+b,0)/v.length;
+ const v=ult.map(r=>r.hrsNum),max=Math.max(...v,1),avg=v.reduce((a,b)=>a+b,0)/v.length;
  const hist=reg.slice().reverse();
  $('m-cuerpo').innerHTML=`
   <div class="nav">
@@ -411,7 +516,7 @@ function renderFicha(){
     <div class="avg" style="bottom:calc(${avg/max*100}% * .9 + 2px)"></div>
    </div>
    <div class="lbl n">${ult.map(r=>`<div class="${r.fechaFiltro===mFecha?'on':''}">${dia(r.fechaFiltro)}<br>${corta(r.fechaFiltro)}</div>`).join('')}</div>
-   <div id="gdet" class="n">${dia(mFecha)} ${corta(mFecha)} · ${fmt(num(m.totalHoras))} hrs</div>
+   <div id="gdet" class="n">${dia(mFecha)} ${corta(mFecha)} · ${fmt(m.hrsNum)} hrs</div>
   </div>
   <div>
    <div class="sec"><span>Registros completos de la unidad</span><span class="pill n">${hist.length} ${hist.length===1?'registro':'registros'}</span></div>
@@ -428,7 +533,7 @@ function renderFicha(){
  s.onclick=()=>{mFecha=fl[ix+1];renderFicha()};
  document.querySelectorAll('.plot button').forEach(b=>b.onclick=()=>{
   const r=ult[b.dataset.k];
-  $('gdet').textContent=`${dia(r.fechaFiltro)} ${corta(r.fechaFiltro)} · ${fmt(num(r.totalHoras))} hrs`;
+  $('gdet').textContent=`${dia(r.fechaFiltro)} ${corta(r.fechaFiltro)} · ${fmt(r.hrsNum)} hrs`;
   document.querySelectorAll('.plot button').forEach(x=>x.classList.remove('act'));b.classList.add('act');
  });
 }
