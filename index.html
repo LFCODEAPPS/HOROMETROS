@@ -19,46 +19,64 @@
 if(t==='dark'||(t==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');})();
 </script>
 <style>
-:root{--bg:#F4F3F0;--card:#fff;--soft:#F0EEE9;--line:#E2DFD8;--tx:#1C1917;--mute:#5F5850;--brand:#B45309;--brandsoft:#FEF3C7;--ok:#15803D;--warn:#B45309;--bad:#B91C1C;--bar:#B45309;--shadow:0 1px 2px rgba(28,25,23,.06)}
-html.dark{--bg:#060E1F;--card:#0D1C38;--soft:#091428;--line:#1E3A6B;--tx:#F1F5F9;--mute:#A3B2C8;--brand:#FBBF24;--brandsoft:rgba(251,191,36,.12);--ok:#4ADE80;--warn:#FBBF24;--bad:#F87171;--bar:#38BDF8;--shadow:none}
+:root{
+  --bg:#F4F3F0;--card:#fff;--soft:#F0EEE9;--line:#E2DFD8;--tx:#1C1917;--mute:#5F5850;
+  --brand:#B45309;--brandsoft:#FEF3C7;--ok:#15803D;--warn:#B45309;--bad:#B91C1C;--bar:#B45309;
+  --shadow:0 1px 2px rgba(28,25,23,.06);
+  --head-bg:#1C1917;--head-tx:#FAFAF9;--head-sub:#FBBF24;--head-mute:#A8A29E;
+  --head-btn:rgba(255,255,255,.08);--head-line:rgba(255,255,255,.14);--head-border:#B45309;
+}
+html.dark{
+  --bg:#060E1F;--card:#0D1C38;--soft:#091428;--line:#1E3A6B;--tx:#F1F5F9;--mute:#A3B2C8;
+  --brand:#FBBF24;--brandsoft:rgba(251,191,36,.12);--ok:#4ADE80;--warn:#FBBF24;--bad:#F87171;--bar:#38BDF8;
+  --shadow:none;
+  --head-bg:#091428;--head-tx:#F8FAFC;--head-sub:#FBBF24;--head-mute:#94A3B8;
+  --head-btn:rgba(255,255,255,.07);--head-line:#1E3A6B;--head-border:#FBBF24;
+}
 *{box-sizing:border-box;margin:0}
 body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;padding-bottom:48px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:background .3s}
 button,select,input{font:inherit;color:inherit}button{cursor:pointer;background:none;border:0}
 .n{font-variant-numeric:tabular-nums}
 .hidden{display:none!important}
 .wrap{max-width:1152px;margin:0 auto;padding:0 16px}
-.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--card) 94%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-.top::before{content:"";display:block;height:3px;background:linear-gradient(90deg,var(--tx),var(--brand),var(--tx))}
+
+/* Cabecera contrastante estilo referencia */
+.top{position:sticky;top:0;z-index:30;background:var(--head-bg);color:var(--head-tx);border-bottom:3px solid var(--head-border);box-shadow:0 4px 14px rgba(0,0,0,.16)}
 .head{display:flex;flex-direction:column;gap:10px;padding-top:12px;padding-bottom:8px}
 .brand-row{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%}
 .brand{display:flex;align-items:center;gap:12px;min-width:0}
-.brand img{height:44px;width:44px;object-fit:contain;flex-shrink:0}
+.brand img{height:44px;width:44px;object-fit:contain;flex-shrink:0;border-radius:11px;background:#fff;padding:2px}
 .brand-txt{display:flex;flex-direction:column;justify-content:center;min-width:0}
-.brand h1{font-size:17px;font-weight:800;letter-spacing:.01em;line-height:1.15}
-.brand p{font-size:12px;font-weight:600;color:var(--brand);margin-top:2px;line-height:1.15}
+.brand h1{font-size:17px;font-weight:800;letter-spacing:.01em;line-height:1.15;color:var(--head-tx)}
+.brand p{font-size:12px;font-weight:600;color:var(--head-sub);margin-top:2px;line-height:1.15}
 .upd-wrap{display:flex;align-items:center;margin-left:auto;flex-shrink:0}
-.upd{font-size:11px;color:var(--mute);font-weight:600;text-align:right;white-space:nowrap}
+.upd{font-size:11px;color:var(--head-mute);font-weight:600;text-align:right;white-space:nowrap}
 .tools{display:flex;align-items:center;gap:6px}
 .ibtn{height:40px;min-width:40px;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 10px;border:1px solid var(--line);border-radius:12px;background:var(--soft);font-size:12px;font-weight:700;transition:transform .15s}
 .ibtn:active{transform:scale(.94)}.ibtn:disabled{opacity:.35;cursor:not-allowed}
 .ibtn svg{width:18px;height:18px}
 .ibtn.spin svg{animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-select{height:40px;border:1px solid var(--line);border-radius:12px;background:var(--brandsoft);padding:0 10px;font-size:13px;font-weight:800;outline:none;min-width:118px;cursor:pointer;flex:1}
-select option{background:var(--card);color:var(--tx)}
+
+/* Controles dentro de la cabecera oscura */
+.top .ibtn{background:var(--head-btn);border-color:var(--head-line);color:var(--head-tx)}
+.top select{height:40px;border:1px solid var(--head-line);border-radius:12px;background:var(--head-btn);color:var(--head-tx);padding:0 10px;font-size:13px;font-weight:800;outline:none;min-width:118px;cursor:pointer;flex:1}
+.top select option{background:var(--card);color:var(--tx)}
 .bar2{display:flex;flex-direction:column;gap:8px;padding-bottom:12px}
 .chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 0}.chips::-webkit-scrollbar{display:none}
-.chip{flex-shrink:0;padding:7px 15px;border-radius:99px;border:1px solid var(--line);background:var(--card);font-size:12px;font-weight:700;color:var(--mute);transition:.15s}
-.chip.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+.chip{flex-shrink:0;padding:7px 15px;border-radius:99px;border:1px solid var(--head-line);background:var(--head-btn);font-size:12px;font-weight:700;color:var(--head-mute);transition:.15s}
+.chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+html.dark .chip.on{color:#060E1F}
 .search{position:relative}
-.search input{width:100%;height:42px;border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:0 38px;font-size:14px;outline:none}
-.search input:focus{border-color:var(--brand);background:var(--card)}
-.search .ic{position:absolute;left:12px;top:12px;width:18px;height:18px;color:var(--mute)}
-#x{position:absolute;right:6px;top:6px;width:30px;height:30px;color:var(--mute)}
+.search input{width:100%;height:42px;border:1px solid var(--head-line);border-radius:12px;background:var(--head-btn);color:var(--head-tx);padding:0 38px;font-size:14px;outline:none}
+.search input::placeholder{color:var(--head-mute)}
+.search input:focus{border-color:var(--head-sub);background:rgba(255,255,255,.12)}
+.search .ic{position:absolute;left:12px;top:12px;width:18px;height:18px;color:var(--head-mute)}
+#x{position:absolute;right:6px;top:6px;width:30px;height:30px;color:var(--head-mute)}
 @media(min-width:768px){
  .head{flex-direction:row;align-items:center;justify-content:space-between}
  .brand-row{width:auto;flex:1;margin-right:6px}
- select{flex:none}
+ .top select{flex:none}
  .bar2{flex-direction:row;justify-content:space-between;align-items:center}
  .search{width:320px}
  .brand h1{font-size:20px}
@@ -152,6 +170,8 @@ select option{background:var(--card);color:var(--tx)}
 .theme{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:6px}
 .theme button{padding:10px 4px;border-radius:12px;font-size:12px;font-weight:700;color:var(--mute)}
 .theme button.on{background:var(--tx);color:var(--bg)}
+.mail-link{color:var(--brand);font-weight:800;text-decoration:none}
+.mail-link:hover{text-decoration:underline}
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -212,7 +232,12 @@ select option{background:var(--card);color:var(--tx)}
   <div class="sb">
    <div><div class="sec"><span>Apariencia</span></div>
     <div class="theme"><button data-t="light">Claro</button><button data-t="dark">Oscuro</button><button data-t="auto">Automático</button></div></div>
-   <div class="box"><div class="sec"><span>Info de App</span></div><p style="font-size:13px;font-weight:600;color:var(--mute)">Aplicación desarrollada por Fernando Carranza para el Grupo Bautista.</p></div>
+   <div class="box">
+    <div class="sec"><span>Info de App</span></div>
+    <div class="row"><span>Sistema</span><b>Control de Maquinaria</b></div>
+    <div class="row"><span>Desarrollado por</span><b>Fernando Carranza</b></div>
+    <div class="row"><span>Soporte técnico</span><a class="mail-link" href="mailto:Ferdoctus@iCloud.com">Ferdoctus@iCloud.com</a></div>
+   </div>
   </div>
  </div>
 </div>
@@ -489,7 +514,7 @@ function kpis(base){
  $('kpis').innerHTML=`
   <div class="kpi"><span>Equipos operativos</span><b class="n">${conData.length} <small>/ ${base.length}</small></b><em class="${sin?'bad':'ok'}">${sin?sin+' sin data hoy':'Todos con data'}</em></div>
   <div class="kpi"><span>Horas totales del día</span><b class="n">${fmt(horas)} <small>hrs</small></b><em>Suma de todos los equipos</em></div>
-  <div class="kpi"><span>Combustible Abastecido</span><b class="n">${fmt(comb)} <small>Gal</small></b><em>Consumo del día</em></div>
+  <div class="kpi"><span>Combustible Abastecido</span><b class="n">${fmt(comb)} <small>Gal</small></b></div>
   <div class="kpi"><span>Promedio por equipo</span><b class="n">${conData.length?fmt(horas/conData.length):'0'} <small>hrs</small></b><em>Equipos con data</em></div>`;
 }
 
