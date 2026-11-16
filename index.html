@@ -36,10 +36,8 @@ button,select,input{font:inherit;color:inherit}button{cursor:pointer;background:
 .brand-txt{display:flex;flex-direction:column;justify-content:center;min-width:0}
 .brand h1{font-size:17px;font-weight:800;letter-spacing:.01em;line-height:1.15}
 .brand p{font-size:12px;font-weight:600;color:var(--brand);margin-top:2px;line-height:1.15}
-.upd-wrap{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
+.upd-wrap{display:flex;align-items:center;margin-left:auto;flex-shrink:0}
 .upd{font-size:11px;color:var(--mute);font-weight:600;text-align:right;white-space:nowrap}
-.sync-pill{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:var(--brand);background:var(--brandsoft);padding:3px 8px;border-radius:99px}
-.sync-pill img{width:13px;height:13px;object-fit:contain;animation:bounce .8s infinite}
 .tools{display:flex;align-items:center;gap:6px}
 .ibtn{height:40px;min-width:40px;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 10px;border:1px solid var(--line);border-radius:12px;background:var(--soft);font-size:12px;font-weight:700;transition:transform .15s}
 .ibtn:active{transform:scale(.94)}.ibtn:disabled{opacity:.35;cursor:not-allowed}
@@ -66,14 +64,14 @@ select option{background:var(--card);color:var(--tx)}
  .brand h1{font-size:20px}
 }
 
-/* Pantalla de carga inicial con logo saltando */
-.loader{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:88px 16px;gap:14px}
-.l-box{position:relative;width:88px;height:88px;display:flex;align-items:center;justify-content:center;animation:bounce 1s infinite}
-.l-glow{position:absolute;inset:0;border-radius:50%;background:var(--brand);opacity:.2;filter:blur(16px)}
-.l-box img{position:relative;max-width:100%;max-height:100%;object-fit:contain}
-.loader small{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--brand)}
-.loader p{font-size:13px;font-weight:600;color:var(--mute)}
-@keyframes bounce{0%,100%{transform:translateY(-15%);animation-timing-function:cubic-bezier(.8,0,1,1)}50%{transform:translateY(0);animation-timing-function:cubic-bezier(0,0,.2,1)}}
+/* Pantalla grande de carga con logo saltando */
+.loader{min-height:62vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:48px 16px;gap:18px}
+.l-box{position:relative;width:108px;height:108px;display:flex;align-items:center;justify-content:center;animation:bounce .95s infinite}
+.l-glow{position:absolute;inset:-6px;border-radius:50%;background:var(--brand);opacity:.22;filter:blur(18px)}
+.l-box img{position:relative;width:100%;height:100%;object-fit:contain}
+.loader small{font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--brand)}
+.loader p{font-size:14px;font-weight:600;color:var(--mute)}
+@keyframes bounce{0%,100%{transform:translateY(-18%);animation-timing-function:cubic-bezier(.8,0,1,1)}50%{transform:translateY(0);animation-timing-function:cubic-bezier(0,0,.2,1)}}
 
 /* KPIs compactos */
 .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:0 0 12px}
@@ -168,7 +166,6 @@ select option{background:var(--card);color:var(--tx)}
      <div class="brand-txt"><h1>GRUPO BAUTISTA</h1><p>Control de Maquinaria</p></div>
     </div>
     <div class="upd-wrap">
-     <span id="sync-badge" class="sync-pill hidden"><img src="bautista.png" alt="" onerror="this.style.display='none'"><span>Actualizando...</span></span>
      <span class="upd n" id="upd-txt"></span>
     </div>
    </div>
@@ -242,7 +239,7 @@ const dia=f=>DIAS[pf(f).getDay()];
 const corta=f=>f.split(/[\/\-]/).slice(0,2).join('/');
 const normU=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s\u00A0]+/g,' ').trim();
 
-/* ---------- Parser CSV nativo (sin dependencias externas) ---------- */
+/* ---------- Parser CSV nativo ---------- */
 function parseCSV(text){
  const rows=[];let row=[],cur='',inQ=false;
  for(let i=0;i<text.length;i++){
@@ -359,55 +356,55 @@ function procesarCSV(csvText,fechaPrevia){
  return true;
 }
 
-/* ---------- Carga de datos optimizada (Caché instantánea + Fetch sin bloqueo) ---------- */
+/* ---------- Carga de datos con pantalla grande del logo saltando ---------- */
 async function cargarDatos(esRefresco=false){
  const btnRef=$('btn-ref');
- const syncBadge=$('sync-badge');
  const fechaPrevia=esRefresco?$('selector-fecha').value:'';
 
  if(btnRef){btnRef.classList.add('spin');btnRef.disabled=true}
 
- // Si hay datos en pantalla o en caché, mostramos inmediato y actualizamos en segundo plano
- let tieneVista=regs.length>0;
- if(!tieneVista){
-  try{
-   const cached=localStorage.getItem(CACHE_KEY);
-   if(cached){
-    const obj=JSON.parse(cached);
-    if(obj&&obj.csv&&procesarCSV(obj.csv,fechaPrevia)){
-     tieneVista=true;
-     if(obj.hora)$('upd-txt').textContent=`Actualizado ${obj.hora}`;
-    }
-   }
-  }catch(_){}
- }
+ // Mostrar pantalla grande del logo saltando al cargar o refrescar
+ $('loader').classList.remove('hidden');
+ $('sec-resumen').classList.add('hidden');
+ $('lista').classList.add('hidden');
 
- if(tieneVista){
-  syncBadge.classList.remove('hidden');
- }else{
-  $('loader').classList.remove('hidden');
- }
-
+ const inicio=Date.now();
  try{
   const res=await fetch(URL_CSV,{cache:'reload'});
   if(!res.ok)throw new Error('HTTP '+res.status);
   const csvText=await res.text();
-  const fActual=$('selector-fecha').value||fechaPrevia;
-  if(procesarCSV(csvText,fActual)){
+
+  // Breve tiempo mínimo para apreciar la animación sin parpadeos bruscos
+  const transcurrido=Date.now()-inicio;
+  if(transcurrido<450)await new Promise(r=>setTimeout(r,450-transcurrido));
+
+  if(procesarCSV(csvText,fechaPrevia)){
    const h=new Date();
    const horaStr=`${String(h.getHours()).padStart(2,'0')}:${String(h.getMinutes()).padStart(2,'0')}`;
    $('upd-txt').textContent=`Actualizado ${horaStr}`;
    try{localStorage.setItem(CACHE_KEY,JSON.stringify({csv:csvText,hora:horaStr}))}catch(_){}
   }
  }catch(_){
-  if(!tieneVista){
+  // Si falla la red, intenta recuperar desde caché local
+  let recuperado=false;
+  try{
+   const cached=localStorage.getItem(CACHE_KEY);
+   if(cached){
+    const obj=JSON.parse(cached);
+    if(obj&&obj.csv&&procesarCSV(obj.csv,fechaPrevia)){
+     recuperado=true;
+     if(obj.hora)$('upd-txt').textContent=`Actualizado ${obj.hora}`;
+    }
+   }
+  }catch(__){}
+
+  if(!recuperado){
    $('loader').classList.add('hidden');
    $('lista').classList.remove('hidden');
    $('sec-resumen').classList.add('hidden');
    $('lista').innerHTML='<div class="grid"><div class="empty"><b>No se pudieron leer los datos</b><p>Revisa tu conexión y toca «Refrescar datos».</p></div></div>';
   }
  }finally{
-  syncBadge.classList.add('hidden');
   if(btnRef){btnRef.classList.remove('spin');btnRef.disabled=false}
  }
 }
