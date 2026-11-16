@@ -25,6 +25,7 @@ html.dark{--bg:#060E1F;--card:#0D1C38;--soft:#091428;--line:#1E3A6B;--tx:#F1F5F9
 body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;padding-bottom:48px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:background .3s}
 button,select,input{font:inherit;color:inherit}button{cursor:pointer;background:none;border:0}
 .n{font-variant-numeric:tabular-nums}
+.hidden{display:none!important}
 .wrap{max-width:1152px;margin:0 auto;padding:0 16px}
 .top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--card) 94%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .top::before{content:"";display:block;height:3px;background:linear-gradient(90deg,var(--tx),var(--brand),var(--tx))}
@@ -36,10 +37,11 @@ button,select,input{font:inherit;color:inherit}button{cursor:pointer;background:
 .tools{display:flex;align-items:center;gap:6px}
 .ibtn{height:40px;min-width:40px;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 10px;border:1px solid var(--line);border-radius:12px;background:var(--soft);font-size:12px;font-weight:700;transition:transform .15s}
 .ibtn:active{transform:scale(.94)}.ibtn:disabled{opacity:.35;cursor:not-allowed}
-.ibtn svg{width:18px;height:18px}
+.ibtn svg{width:18px;height:18px;transition:transform .5s}
+.ibtn.spin svg{transform:rotate(360deg)}
 select{height:40px;border:1px solid var(--line);border-radius:12px;background:var(--brandsoft);padding:0 10px;font-size:13px;font-weight:800;outline:none;min-width:118px;cursor:pointer}
 select option{background:var(--card);color:var(--tx)}
-.upd{font-size:11px;color:var(--mute);font-weight:600;padding:0 4px}
+.upd{display:block;font-size:11px;color:var(--mute);font-weight:600;margin-top:2px}
 .bar2{display:flex;flex-direction:column;gap:8px;padding-bottom:12px}
 .chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 0}.chips::-webkit-scrollbar{display:none}
 .chip{flex-shrink:0;padding:7px 15px;border-radius:99px;border:1px solid var(--line);background:var(--card);font-size:12px;font-weight:700;color:var(--mute);transition:.15s}
@@ -50,16 +52,30 @@ select option{background:var(--card);color:var(--tx)}
 .search .ic{position:absolute;left:12px;top:12px;width:18px;height:18px;color:var(--mute)}
 #x{position:absolute;right:6px;top:6px;width:30px;height:30px;color:var(--mute)}
 @media(min-width:768px){.bar2{flex-direction:row;justify-content:space-between;align-items:center}.search{width:320px}.brand h1{font-size:20px}}
-.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
-@media(min-width:768px){.kpis{grid-template-columns:repeat(4,1fr)}}
-.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow)}
-.kpi span{display:block;font-size:12px;font-weight:600;color:var(--mute)}
-.kpi b{display:block;font-size:26px;font-weight:800;line-height:1.15;margin-top:4px;letter-spacing:-.02em}
-.kpi b small{font-size:14px;font-weight:700;color:var(--mute)}
-.kpi em{font-style:normal;font-size:12px;font-weight:700;color:var(--mute)}
+
+/* Pantalla de carga con logo saltando */
+.loader{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:88px 16px;gap:14px}
+.l-box{position:relative;width:88px;height:88px;display:flex;align-items:center;justify-content:center;animation:bounce 1s infinite}
+.l-glow{position:absolute;inset:0;border-radius:50%;background:var(--brand);opacity:.2;filter:blur(16px)}
+.l-box img{position:relative;max-width:100%;max-height:100%;object-fit:contain}
+.loader small{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--brand)}
+.loader p{font-size:13px;font-weight:600;color:var(--mute)}
+@keyframes bounce{0%,100%{transform:translateY(-15%);animation-timing-function:cubic-bezier(.8,0,1,1)}50%{transform:translateY(0);animation-timing-function:cubic-bezier(0,0,.2,1)}}
+
+/* KPIs compactos */
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0 12px}
+@media(min-width:768px){.kpis{grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:9px 11px;box-shadow:var(--shadow)}
+@media(min-width:768px){.kpi{padding:11px 14px;border-radius:14px}}
+.kpi span{display:block;font-size:10.5px;font-weight:600;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi b{display:block;font-size:19px;font-weight:800;line-height:1.15;margin-top:2px;letter-spacing:-.02em}
+@media(min-width:768px){.kpi b{font-size:22px}}
+.kpi b small{font-size:12px;font-weight:700;color:var(--mute)}
+.kpi em{display:block;font-style:normal;font-size:10.5px;font-weight:700;color:var(--mute);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kpi em.bad{color:var(--bad)}.kpi em.ok{color:var(--ok)}
-.grp{display:flex;align-items:baseline;gap:8px;margin:22px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
-.grp h2{font-size:14px;font-weight:800}.grp span{font-size:12px;font-weight:700;color:var(--mute)}
+
+.grp{display:flex;align-items:baseline;gap:8px;margin:16px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+.grp h2{font-size:13px;font-weight:800}.grp span{font-size:11.5px;font-weight:700;color:var(--mute)}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 @media(min-width:768px){.grid{grid-template-columns:repeat(3,1fr);gap:12px}}
 @media(min-width:1024px){.grid{grid-template-columns:repeat(4,1fr)}}
@@ -77,8 +93,6 @@ select option{background:var(--card);color:var(--tx)}
 .ch b{font-size:20px;font-weight:800;letter-spacing:-.02em}.ch small{font-size:11px;font-weight:700;color:var(--mute)}
 .ch b.bad{color:var(--bad);font-size:13px}
 .prog{height:5px;border-radius:9px;background:var(--soft);overflow:hidden}.prog i{display:block;height:100%;background:var(--bar);border-radius:9px;transition:width .5s}
-.sk{border-radius:16px;min-height:128px;background:linear-gradient(90deg,var(--soft),var(--line),var(--soft));background-size:200% 100%;animation:sh 1.4s infinite}
-@keyframes sh{to{background-position:-200% 0}}
 .empty{grid-column:1/-1;text-align:center;padding:56px 16px;background:var(--card);border:1px dashed var(--line);border-radius:16px;color:var(--mute)}
 .empty svg{width:40px;height:40px;margin:0 auto 10px;display:block;opacity:.6}
 .empty b{display:block;color:var(--tx);font-size:15px;margin-bottom:4px}.empty p{font-size:13px}
@@ -88,7 +102,7 @@ select option{background:var(--card);color:var(--tx)}
 .pill.bad{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
 .ov{position:fixed;inset:0;z-index:50;background:rgba(2,6,17,.6);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;transition:opacity .2s}
 @media(min-width:640px){.ov{align-items:center;padding:16px}}
-.ov.hidden{display:none}.ov.out{opacity:0}
+.ov.out{opacity:0}
 .sheet{background:var(--card);border:1px solid var(--line);border-radius:24px 24px 0 0;width:100%;max-width:520px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;animation:up .28s cubic-bezier(.16,1,.3,1)}
 @media(min-width:640px){.sheet{border-radius:24px}}
 .ov.out .sheet{animation:down .2s forwards}
@@ -137,13 +151,13 @@ select option{background:var(--card);color:var(--tx)}
   <header class="head">
    <div class="brand">
     <img src="bautista.png" alt="Grupo Bautista" onerror="this.style.display='none'">
-    <div><h1>GRUPO BAUTISTA</h1><p>Control de Maquinaria</p></div>
+    <div><h1>GRUPO BAUTISTA</h1><p>Control de Maquinaria</p><span class="upd n" id="upd-txt"></span></div>
    </div>
    <div class="tools">
     <button class="ibtn" id="f-ant" aria-label="Día anterior"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></button>
     <select id="selector-fecha" aria-label="Fecha"><option>Cargando...</option></select>
     <button class="ibtn" id="f-sig" aria-label="Día siguiente"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></button>
-    <button class="ibtn" onclick="location.reload()" aria-label="Refrescar datos" title="Refrescar datos"><svg fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8 8 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8 8 0 01-15.357-2m15.357 2H15"/></svg></button>
+    <button class="ibtn" id="btn-ref" onclick="cargarDatos(true)" aria-label="Refrescar datos" title="Refrescar datos"><svg fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8 8 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg></button>
     <button class="ibtn" onclick="abrir('modal-config')" aria-label="Configuración" title="Configuración"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></button>
    </div>
   </header>
@@ -152,15 +166,23 @@ select option{background:var(--card);color:var(--tx)}
    <div class="search">
     <svg class="ic" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
     <input id="buscador" type="text" placeholder="Buscar equipo o maquinaria..." autocomplete="off">
-    <button id="x" class="hidden" style="display:none" aria-label="Borrar búsqueda"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    <button id="x" class="hidden" aria-label="Borrar búsqueda"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
    </div>
   </div>
  </div>
 </div>
 
 <main class="wrap">
- <section class="kpis" id="kpis"></section>
- <div id="lista"></div>
+ <div id="loader" class="loader">
+  <div class="l-box">
+   <div class="l-glow"></div>
+   <img src="bautista.png" alt="Grupo Bautista" onerror="this.style.display='none'">
+  </div>
+  <small>GRUPO BAUTISTA</small>
+  <p>Espere unos segundos mientras carga el sistema...</p>
+ </div>
+ <section class="kpis hidden" id="kpis"></section>
+ <div id="lista" class="hidden"></div>
 </main>
 
 <div id="modal-config" class="ov hidden">
@@ -193,6 +215,7 @@ const fmt=n=>(Math.round(n*10)/10).toString().replace('.',',');
 const pf=f=>{const p=f.split(/[\/\-]/).map(Number);let y=p[2];if(y<100)y+=2000;return new Date(y,p[1]-1,p[0])};
 const dia=f=>DIAS[pf(f).getDay()];
 const corta=f=>f.split(/[\/\-]/).slice(0,2).join('/');
+const normU=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s\u00A0]+/g,' ').trim();
 
 /* ---------- Tema ---------- */
 function aplicarTema(m){
@@ -232,40 +255,59 @@ function icono(n){
  return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
 }
 
-/* ---------- Carga de datos ---------- */
-function esqueleto(){
- $('kpis').innerHTML=Array(4).fill('<div class="sk" style="min-height:92px"></div>').join('');
- $('lista').innerHTML='<div class="grid">'+Array(8).fill('<div class="sk"></div>').join('')+'</div>';
-}
-esqueleto();
+/* ---------- Carga de datos con animación de logo saltando ---------- */
+function cargarDatos(esRefresco=false){
+ const btnRef=$('btn-ref');
+ const fechaPrevia=esRefresco?$('selector-fecha').value:'';
+ if(btnRef){btnRef.classList.add('spin');btnRef.disabled=true;}
+ $('loader').classList.remove('hidden');
+ $('kpis').classList.add('hidden');
+ $('lista').classList.add('hidden');
 
-Papa.parse(URL_CSV,{download:true,header:false,
- complete(res){
-  const rows=res.data;if(!rows||!rows.length)return;
-  const set=new Set();let vigente='Sin Fecha';
-  rows.forEach(row=>{
-   if(!row||!row.length)return;
-   for(let j=0;j<Math.min(row.length,6);j++){
-    const c=row[j]?row[j].trim():'';
-    if(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/.test(c)){vigente=c;set.add(c);break}
+ const urlSinCache=`${URL_CSV}&_=${Date.now()}`;
+ Papa.parse(urlSinCache,{download:true,header:false,
+  complete(res){
+   const rows=res.data;
+   if(!rows||!rows.length)return;
+   regs=[];
+   const set=new Set();let vigente='Sin Fecha';
+   rows.forEach(row=>{
+    if(!row||!row.length)return;
+    for(let j=0;j<Math.min(row.length,6);j++){
+     const c=row[j]?row[j].trim():'';
+     if(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/.test(c)){vigente=c;set.add(c);break}
+    }
+    if(row.length<8)return;
+    const u=row[7]?row[7].replace(/[\s\u00A0]+/g,' ').trim():'';
+    if(!u||/^(UNIDAD|EQUIPO)$/i.test(u)||u.toUpperCase().includes('REPORTE'))return;
+    regs.push({fechaFiltro:vigente,lugar:row[0]?row[0].trim():'Sin ubicación',unidad:u,
+     operador:row[6]?row[6].trim():'No asignado',hInicial:row[8]?row[8].trim():'-',hFinal:row[9]?row[9].trim():'-',
+     totalHoras:row[10]?row[10].trim():'0',estadoMtto:row[11]?row[11].trim():'Sin registro',combustible:row[12]?row[12].trim():'0 Gal'});
+   });
+   fechas=[...set];
+   const sel=$('selector-fecha');
+   sel.innerHTML=fechas.length?fechas.map(f=>`<option value="${f}">${dia(f)} ${f}</option>`).join(''):'<option value="">No hay fechas</option>';
+   if(fechas.length){
+    sel.value=(fechaPrevia&&fechas.includes(fechaPrevia))?fechaPrevia:fechas[fechas.length-1];
    }
-   if(row.length<8)return;
-   const u=row[7]?row[7].trim():'';
-   if(!u||/^(UNIDAD|EQUIPO)$/i.test(u)||u.toUpperCase().includes('REPORTE'))return;
-   regs.push({fechaFiltro:vigente,lugar:row[0]?row[0].trim():'Sin ubicación',unidad:u,
-    operador:row[6]?row[6].trim():'No asignado',hInicial:row[8]?row[8].trim():'-',hFinal:row[9]?row[9].trim():'-',
-    totalHoras:row[10]?row[10].trim():'0',estadoMtto:row[11]?row[11].trim():'Sin registro',combustible:row[12]?row[12].trim():'0 Gal'});
-  });
-  fechas=[...set];
-  const sel=$('selector-fecha');
-  sel.innerHTML=fechas.length?fechas.map(f=>`<option value="${f}">${dia(f)} ${f}</option>`).join(''):'<option value="">No hay fechas</option>';
-  if(fechas.length)sel.value=fechas[fechas.length-1];
-  const h=new Date();
-  document.querySelector('.brand p').insertAdjacentHTML('afterend',`<span class="upd n">Actualizado ${String(h.getHours()).padStart(2,'0')}:${String(h.getMinutes()).padStart(2,'0')}</span>`);
-  vista();
- },
- error(){$('kpis').innerHTML='';$('lista').innerHTML='<div class="grid"><div class="empty"><b>No se pudieron leer los datos</b><p>Revisa tu conexión y toca «Refrescar datos».</p></div></div>'}
-});
+   const h=new Date();
+   $('upd-txt').textContent=`Actualizado ${String(h.getHours()).padStart(2,'0')}:${String(h.getMinutes()).padStart(2,'0')}`;
+   $('loader').classList.add('hidden');
+   $('kpis').classList.remove('hidden');
+   $('lista').classList.remove('hidden');
+   if(btnRef){btnRef.classList.remove('spin');btnRef.disabled=false;}
+   vista();
+  },
+  error(){
+   $('loader').classList.add('hidden');
+   $('lista').classList.remove('hidden');
+   if(btnRef){btnRef.classList.remove('spin');btnRef.disabled=false;}
+   $('kpis').innerHTML='';
+   $('lista').innerHTML='<div class="grid"><div class="empty"><b>No se pudieron leer los datos</b><p>Revisa tu conexión y toca «Refrescar datos».</p></div></div>';
+  }
+ });
+}
+cargarDatos(false);
 
 /* ---------- Vista principal ---------- */
 function nav(){
@@ -275,8 +317,8 @@ function nav(){
 $('f-ant').onclick=()=>{const s=$('selector-fecha');s.value=fechas[fechas.indexOf(s.value)-1];vista()};
 $('f-sig').onclick=()=>{const s=$('selector-fecha');s.value=fechas[fechas.indexOf(s.value)+1];vista()};
 $('selector-fecha').addEventListener('change',vista);
-$('buscador').addEventListener('input',function(){$('x').style.display=this.value?'block':'none';vista()});
-$('x').onclick=()=>{$('buscador').value='';$('x').style.display='none';vista();$('buscador').focus()};
+$('buscador').addEventListener('input',function(){$('x').classList.toggle('hidden',!this.value);vista()});
+$('x').onclick=()=>{$('buscador').value='';$('x').classList.add('hidden');vista();$('buscador').focus()};
 $('chips').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b){filtro=b.dataset.f;vista()}});
 
 function prio(n){return n==='CARRETERA CHIPULUC'?1:n==='OLMOS'?2:3}
@@ -315,7 +357,7 @@ function kpis(base){
  $('kpis').innerHTML=`
   <div class="kpi"><span>Equipos operativos</span><b class="n">${conData.length} <small>/ ${base.length}</small></b><em class="${sin?'bad':'ok'}">${sin?sin+' sin data hoy':'Todos con data'}</em></div>
   <div class="kpi"><span>Horas totales del día</span><b class="n">${fmt(horas)} <small>hrs</small></b><em>Suma de todos los equipos</em></div>
-  <div class="kpi"><span>Combustible total</span><b class="n">${fmt(comb)} <small>Gal</small></b><em>Consumo del día</em></div>
+  <div class="kpi"><span>Combustible Abastecido</span><b class="n">${fmt(comb)} <small>Gal</small></b><em>Consumo del día</em></div>
   <div class="kpi"><span>Promedio por equipo</span><b class="n">${conData.length?fmt(horas/conData.length):'0'} <small>hrs</small></b><em>Equipos con data</em></div>`;
 }
 
@@ -335,9 +377,10 @@ function abrirDetalle(i){
  renderFicha();abrir('modal-detalle');$('m-cuerpo').scrollTop=0;
 }
 function renderFicha(){
- const u=mUnidad,reg=regs.filter(r=>r.unidad===u);
- const m=reg.find(r=>r.fechaFiltro===mFecha);
- $('m-titulo').textContent=u;
+ const u=mUnidad;
+ const reg=regs.filter(r=>normU(r.unidad)===normU(u)).sort((a,b)=>pf(a.fechaFiltro)-pf(b.fechaFiltro));
+ const m=reg.find(r=>r.fechaFiltro===mFecha)||reg[reg.length-1];
+ $('m-titulo').textContent=m.unidad;
  const fl=reg.map(r=>r.fechaFiltro),ix=fl.indexOf(mFecha);
  const ult=reg.slice(Math.max(0,ix-6),ix+1);
  const v=ult.map(r=>num(r.totalHoras)),max=Math.max(...v,1),avg=v.reduce((a,b)=>a+b,0)/v.length;
@@ -350,7 +393,7 @@ function renderFicha(){
   </div>
   <div class="hero">
    <div><small>Horas totales</small><b class="n">${esc(m.totalHoras)}<u>hrs</u></b></div>
-   <div><small>Combustible</small><b class="n">${esc(m.combustible||'0 Gal')}</b></div>
+   <div><small>Combustible Abastecido</small><b class="n">${esc(m.combustible||'0 Gal')}</b></div>
   </div>
   <div class="box">
    <div class="row"><span>Ubicación</span><b>${esc(m.lugar)}</b></div>
