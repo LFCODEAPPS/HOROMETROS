@@ -102,18 +102,18 @@
         }
     </style>
 </head>
-<body class="bg-[#F5F5F4] dark:bg-[#0C0D10] text-stone-900 dark:text-stone-100 min-h-screen pb-16 font-sans transition-colors duration-300 antialiased">
+<body class="bg-[#F5F5F4] dark:bg-[#060E1F] text-stone-900 dark:text-slate-100 min-h-screen pb-16 font-sans transition-colors duration-300 antialiased">
 
     <!-- BLOQUE SUPERIOR FIJO CORPORATIVO -->
-    <div class="sticky top-0 z-30 bg-white/95 dark:bg-[#121317]/95 backdrop-blur-xl border-b border-stone-200/80 dark:border-stone-800/90 shadow-[0_4px_24px_-12px_rgba(0,0,0,0.12)]">
+    <div class="sticky top-0 z-30 bg-white/95 dark:bg-[#0B1933]/95 backdrop-blur-xl border-b border-stone-200/80 dark:border-blue-800/60 shadow-[0_4px_24px_-12px_rgba(0,0,0,0.2)]">
         
-        <!-- Línea superior de acento dorado -->
-        <div class="h-1 w-full bg-gradient-to-r from-stone-900 via-amber-500 to-stone-900 dark:from-amber-600 dark:via-amber-400 dark:to-amber-600"></div>
+        <!-- Línea superior de acento dorado / azul corporativo -->
+        <div class="h-1 w-full bg-gradient-to-r from-stone-900 via-amber-500 to-stone-900 dark:from-blue-600 dark:via-amber-400 dark:to-blue-600"></div>
 
         <!-- Cabecera -->
         <header class="max-w-xl md:max-w-6xl mx-auto px-4 md:px-8 pt-4 pb-3 md:py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3.5 md:gap-6">
             
-            <!-- Identidad Corporativa + Botón Configuración Minimalista (en móvil va a la derecha) -->
+            <!-- Identidad Corporativa + Botón Configuración Minimalista -->
             <div class="flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3.5 min-w-0">
                     <div class="h-12 w-12 md:h-13 md:w-13 flex items-center justify-center shrink-0">
@@ -124,8 +124,8 @@
                             Grupo Bautista
                         </h1>
                         <div class="flex items-center gap-1.5 mt-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                            <p class="text-xs md:text-sm font-bold text-amber-600 dark:text-amber-400 tracking-wide truncate">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-sky-400"></span>
+                            <p class="text-xs md:text-sm font-bold text-amber-600 dark:text-sky-300 tracking-wide truncate">
                                 Control de Maquinaria
                             </p>
                         </div>
@@ -133,7 +133,7 @@
                 </div>
 
                 <!-- Botón Minimalista Configuración en Móvil -->
-                <button onclick="abrirConfig()" aria-label="Configuración" class="md:hidden h-10 w-10 text-stone-700 hover:text-amber-600 dark:text-stone-300 dark:hover:text-amber-400 bg-stone-100 hover:bg-stone-200/70 dark:bg-stone-800/90 dark:hover:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 flex items-center justify-center transition active:scale-95 shrink-0" title="Configuración">
+                <button onclick="abrirConfig()" aria-label="Configuración" class="md:hidden h-10 w-10 text-stone-700 hover:text-amber-600 dark:text-sky-200 dark:hover:text-amber-400 bg-stone-100 hover:bg-stone-200/70 dark:bg-[#12264A] dark:hover:bg-[#193361] rounded-xl border border-stone-200 dark:border-blue-700/70 flex items-center justify-center transition active:scale-95 shrink-0" title="Configuración">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -143,27 +143,26 @@
 
             <!-- Fila de Fecha Compacta + Botón "Refrescar datos" + Configuración en Escritorio -->
             <div class="flex items-center gap-2 md:gap-2.5 md:w-auto">
-                <!-- Selector de Fecha más compacto -->
                 <div class="relative flex-1 md:w-48">
-                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-amber-400">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600 dark:text-sky-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     </div>
-                    <select id="selector-fecha" class="w-full bg-amber-500/10 hover:bg-amber-500/15 dark:bg-amber-500/15 dark:hover:bg-amber-500/20 text-stone-900 dark:text-amber-300 font-extrabold text-xs md:text-sm pl-9 pr-8 py-2.5 rounded-xl border border-amber-500/30 focus:ring-2 focus:ring-amber-500/40 cursor-pointer outline-none appearance-none transition">
+                    <select id="selector-fecha" class="w-full bg-amber-500/10 hover:bg-amber-500/15 dark:bg-blue-600/20 dark:hover:bg-blue-600/30 text-stone-900 dark:text-sky-100 font-extrabold text-xs md:text-sm pl-9 pr-8 py-2.5 rounded-xl border border-amber-500/30 dark:border-blue-500/40 focus:ring-2 focus:ring-amber-500/40 dark:focus:ring-sky-400/40 cursor-pointer outline-none appearance-none transition">
                         <option value="">Cargando...</option>
                     </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-amber-700 dark:text-amber-400">
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-amber-700 dark:text-sky-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                 </div>
 
                 <!-- Botón Refrescar datos a la derecha del selector de fecha -->
-                <button onclick="recargarConAnimacion(this)" class="h-10 px-3.5 md:px-4 text-stone-800 hover:text-amber-700 dark:text-stone-200 dark:hover:text-amber-400 bg-stone-100 hover:bg-stone-200/80 dark:bg-stone-800/90 dark:hover:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 flex items-center gap-1.5 text-xs font-extrabold transition active:scale-95 cursor-pointer shrink-0" title="Refrescar datos">
-                    <svg class="icono-recargar w-3.5 h-3.5 text-amber-600 dark:text-amber-400 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <button onclick="recargarConAnimacion(this)" class="h-10 px-3.5 md:px-4 text-stone-800 hover:text-amber-700 dark:text-slate-100 dark:hover:text-amber-300 bg-stone-100 hover:bg-stone-200/80 dark:bg-[#12264A] dark:hover:bg-[#193361] rounded-xl border border-stone-200 dark:border-blue-700/70 flex items-center gap-1.5 text-xs font-extrabold transition active:scale-95 cursor-pointer shrink-0" title="Refrescar datos">
+                    <svg class="icono-recargar w-3.5 h-3.5 text-amber-600 dark:text-sky-400 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     <span>Refrescar datos</span>
                 </button>
 
                 <!-- Botón Minimalista Configuración en Escritorio -->
-                <button onclick="abrirConfig()" aria-label="Configuración" class="hidden md:flex h-10 w-10 text-stone-700 hover:text-amber-600 dark:text-stone-300 dark:hover:text-amber-400 bg-stone-100 hover:bg-stone-200/70 dark:bg-stone-800/90 dark:hover:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 items-center justify-center transition active:scale-95 cursor-pointer shrink-0" title="Configuración">
+                <button onclick="abrirConfig()" aria-label="Configuración" class="hidden md:flex h-10 w-10 text-stone-700 hover:text-amber-600 dark:text-sky-200 dark:hover:text-amber-400 bg-stone-100 hover:bg-stone-200/70 dark:bg-[#12264A] dark:hover:bg-[#193361] rounded-xl border border-stone-200 dark:border-blue-700/70 items-center justify-center transition active:scale-95 cursor-pointer shrink-0" title="Configuración">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -172,23 +171,20 @@
             </div>
         </header>
 
-        <!-- Filtros + Buscador con botón X para limpiar -->
+        <!-- Filtros Dinámicos por Lugar + Buscador con botón X para limpiar -->
         <div class="max-w-xl md:max-w-6xl mx-auto px-4 md:px-8 pb-3.5 md:pb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2.5 md:gap-4">
             <div class="flex overflow-x-auto gap-1.5 md:gap-2 hide-scrollbar py-0.5" id="botones-categoria">
-                <button onclick="filtrarPorUbicacion('TODOS', this)" class="btn-filtro bg-stone-900 dark:bg-amber-500 text-amber-400 dark:text-stone-950 border-stone-900 dark:border-amber-500 font-bold px-4 py-1.5 md:py-2 rounded-full text-[11px] md:text-xs shrink-0 transition-all duration-200 active:scale-95 shadow-sm border cursor-pointer">TODOS</button>
-                <button onclick="filtrarPorUbicacion('CARRETERA CHIPULUC', this)" class="btn-filtro bg-white dark:bg-stone-800/80 text-stone-600 dark:text-stone-300 border-stone-200 dark:border-stone-700 font-semibold px-4 py-1.5 md:py-2 rounded-full text-[11px] md:text-xs shrink-0 transition-all duration-200 active:scale-95 hover:bg-stone-100 dark:hover:bg-stone-800 border cursor-pointer">CARRETERA CHIPULUC</button>
-                <button onclick="filtrarPorUbicacion('OLMOS', this)" class="btn-filtro bg-white dark:bg-stone-800/80 text-stone-600 dark:text-stone-300 border-stone-200 dark:border-stone-700 font-semibold px-4 py-1.5 md:py-2 rounded-full text-[11px] md:text-xs shrink-0 transition-all duration-200 active:scale-95 hover:bg-stone-100 dark:hover:bg-stone-800 border cursor-pointer">OLMOS</button>
-                <button onclick="filtrarPorUbicacion('OTROS', this)" class="btn-filtro bg-white dark:bg-stone-800/80 text-stone-600 dark:text-stone-300 border-stone-200 dark:border-stone-700 font-semibold px-4 py-1.5 md:py-2 rounded-full text-[11px] md:text-xs shrink-0 transition-all duration-200 active:scale-95 hover:bg-stone-100 dark:hover:bg-stone-800 border cursor-pointer">OTROS</button>
+                <button onclick="filtrarPorUbicacion('TODOS')" class="btn-filtro bg-stone-900 dark:bg-blue-600 text-amber-400 dark:text-white border-stone-900 dark:border-blue-500 font-bold px-4 py-1.5 md:py-2 rounded-full text-[11px] md:text-xs shrink-0 transition-all duration-200 active:scale-95 shadow-sm border cursor-pointer">TODOS</button>
             </div>
 
             <div class="relative md:w-80 shrink-0">
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-stone-400">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-stone-400 dark:text-sky-400/70">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
                 <input type="text" id="buscador" placeholder="Buscar equipo o maquinaria..." 
-                    class="w-full bg-stone-100/80 dark:bg-stone-900/90 border border-stone-200 dark:border-stone-800 text-xs sm:text-sm rounded-xl pl-10 pr-9 py-2.5 text-stone-800 dark:text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 focus:bg-white dark:focus:bg-stone-800 transition-all">
-                <button id="btn-limpiar-buscador" onclick="limpiarBuscador()" aria-label="Borrar búsqueda" class="hidden absolute inset-y-0 right-0 flex items-center pr-3 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition cursor-pointer">
-                    <span class="w-5 h-5 rounded-full bg-stone-200/80 dark:bg-stone-700 flex items-center justify-center">
+                    class="w-full bg-stone-100/80 dark:bg-[#081326] border border-stone-200 dark:border-blue-800/80 text-xs sm:text-sm rounded-xl pl-10 pr-9 py-2.5 text-stone-800 dark:text-white placeholder-stone-400 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30 dark:focus:ring-sky-500/40 focus:border-amber-500 dark:focus:border-sky-400 focus:bg-white dark:focus:bg-[#0D1E3B] transition-all">
+                <button id="btn-limpiar-buscador" onclick="limpiarBuscador()" aria-label="Borrar búsqueda" class="hidden absolute inset-y-0 right-0 flex items-center pr-3 text-stone-400 hover:text-stone-700 dark:text-sky-300 dark:hover:text-white transition cursor-pointer">
+                    <span class="w-5 h-5 rounded-full bg-stone-200/80 dark:bg-blue-900/90 flex items-center justify-center">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </span>
                 </button>
@@ -203,14 +199,14 @@
         <!-- Pantalla de Carga con Logo Original -->
         <div id="loading" class="flex flex-col items-center justify-center py-24 md:py-32 text-center space-y-5">
             <div class="relative">
-                <div class="absolute inset-0 bg-amber-500/20 rounded-full blur-xl animate-pulse"></div>
+                <div class="absolute inset-0 bg-amber-500/20 dark:bg-blue-500/25 rounded-full blur-xl animate-pulse"></div>
                 <div class="relative w-24 h-24 flex items-center justify-center animate-bounce">
                     <img src="bautista.png" alt="Grupo Bautista" class="max-h-full max-w-full object-contain" onerror="this.parentElement.style.display='none'">
                 </div>
             </div>
             <div class="space-y-1">
-                <p class="text-xs font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">Grupo Bautista</p>
-                <p class="text-stone-500 dark:text-stone-400 text-sm font-medium animate-pulse">
+                <p class="text-xs font-black uppercase tracking-widest text-amber-600 dark:text-sky-400">Grupo Bautista</p>
+                <p class="text-stone-500 dark:text-slate-300 text-sm font-medium animate-pulse">
                     Espere unos segundos mientras carga el sistema...
                 </p>
             </div>
@@ -224,29 +220,29 @@
     </main>
 
     <!-- MODAL DE CONFIGURACIÓN MINIMALISTA -->
-    <div id="modal-config" class="fixed inset-0 bg-stone-950/65 dark:bg-black/85 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden transition-opacity duration-200">
-        <div id="modal-config-contenido" class="bg-white dark:bg-[#141519] border-t sm:border border-stone-200 dark:border-stone-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-5 md:p-6 pb-7 sm:pb-6 shadow-2xl space-y-5 relative anim-modal">
+    <div id="modal-config" class="fixed inset-0 bg-stone-950/65 dark:bg-[#020611]/85 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden transition-opacity duration-200">
+        <div id="modal-config-contenido" class="bg-white dark:bg-[#0D1C38] border-t sm:border border-stone-200 dark:border-blue-700/70 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-5 md:p-6 pb-7 sm:pb-6 shadow-2xl space-y-5 relative anim-modal">
             
-            <div class="w-10 h-1 bg-stone-300 dark:bg-stone-700 rounded-full mx-auto mb-1 sm:hidden"></div>
+            <div class="w-10 h-1 bg-stone-300 dark:bg-blue-700 rounded-full mx-auto mb-1 sm:hidden"></div>
 
             <!-- Cabecera Config -->
-            <div class="flex justify-between items-center border-b border-stone-100 dark:border-stone-800 pb-3.5">
+            <div class="flex justify-between items-center border-b border-stone-100 dark:border-blue-800/70 pb-3.5">
                 <div>
-                    <span class="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-amber-600 dark:text-amber-400 font-extrabold">
-                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                    <span class="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-amber-600 dark:text-sky-400 font-extrabold">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-sky-400"></span>
                         Preferencias
                     </span>
                     <h2 class="text-lg font-extrabold text-stone-900 dark:text-white mt-0.5 leading-snug">Configuración</h2>
                 </div>
-                <button onclick="cerrarConfig()" aria-label="Cerrar configuración" class="bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 w-9 h-9 rounded-full flex items-center justify-center transition active:scale-90 shrink-0 cursor-pointer">
+                <button onclick="cerrarConfig()" aria-label="Cerrar configuración" class="bg-stone-100 dark:bg-[#162C54] hover:bg-stone-200 dark:hover:bg-[#1E3B70] text-stone-600 dark:text-sky-200 w-9 h-9 rounded-full flex items-center justify-center transition active:scale-90 shrink-0 cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
 
             <!-- Selector de Apariencia -->
             <div class="space-y-2.5">
-                <label class="text-xs font-extrabold uppercase tracking-wider text-stone-500 dark:text-stone-400 block">Apariencia del sistema</label>
-                <div class="grid grid-cols-3 gap-2 bg-stone-100 dark:bg-stone-900 p-1.5 rounded-2xl border border-stone-200/80 dark:border-stone-800">
+                <label class="text-xs font-extrabold uppercase tracking-wider text-stone-500 dark:text-sky-300/80 block">Apariencia del sistema</label>
+                <div class="grid grid-cols-3 gap-2 bg-stone-100 dark:bg-[#081326] p-1.5 rounded-2xl border border-stone-200/80 dark:border-blue-800/70">
                     <button type="button" onclick="cambiarTema('light')" data-tema-btn="light" class="btn-tema flex flex-col items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-bold transition cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         <span>Claro</span>
@@ -263,12 +259,12 @@
             </div>
 
             <!-- Info de App -->
-            <div class="bg-stone-50 dark:bg-stone-900/90 p-4 rounded-2xl border border-stone-200/80 dark:border-stone-800 space-y-1.5">
-                <div class="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+            <div class="bg-stone-50 dark:bg-[#081326] p-4 rounded-2xl border border-stone-200/80 dark:border-blue-800/70 space-y-1.5">
+                <div class="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-sky-400">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span>Info de App</span>
                 </div>
-                <p class="text-xs font-semibold text-stone-700 dark:text-stone-300 leading-relaxed">
+                <p class="text-xs font-semibold text-stone-700 dark:text-slate-200 leading-relaxed">
                     Aplicación desarrollada por Fernando Carranza para el Grupo Bautista.
                 </p>
             </div>
@@ -276,41 +272,41 @@
         </div>
     </div>
 
-    <!-- Modal / Bottom Sheet Corporativo de Ficha (SOLO SE CIERRA CON LA X) -->
-    <div id="modal-detalle" class="fixed inset-0 bg-stone-950/65 dark:bg-black/85 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden transition-opacity duration-200">
-        <div id="modal-contenido" class="bg-white dark:bg-[#141519] border-t sm:border border-stone-200 dark:border-stone-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md md:max-w-lg max-h-[90vh] flex flex-col shadow-2xl relative anim-modal overflow-hidden">
+    <!-- Modal / Bottom Sheet Corporativo de Ficha (SIEMPRE EXPANDIDO, SOLO SE CIERRA CON LA X) -->
+    <div id="modal-detalle" class="fixed inset-0 bg-stone-950/65 dark:bg-[#020611]/85 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden transition-opacity duration-200">
+        <div id="modal-contenido" class="bg-white dark:bg-[#0D1C38] border-t sm:border border-stone-200 dark:border-blue-700/70 rounded-t-3xl sm:rounded-3xl w-full max-w-md md:max-w-lg max-h-[90vh] flex flex-col shadow-2xl relative anim-modal overflow-hidden">
             
             <!-- CABECERA FIJA DEL MODAL (La X es la única forma de cerrar) -->
-            <div class="px-5 md:px-6 pt-4 md:pt-5 pb-3.5 border-b border-stone-100 dark:border-stone-800 shrink-0 bg-white dark:bg-[#141519]">
-                <div class="w-10 h-1 bg-stone-300 dark:bg-stone-700 rounded-full mx-auto mb-3 sm:hidden"></div>
+            <div class="px-5 md:px-6 pt-4 md:pt-5 pb-3.5 border-b border-stone-100 dark:border-blue-800/70 shrink-0 bg-white dark:bg-[#0D1C38]">
+                <div class="w-10 h-1 bg-stone-300 dark:bg-blue-700 rounded-full mx-auto mb-3 sm:hidden"></div>
 
                 <div class="flex justify-between items-start">
                     <div class="pr-2">
-                        <span class="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-amber-600 dark:text-amber-400 font-extrabold">
-                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                        <span class="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-amber-600 dark:text-sky-400 font-extrabold">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-sky-400"></span>
                             Grupo Bautista • Ficha
                         </span>
                         <h2 id="modal-titulo" class="text-lg md:text-xl font-extrabold text-stone-900 dark:text-white mt-0.5 leading-snug">Nombre de Máquina</h2>
                     </div>
-                    <button onclick="cerrarModal()" aria-label="Cerrar ficha" class="bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 w-9 h-9 rounded-full flex items-center justify-center transition active:scale-90 shrink-0 cursor-pointer">
+                    <button onclick="cerrarModal()" aria-label="Cerrar ficha" class="bg-stone-100 dark:bg-[#162C54] hover:bg-stone-200 dark:hover:bg-[#1E3B70] text-stone-600 dark:text-sky-200 w-9 h-9 rounded-full flex items-center justify-center transition active:scale-90 shrink-0 cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
             </div>
 
-            <!-- CUERPO CON SCROLL -->
-            <div id="modal-scroll-area" class="px-5 md:px-6 py-4 overflow-y-auto flex-1 space-y-4 overscroll-contain">
+            <!-- CUERPO CON SCROLL COMPLETO (SIEMPRE EXPANDIDO) -->
+            <div id="modal-scroll-area" class="px-5 md:px-6 py-4 pb-8 overflow-y-auto flex-1 space-y-4 overscroll-contain">
                 
                 <!-- Controles de Navegación por Fecha -->
-                <div class="flex items-center justify-between bg-stone-100/90 dark:bg-stone-900 p-1.5 rounded-2xl border border-stone-200/80 dark:border-stone-800">
-                    <button id="btn-fecha-ant" class="w-10 h-10 flex items-center justify-center text-amber-600 dark:text-amber-400 bg-white dark:bg-stone-800 shadow-xs hover:bg-amber-50 dark:hover:bg-stone-700 rounded-xl transition active:scale-90 disabled:opacity-30 disabled:shadow-none disabled:hover:bg-white dark:disabled:hover:bg-stone-800 cursor-pointer disabled:cursor-not-allowed">
+                <div class="flex items-center justify-between bg-stone-100/90 dark:bg-[#081326] p-1.5 rounded-2xl border border-stone-200/80 dark:border-blue-800/70">
+                    <button id="btn-fecha-ant" class="w-10 h-10 flex items-center justify-center text-amber-600 dark:text-sky-400 bg-white dark:bg-[#12264A] shadow-xs hover:bg-amber-50 dark:hover:bg-[#193361] rounded-xl transition active:scale-90 disabled:opacity-30 disabled:shadow-none disabled:hover:bg-white dark:disabled:hover:bg-[#12264A] cursor-pointer disabled:cursor-not-allowed">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
                     </button>
                     <div class="text-center flex-1">
-                        <span class="block text-[9px] font-bold text-stone-400 uppercase tracking-widest">Fecha del Registro</span>
+                        <span class="block text-[9px] font-bold text-stone-400 dark:text-sky-300/70 uppercase tracking-widest">Fecha del Registro</span>
                         <span id="modal-fecha-actual" class="font-extrabold text-stone-900 dark:text-white text-sm">--/--/--</span>
                     </div>
-                    <button id="btn-fecha-sig" class="w-10 h-10 flex items-center justify-center text-amber-600 dark:text-amber-400 bg-white dark:bg-stone-800 shadow-xs hover:bg-amber-50 dark:hover:bg-stone-700 rounded-xl transition active:scale-90 disabled:opacity-30 disabled:shadow-none disabled:hover:bg-white dark:disabled:hover:bg-stone-800 cursor-pointer disabled:cursor-not-allowed">
+                    <button id="btn-fecha-sig" class="w-10 h-10 flex items-center justify-center text-amber-600 dark:text-sky-400 bg-white dark:bg-[#12264A] shadow-xs hover:bg-amber-50 dark:hover:bg-[#193361] rounded-xl transition active:scale-90 disabled:opacity-30 disabled:shadow-none disabled:hover:bg-white dark:disabled:hover:bg-[#12264A] cursor-pointer disabled:cursor-not-allowed">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                 </div>
@@ -319,95 +315,85 @@
                 <div id="modal-datos-cuerpo" class="space-y-2.5 text-xs md:text-sm transition-opacity duration-150">
                     
                     <!-- Ubicación, Operador y Estado para Mtto (Columna L) -->
-                    <div class="bg-stone-50 dark:bg-stone-900/80 p-3.5 rounded-2xl border border-stone-200/70 dark:border-stone-800 space-y-2.5">
+                    <div class="bg-stone-50 dark:bg-[#081326] p-3.5 rounded-2xl border border-stone-200/70 dark:border-blue-800/70 space-y-2.5">
                         <div class="flex justify-between items-start gap-3">
-                            <span class="text-stone-400 text-xs font-medium flex items-center gap-1.5 shrink-0">
-                                <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <span class="text-stone-400 dark:text-slate-400 text-xs font-medium flex items-center gap-1.5 shrink-0">
+                                <svg class="w-3.5 h-3.5 text-amber-500 dark:text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                 Ubicación
                             </span>
-                            <span id="modal-lugar" class="font-bold text-stone-800 dark:text-stone-100 text-right break-words text-xs md:text-sm">--</span>
+                            <span id="modal-lugar" class="font-bold text-stone-800 dark:text-white text-right break-words text-xs md:text-sm">--</span>
                         </div>
-                        <div class="border-t border-stone-200/70 dark:border-stone-800 pt-2.5 flex justify-between items-center gap-3">
-                            <span class="text-stone-400 text-xs font-medium flex items-center gap-1.5 shrink-0">
-                                <svg class="w-3.5 h-3.5 text-stone-500 dark:text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <div class="border-t border-stone-200/70 dark:border-blue-900/60 pt-2.5 flex justify-between items-center gap-3">
+                            <span class="text-stone-400 dark:text-slate-400 text-xs font-medium flex items-center gap-1.5 shrink-0">
+                                <svg class="w-3.5 h-3.5 text-stone-500 dark:text-sky-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                 Operador
                             </span>
-                            <span id="modal-operador" class="font-bold text-stone-800 dark:text-stone-100 text-right truncate text-xs md:text-sm">--</span>
+                            <span id="modal-operador" class="font-bold text-stone-800 dark:text-white text-right truncate text-xs md:text-sm">--</span>
                         </div>
-                        <div class="border-t border-stone-200/70 dark:border-stone-800 pt-2.5 flex justify-between items-center gap-3">
-                            <span class="text-stone-400 text-xs font-medium flex items-center gap-1.5 shrink-0">
+                        <div class="border-t border-stone-200/70 dark:border-blue-900/60 pt-2.5 flex justify-between items-center gap-3">
+                            <span class="text-stone-400 dark:text-slate-400 text-xs font-medium flex items-center gap-1.5 shrink-0">
                                 <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
                                 Estado para Mtto
                             </span>
-                            <span id="modal-estado-mtto" class="font-bold text-stone-800 dark:text-stone-100 text-right break-words text-xs md:text-sm">--</span>
+                            <span id="modal-estado-mtto" class="font-bold text-stone-800 dark:text-white text-right break-words text-xs md:text-sm">--</span>
                         </div>
                     </div>
 
                     <!-- Horómetros -->
                     <div class="grid grid-cols-2 gap-2.5">
-                        <div class="bg-stone-50 dark:bg-stone-900/80 p-3.5 rounded-2xl border border-stone-200/70 dark:border-stone-800">
-                            <span class="text-stone-400 text-[11px] font-medium block mb-1">Horómetro Inicial</span>
+                        <div class="bg-stone-50 dark:bg-[#081326] p-3.5 rounded-2xl border border-stone-200/70 dark:border-blue-800/70">
+                            <span class="text-stone-400 dark:text-slate-400 text-[11px] font-medium block mb-1">Horómetro Inicial</span>
                             <span id="modal-hinicial" class="font-extrabold text-stone-900 dark:text-white text-base md:text-lg tracking-tight">--</span>
                         </div>
-                        <div class="bg-stone-50 dark:bg-stone-900/80 p-3.5 rounded-2xl border border-stone-200/70 dark:border-stone-800">
-                            <span class="text-stone-400 text-[11px] font-medium block mb-1">Horómetro Final</span>
+                        <div class="bg-stone-50 dark:bg-[#081326] p-3.5 rounded-2xl border border-stone-200/70 dark:border-blue-800/70">
+                            <span class="text-stone-400 dark:text-slate-400 text-[11px] font-medium block mb-1">Horómetro Final</span>
                             <span id="modal-hfinal" class="font-extrabold text-stone-900 dark:text-white text-base md:text-lg tracking-tight">--</span>
                         </div>
                     </div>
 
                     <!-- Horas Totales y Combustible -->
                     <div class="grid grid-cols-2 gap-2.5">
-                        <div class="bg-stone-100/90 dark:bg-stone-800/70 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-700">
-                            <span class="text-stone-500 dark:text-stone-400 text-[11px] font-bold block mb-1">Horas Totales</span>
+                        <div class="bg-stone-100/90 dark:bg-[#12264A] p-3.5 rounded-2xl border border-stone-200 dark:border-blue-700/70">
+                            <span class="text-stone-500 dark:text-sky-300 text-[11px] font-bold block mb-1">Horas Totales</span>
                             <span id="modal-totales" class="font-black text-stone-900 dark:text-white text-base md:text-lg">--</span>
                         </div>
-                        <div class="bg-amber-500/10 dark:bg-amber-500/15 p-3.5 rounded-2xl border border-amber-500/30">
-                            <span class="text-amber-700 dark:text-amber-400 text-[11px] font-bold block mb-1">Combustible</span>
+                        <div class="bg-amber-500/10 dark:bg-blue-600/25 p-3.5 rounded-2xl border border-amber-500/30 dark:border-sky-400/40">
+                            <span class="text-amber-700 dark:text-amber-300 text-[11px] font-bold block mb-1">Combustible</span>
                             <span id="modal-combustible" class="font-black text-amber-600 dark:text-amber-300 text-base md:text-lg">--</span>
                         </div>
                     </div>
 
                 </div>
 
-                <!-- GRÁFICO DE BARRAS DE LOS ÚLTIMOS 7 DÍAS (SOBRE EXPANDIR INFORMACIÓN) -->
-                <div class="bg-stone-50 dark:bg-stone-900/80 p-3.5 rounded-2xl border border-stone-200/70 dark:border-stone-800 space-y-3">
+                <!-- GRÁFICO DE BARRAS DE LOS ÚLTIMOS 7 DÍAS -->
+                <div class="bg-stone-50 dark:bg-[#081326] p-3.5 rounded-2xl border border-stone-200/70 dark:border-blue-800/70 space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-stone-500 dark:text-sky-300 flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-sky-400"></span>
                             Horas trabajadas • Últimos 7 días
                         </span>
-                        <span id="grafico-promedio" class="text-[10px] font-bold text-amber-600 dark:text-amber-400">--</span>
+                        <span id="grafico-promedio" class="text-[10px] font-bold text-amber-600 dark:text-amber-300">--</span>
                     </div>
                     <div id="grafico-7-dias" class="grid grid-cols-7 gap-1.5 items-end h-28 pt-3 px-0.5">
                         <!-- Barras generadas dinámicamente -->
                     </div>
                 </div>
 
-                <!-- SECCIÓN EXPANDIBLE: MISMOS DATOS QUE EN INFO CONTRAÍDA -->
-                <div id="seccion-expandida" class="hidden pt-3 border-t border-stone-200 dark:border-stone-800 space-y-3">
+                <!-- HISTORIAL COMPLETO SIEMPRE EXPANDIDO -->
+                <div id="seccion-expandida" class="pt-3 border-t border-stone-200 dark:border-blue-800/70 space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-[11px] font-extrabold uppercase tracking-wider text-stone-700 dark:text-stone-200 flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                        <span class="text-[11px] font-extrabold uppercase tracking-wider text-stone-700 dark:text-sky-200 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-amber-500 dark:bg-sky-400"></span>
                             Registros completos de la unidad
                         </span>
-                        <span id="contador-registros-unidad" class="text-[10px] font-bold bg-stone-200/80 dark:bg-stone-800 text-stone-700 dark:text-stone-300 px-2.5 py-0.5 rounded-full">0 registros</span>
+                        <span id="contador-registros-unidad" class="text-[10px] font-bold bg-stone-200/80 dark:bg-[#162C54] text-stone-700 dark:text-sky-200 px-2.5 py-0.5 rounded-full">0 registros</span>
                     </div>
 
                     <div id="lista-registros-completos" class="space-y-2.5">
-                        <!-- Aquí se inyectan los registros históricos con los mismos campos que la ficha contraída -->
+                        <!-- Aquí se inyectan los registros históricos con los mismos campos -->
                     </div>
                 </div>
 
-            </div>
-
-            <!-- PIE FIJO DEL MODAL: BOTÓN EXPANDIR INFORMACIÓN -->
-            <div class="px-5 md:px-6 pt-3 pb-6 sm:pb-5 border-t border-stone-100 dark:border-stone-800 bg-white dark:bg-[#141519] shrink-0">
-                <button id="btn-expandir-info" onclick="toggleExpandirInfo()" class="w-full bg-stone-900 hover:bg-stone-800 dark:bg-amber-500 dark:hover:bg-amber-400 text-amber-400 dark:text-stone-950 font-extrabold py-3.5 rounded-2xl transition-all active:scale-95 text-sm shadow-lg flex items-center justify-center gap-2 cursor-pointer">
-                    <span id="texto-btn-expandir">Expandir información</span>
-                    <svg id="icono-btn-expandir" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </button>
             </div>
 
         </div>
@@ -423,9 +409,8 @@
         let maquinaActualModal = "";
         let fechaActualModal = "";
         let filtroUbicacionActual = "TODOS";
-        let estaExpandido = false;
 
-        // --- GESTIÓN DE TEMA (CLARO / OSCURO / AUTOMÁTICO) ---
+        // --- GESTIÓN DE TEMA (CLARO / OSCURO AZUL CORPORATIVO / AUTOMÁTICO) ---
         function aplicarTema(modo) {
             const prefiereOscuro = window.matchMedia('(prefers-color-scheme: dark)').matches;
             if (modo === 'dark' || (modo === 'auto' && prefiereOscuro)) {
@@ -445,11 +430,11 @@
             document.querySelectorAll('.btn-tema').forEach(btn => {
                 const esActivo = btn.getAttribute('data-tema-btn') === modoActivo;
                 if (esActivo) {
-                    btn.classList.add('bg-stone-900', 'dark:bg-amber-500', 'text-amber-400', 'dark:text-stone-950', 'shadow-xs');
-                    btn.classList.remove('text-stone-600', 'dark:text-stone-400', 'hover:bg-white/60', 'dark:hover:bg-stone-800');
+                    btn.classList.add('bg-stone-900', 'dark:bg-blue-600', 'text-amber-400', 'dark:text-white', 'shadow-xs');
+                    btn.classList.remove('text-stone-600', 'dark:text-sky-300/70', 'hover:bg-white/60', 'dark:hover:bg-[#12264A]');
                 } else {
-                    btn.classList.remove('bg-stone-900', 'dark:bg-amber-500', 'text-amber-400', 'dark:text-stone-950', 'shadow-xs');
-                    btn.classList.add('text-stone-600', 'dark:text-stone-400', 'hover:bg-white/60', 'dark:hover:bg-stone-800');
+                    btn.classList.remove('bg-stone-900', 'dark:bg-blue-600', 'text-amber-400', 'dark:text-white', 'shadow-xs');
+                    btn.classList.add('text-stone-600', 'dark:text-sky-300/70', 'hover:bg-white/60', 'dark:hover:bg-[#12264A]');
                 }
             });
         }
@@ -486,27 +471,27 @@
             return isNaN(num) ? 0 : num;
         }
 
-        // Paleta ejecutiva sobria por ubicación
+        // Paleta ejecutiva con modo oscuro en Azul Corporativo
         const paletaLugares = [
             {
-                card: 'bg-amber-50/70 dark:bg-[#191713] border-amber-300 dark:border-amber-600/40',
-                iconBox: 'bg-amber-500/15 text-amber-700 dark:text-amber-400',
-                accent: 'bg-amber-500'
+                card: 'bg-amber-50/70 dark:bg-[#0E2040] border-amber-300 dark:border-blue-600/70',
+                iconBox: 'bg-amber-500/15 dark:bg-blue-500/25 text-amber-700 dark:text-sky-300',
+                accent: 'bg-amber-500 dark:bg-amber-400'
             },
             {
-                card: 'bg-white dark:bg-[#141519] border-stone-300 dark:border-stone-700',
-                iconBox: 'bg-stone-200/70 dark:bg-stone-800 text-stone-800 dark:text-stone-200',
-                accent: 'bg-stone-900 dark:bg-stone-400'
+                card: 'bg-white dark:bg-[#0B1933] border-stone-300 dark:border-blue-800/80',
+                iconBox: 'bg-stone-200/70 dark:bg-[#152D57] text-stone-800 dark:text-sky-200',
+                accent: 'bg-stone-900 dark:bg-blue-500'
             },
             {
-                card: 'bg-orange-50/60 dark:bg-[#191513] border-orange-300 dark:border-orange-600/40',
-                iconBox: 'bg-orange-500/15 text-orange-700 dark:text-orange-400',
-                accent: 'bg-orange-600'
+                card: 'bg-orange-50/60 dark:bg-[#102447] border-orange-300 dark:border-sky-600/60',
+                iconBox: 'bg-orange-500/15 dark:bg-sky-500/25 text-orange-700 dark:text-sky-300',
+                accent: 'bg-orange-600 dark:bg-sky-400'
             },
             {
-                card: 'bg-slate-100/80 dark:bg-[#13161C] border-slate-300 dark:border-slate-700',
-                iconBox: 'bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300',
-                accent: 'bg-slate-600'
+                card: 'bg-slate-100/80 dark:bg-[#09152B] border-slate-300 dark:border-indigo-800/70',
+                iconBox: 'bg-slate-200/80 dark:bg-[#162F5C] text-slate-700 dark:text-blue-200',
+                accent: 'bg-slate-600 dark:bg-indigo-400'
             }
         ];
         
@@ -599,18 +584,54 @@
             }
         });
 
-        function filtrarPorUbicacion(categoria, botonClickado) {
-            filtroUbicacionActual = categoria;
-            
-            const botones = document.querySelectorAll('.btn-filtro');
-            botones.forEach(btn => {
-                btn.classList.remove('bg-stone-900', 'dark:bg-amber-500', 'text-amber-400', 'dark:text-stone-950', 'border-stone-900', 'dark:border-amber-500', 'font-bold');
-                btn.classList.add('bg-white', 'dark:bg-stone-800/80', 'text-stone-600', 'dark:text-stone-300', 'border-stone-200', 'dark:border-stone-700', 'font-semibold', 'hover:bg-stone-100', 'dark:hover:bg-stone-800');
+        // --- GENERACIÓN DINÁMICA DE FILTROS DE UBICACIÓN (SIN "OTROS") ---
+        function renderizarFiltrosUbicacion(registrosDeFecha) {
+            const contenedor = document.getElementById('botones-categoria');
+            const lugaresSet = new Set();
+
+            registrosDeFecha.forEach(item => {
+                const limpio = (item.lugar || '').trim().toUpperCase();
+                if (limpio && limpio !== 'SIN UBICACIÓN' && limpio !== 'SIN UBICACION') {
+                    lugaresSet.add(limpio);
+                }
             });
 
-            botonClickado.classList.remove('bg-white', 'dark:bg-stone-800/80', 'text-stone-600', 'dark:text-stone-300', 'border-stone-200', 'dark:border-stone-700', 'font-semibold', 'hover:bg-stone-100', 'dark:hover:bg-stone-800');
-            botonClickado.classList.add('bg-stone-900', 'dark:bg-amber-500', 'text-amber-400', 'dark:text-stone-950', 'border-stone-900', 'dark:border-amber-500', 'font-bold');
+            // Ordenar ubicaciones: primero CARRETERA CHIPULUC y OLMOS, luego cualquier ubicación nueva
+            const lugaresOrdenados = Array.from(lugaresSet).sort((a, b) => {
+                const prioridad = (nombre) => {
+                    if (nombre === 'CARRETERA CHIPULUC') return 1;
+                    if (nombre === 'OLMOS') return 2;
+                    return 3;
+                };
+                const pA = prioridad(a);
+                const pB = prioridad(b);
+                if (pA !== pB) return pA - pB;
+                return a.localeCompare(b, 'es');
+            });
 
+            // Si el filtro activo ya no existe en esta fecha, volver a TODOS
+            if (filtroUbicacionActual !== 'TODOS' && !lugaresSet.has(filtroUbicacionActual)) {
+                filtroUbicacionActual = 'TODOS';
+            }
+
+            const opciones = ['TODOS', ...lugaresOrdenados];
+            let html = '';
+
+            opciones.forEach(opcion => {
+                const activo = filtroUbicacionActual === opcion;
+                const clases = activo
+                    ? 'bg-stone-900 dark:bg-blue-600 text-amber-400 dark:text-white border-stone-900 dark:border-blue-500 font-bold'
+                    : 'bg-white dark:bg-[#12264A] text-stone-600 dark:text-sky-200/85 border-stone-200 dark:border-blue-700/70 font-semibold hover:bg-stone-100 dark:hover:bg-[#193361]';
+
+                const opcionEscapada = opcion.replace(/'/g, "\\'");
+                html += `<button onclick="filtrarPorUbicacion('${opcionEscapada}')" class="btn-filtro ${clases} px-4 py-1.5 md:py-2 rounded-full text-[11px] md:text-xs shrink-0 transition-all duration-200 active:scale-95 shadow-xs border cursor-pointer">${opcion}</button>`;
+            });
+
+            contenedor.innerHTML = html;
+        }
+
+        function filtrarPorUbicacion(categoria) {
+            filtroUbicacionActual = categoria;
             actualizarVista();
         }
 
@@ -618,21 +639,18 @@
             const fechaSeleccionada = document.getElementById('selector-fecha').value;
             const textoBusqueda = document.getElementById('buscador').value.toLowerCase();
 
-            const filtrados = todosLosRegistros.filter(item => {
-                const coincideBasico = (item.fechaFiltro === fechaSeleccionada) && item.unidad.toLowerCase().includes(textoBusqueda);
-                if (!coincideBasico) return false;
+            // Registros correspondientes a la fecha seleccionada
+            const registrosFecha = todosLosRegistros.filter(item => item.fechaFiltro === fechaSeleccionada);
 
-                const lugarUpper = item.lugar.toUpperCase();
-                if (filtroUbicacionActual === "TODOS") {
-                    return true;
-                } else if (filtroUbicacionActual === "CARRETERA CHIPULUC") {
-                    return lugarUpper.includes("CARRETERA CHIPULUC");
-                } else if (filtroUbicacionActual === "OLMOS") {
-                    return lugarUpper.includes("OLMOS");
-                } else if (filtroUbicacionActual === "OTROS") {
-                    return !lugarUpper.includes("CARRETERA CHIPULUC") && !lugarUpper.includes("OLMOS");
-                }
-                return true;
+            // Actualizar dinámicamente los botones de filtro (TODOS + lugares existentes/nuevos)
+            renderizarFiltrosUbicacion(registrosFecha);
+
+            const filtrados = registrosFecha.filter(item => {
+                const coincideBusqueda = item.unidad.toLowerCase().includes(textoBusqueda);
+                if (!coincideBusqueda) return false;
+
+                if (filtroUbicacionActual === 'TODOS') return true;
+                return item.lugar.trim().toUpperCase() === filtroUbicacionActual;
             });
 
             renderizarBotones(filtrados);
@@ -643,7 +661,7 @@
             let html = '';
 
             if (datos.length === 0) {
-                grid.innerHTML = '<div class="col-span-2 md:col-span-3 lg:col-span-4 text-center text-stone-400 py-16 text-sm bg-white dark:bg-[#141519] rounded-2xl border border-stone-200 dark:border-stone-800 anim-card">No se encontraron máquinas en esta vista.</div>';
+                grid.innerHTML = '<div class="col-span-2 md:col-span-3 lg:col-span-4 text-center text-stone-400 dark:text-sky-300/60 py-16 text-sm bg-white dark:bg-[#0B1933] rounded-2xl border border-stone-200 dark:border-blue-800/70 anim-card">No se encontraron máquinas en esta vista.</div>';
                 return;
             }
 
@@ -651,34 +669,35 @@
                 const indexReal = todosLosRegistros.indexOf(item);
                 const horasNum = parsearHorasNumerico(item.totalHoras);
                 const sinDataHoy = horasNum === 0;
+                const claveLugar = item.lugar.trim().toUpperCase();
                 
-                if (!mapaColoresLugar[item.lugar]) {
-                    mapaColoresLugar[item.lugar] = paletaLugares[contadorLugares % paletaLugares.length];
+                if (!mapaColoresLugar[claveLugar]) {
+                    mapaColoresLugar[claveLugar] = paletaLugares[contadorLugares % paletaLugares.length];
                     contadorLugares++;
                 }
-                const estiloBase = mapaColoresLugar[item.lugar];
+                const estiloBase = mapaColoresLugar[claveLugar];
                 const delay = Math.min(idx * 25, 300);
 
                 // Si tiene 0 horas en la fecha seleccionada: tarjeta en rojo con etiqueta "SIN DATA HOY"
                 const cardClass = sinDataHoy
-                    ? 'bg-red-50/90 dark:bg-red-950/35 border-red-300 dark:border-red-800/70'
+                    ? 'bg-red-50/90 dark:bg-red-950/55 border-red-300 dark:border-red-700/80'
                     : estiloBase.card;
                 const iconBoxClass = sinDataHoy
-                    ? 'bg-red-500/15 text-red-700 dark:text-red-400'
+                    ? 'bg-red-500/15 text-red-700 dark:text-red-300'
                     : estiloBase.iconBox;
                 const accentClass = sinDataHoy
                     ? 'bg-red-600 dark:bg-red-500'
                     : estiloBase.accent;
                 const badgeClass = sinDataHoy
                     ? 'text-red-700 dark:text-red-300 bg-transparent border border-red-600 dark:border-red-400'
-                    : 'text-stone-950 dark:text-stone-100 bg-transparent border border-stone-950 dark:border-stone-300';
+                    : 'text-stone-950 dark:text-sky-100 bg-transparent border border-stone-950 dark:border-sky-400/70';
                 const badgeTexto = sinDataHoy ? 'SIN DATA HOY' : item.lugar;
                 const tituloClass = sinDataHoy
                     ? 'text-red-950 dark:text-red-100'
                     : 'text-stone-950 dark:text-white';
                 const flechaClass = sinDataHoy
-                    ? 'text-red-400 group-hover:text-red-700 dark:group-hover:text-red-300'
-                    : 'text-stone-400 group-hover:text-stone-900 dark:group-hover:text-amber-400';
+                    ? 'text-red-400 group-hover:text-red-700 dark:group-hover:text-red-200'
+                    : 'text-stone-400 dark:text-sky-400/70 group-hover:text-stone-900 dark:group-hover:text-amber-300';
 
                 html += `
                     <button onclick="abrirDetalle(${indexReal})" style="animation-delay: ${delay}ms;" class="anim-card ${cardClass} p-3.5 md:p-4 rounded-2xl shadow-xs border flex flex-col justify-between items-start text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.97] min-h-[112px] md:min-h-[126px] relative overflow-hidden group cursor-pointer">
@@ -719,9 +738,6 @@
             const m = todosLosRegistros[indexOriginal];
             maquinaActualModal = m.unidad;
             fechaActualModal = m.fechaFiltro;
-            
-            estaExpandido = false;
-            actualizarUIExpandido();
 
             cargarDatosEnModal(m);
             actualizarBotonesNavegacionFecha();
@@ -767,7 +783,7 @@
             const ultimos7 = registrosUnidad.slice(-7);
 
             if (ultimos7.length === 0) {
-                contenedor.innerHTML = '<div class="col-span-7 text-center text-xs text-stone-400 py-6">Sin historial disponible</div>';
+                contenedor.innerHTML = '<div class="col-span-7 text-center text-xs text-stone-400 dark:text-slate-400 py-6">Sin historial disponible</div>';
                 etiquetaPromedio.innerText = '';
                 return;
             }
@@ -787,19 +803,19 @@
                 const hrsTexto = hrs.toFixed(1).replace('.', ',');
 
                 const colorBarra = hrs === 0
-                    ? 'bg-red-400/70 dark:bg-red-500/50'
+                    ? 'bg-red-400/70 dark:bg-red-500/60'
                     : (esFechaActiva
-                        ? 'bg-stone-900 dark:bg-amber-400 ring-2 ring-amber-500/40'
-                        : 'bg-amber-500/80 dark:bg-amber-500/60');
+                        ? 'bg-stone-900 dark:bg-amber-400 ring-2 ring-amber-500/40 dark:ring-amber-300/40'
+                        : 'bg-amber-500/80 dark:bg-sky-500');
 
                 const colorTextoFecha = esFechaActiva
                     ? 'text-stone-950 dark:text-amber-300 font-extrabold'
-                    : 'text-stone-400 font-semibold';
+                    : 'text-stone-400 dark:text-slate-400 font-semibold';
 
                 html += `
                     <div class="flex flex-col items-center justify-end h-full gap-1 group">
-                        <span class="text-[9px] font-extrabold ${hrs === 0 ? 'text-red-500' : 'text-stone-700 dark:text-stone-300'} leading-none">${hrsTexto}</span>
-                        <div class="w-full max-w-[26px] h-16 bg-stone-200/70 dark:bg-stone-800/80 rounded-lg flex items-end overflow-hidden p-0.5">
+                        <span class="text-[9px] font-extrabold ${hrs === 0 ? 'text-red-500 dark:text-red-400' : 'text-stone-700 dark:text-sky-200'} leading-none">${hrsTexto}</span>
+                        <div class="w-full max-w-[26px] h-16 bg-stone-200/70 dark:bg-[#12264A] rounded-lg flex items-end overflow-hidden p-0.5">
                             <div style="height: ${porcentaje}%;" class="w-full ${colorBarra} rounded-md transition-all duration-500"></div>
                         </div>
                         <span class="text-[9px] ${colorTextoFecha} leading-none tracking-tight">${fechaCorta}</span>
@@ -808,34 +824,6 @@
             });
 
             contenedor.innerHTML = html;
-        }
-
-        function toggleExpandirInfo() {
-            estaExpandido = !estaExpandido;
-            actualizarUIExpandido();
-
-            if (estaExpandido) {
-                const seccion = document.getElementById('seccion-expandida');
-                setTimeout(() => {
-                    seccion.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 60);
-            }
-        }
-
-        function actualizarUIExpandido() {
-            const seccion = document.getElementById('seccion-expandida');
-            const textoBtn = document.getElementById('texto-btn-expandir');
-            const iconoBtn = document.getElementById('icono-btn-expandir');
-
-            if (estaExpandido) {
-                seccion.classList.remove('hidden');
-                textoBtn.innerText = 'Contraer información';
-                iconoBtn.classList.add('rotate-180');
-            } else {
-                seccion.classList.add('hidden');
-                textoBtn.innerText = 'Expandir información';
-                iconoBtn.classList.remove('rotate-180');
-            }
         }
 
         function renderizarHistorialCompletoUnidad(nombreUnidad) {
@@ -850,41 +838,41 @@
             contador.innerText = `${registrosUnidad.length} ${registrosUnidad.length === 1 ? 'registro' : 'registros'}`;
 
             if (registrosUnidad.length === 0) {
-                lista.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">No hay registros adicionales para esta unidad.</p>';
+                lista.innerHTML = '<p class="text-xs text-stone-400 dark:text-slate-400 text-center py-4">No hay registros adicionales para esta unidad.</p>';
                 return;
             }
 
             let html = '';
             registrosUnidad.forEach(reg => {
                 html += `
-                    <div class="bg-stone-50 dark:bg-stone-900/90 p-3.5 rounded-2xl border border-stone-200/80 dark:border-stone-800 space-y-2.5 text-xs">
-                        <div class="flex items-center justify-between gap-2 border-b border-stone-200/70 dark:border-stone-800 pb-2">
-                            <span class="font-extrabold text-amber-600 dark:text-amber-400">${reg.fechaFiltro}</span>
-                            <span class="text-[10px] font-extrabold text-stone-950 dark:text-stone-100 border border-stone-950 dark:border-stone-400 px-2 py-0.5 rounded-full">${reg.lugar}</span>
+                    <div class="bg-stone-50 dark:bg-[#081326] p-3.5 rounded-2xl border border-stone-200/80 dark:border-blue-800/70 space-y-2.5 text-xs">
+                        <div class="flex items-center justify-between gap-2 border-b border-stone-200/70 dark:border-blue-900/60 pb-2">
+                            <span class="font-extrabold text-amber-600 dark:text-sky-400">${reg.fechaFiltro}</span>
+                            <span class="text-[10px] font-extrabold text-stone-950 dark:text-sky-100 border border-stone-950 dark:border-sky-400/70 px-2 py-0.5 rounded-full">${reg.lugar}</span>
                         </div>
                         <div class="grid grid-cols-2 gap-x-3 gap-y-2 text-[11px]">
                             <div>
-                                <span class="text-stone-400 block">Operador</span>
-                                <span class="font-bold text-stone-800 dark:text-stone-100">${reg.operador || 'Sin registro'}</span>
+                                <span class="text-stone-400 dark:text-slate-400 block">Operador</span>
+                                <span class="font-bold text-stone-800 dark:text-white">${reg.operador || 'Sin registro'}</span>
                             </div>
                             <div>
-                                <span class="text-stone-400 block">Estado para Mtto</span>
-                                <span class="font-bold text-stone-800 dark:text-stone-100">${reg.estadoMtto || 'Sin registro'}</span>
+                                <span class="text-stone-400 dark:text-slate-400 block">Estado para Mtto</span>
+                                <span class="font-bold text-stone-800 dark:text-white">${reg.estadoMtto || 'Sin registro'}</span>
                             </div>
                             <div>
-                                <span class="text-stone-400 block">Horómetro Inicial</span>
-                                <span class="font-bold text-stone-800 dark:text-stone-100">${reg.hInicial}</span>
+                                <span class="text-stone-400 dark:text-slate-400 block">Horómetro Inicial</span>
+                                <span class="font-bold text-stone-800 dark:text-white">${reg.hInicial}</span>
                             </div>
                             <div>
-                                <span class="text-stone-400 block">Horómetro Final</span>
-                                <span class="font-bold text-stone-800 dark:text-stone-100">${reg.hFinal}</span>
+                                <span class="text-stone-400 dark:text-slate-400 block">Horómetro Final</span>
+                                <span class="font-bold text-stone-800 dark:text-white">${reg.hFinal}</span>
                             </div>
                             <div>
-                                <span class="text-stone-400 block">Horas Totales</span>
+                                <span class="text-stone-400 dark:text-slate-400 block">Horas Totales</span>
                                 <span class="font-bold text-stone-900 dark:text-white">${reg.totalHoras} hrs</span>
                             </div>
                             <div>
-                                <span class="text-stone-400 block">Combustible</span>
+                                <span class="text-stone-400 dark:text-slate-400 block">Combustible</span>
                                 <span class="font-bold text-amber-600 dark:text-amber-300">${reg.combustible || '0 Gal'}</span>
                             </div>
                         </div>
