@@ -229,7 +229,7 @@ const URL_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vReJl2BT_9uiaFmB-
 const CACHE_KEY="gb_csv_v1";
 const $=id=>document.getElementById(id);
 const DIAS=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-let regs=[],fechas=[],filtro='TODOS',mUnidad='',mFecha='';
+let regs=[],fechas=[],filtro='TODOS',mUnidad='',mFecha='',ultimaSync=0,cargando=false;
 
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=v=>{const n=parseFloat(String(v||'').replace(',','.').replace(/[^\d.-]/g,''));return isNaN(n)?0:n};
@@ -353,62 +353,78 @@ function procesarCSV(csvText,fechaPrevia){
  $('sec-resumen').classList.remove('hidden');
  $('lista').classList.remove('hidden');
  vista();
+ if(!$('modal-detalle').classList.contains('hidden'))renderFicha();
  return true;
 }
 
-/* ---------- Carga de datos con pantalla grande del logo saltando ---------- */
-async function cargarDatos(esRefresco=false){
+/* ---------- Carga en tiempo real sin caché CDN ---------- */
+async function cargarDatos(esRefresco=false,silencioso=false){
+ if(cargando)return;
+ cargando=true;
  const btnRef=$('btn-ref');
- const fechaPrevia=esRefresco?$('selector-fecha').value:'';
+ const fechaPrevia=(esRefresco||silencioso)?$('selector-fecha').value:'';
 
  if(btnRef){btnRef.classList.add('spin');btnRef.disabled=true}
 
- // Mostrar pantalla grande del logo saltando al cargar o refrescar
- $('loader').classList.remove('hidden');
- $('sec-resumen').classList.add('hidden');
- $('lista').classList.add('hidden');
+ if(!silencioso){
+  $('loader').classList.remove('hidden');
+  $('sec-resumen').classList.add('hidden');
+  $('lista').classList.add('hidden');
+ }
 
  const inicio=Date.now();
  try{
-  const res=await fetch(URL_CSV,{cache:'reload'});
+  const urlViva=`${URL_CSV}&_=${Date.now()}`;
+  const res=await fetch(urlViva,{cache:'no-store'});
   if(!res.ok)throw new Error('HTTP '+res.status);
   const csvText=await res.text();
 
-  // Breve tiempo mínimo para apreciar la animación sin parpadeos bruscos
-  const transcurrido=Date.now()-inicio;
-  if(transcurrido<450)await new Promise(r=>setTimeout(r,450-transcurrido));
+  if(!silencioso){
+   const transcurrido=Date.now()-inicio;
+   if(transcurrido<400)await new Promise(r=>setTimeout(r,400-transcurrido));
+  }
 
   if(procesarCSV(csvText,fechaPrevia)){
+   ultimaSync=Date.now();
    const h=new Date();
    const horaStr=`${String(h.getHours()).padStart(2,'0')}:${String(h.getMinutes()).padStart(2,'0')}`;
    $('upd-txt').textContent=`Actualizado ${horaStr}`;
    try{localStorage.setItem(CACHE_KEY,JSON.stringify({csv:csvText,hora:horaStr}))}catch(_){}
   }
  }catch(_){
-  // Si falla la red, intenta recuperar desde caché local
-  let recuperado=false;
-  try{
-   const cached=localStorage.getItem(CACHE_KEY);
-   if(cached){
-    const obj=JSON.parse(cached);
-    if(obj&&obj.csv&&procesarCSV(obj.csv,fechaPrevia)){
-     recuperado=true;
-     if(obj.hora)$('upd-txt').textContent=`Actualizado ${obj.hora}`;
+  if(!silencioso){
+   let recuperado=false;
+   try{
+    const cached=localStorage.getItem(CACHE_KEY);
+    if(cached){
+     const obj=JSON.parse(cached);
+     if(obj&&obj.csv&&procesarCSV(obj.csv,fechaPrevia)){
+      recuperado=true;
+      if(obj.hora)$('upd-txt').textContent=`Actualizado ${obj.hora}`;
+     }
     }
-   }
-  }catch(__){}
+   }catch(__){}
 
-  if(!recuperado){
-   $('loader').classList.add('hidden');
-   $('lista').classList.remove('hidden');
-   $('sec-resumen').classList.add('hidden');
-   $('lista').innerHTML='<div class="grid"><div class="empty"><b>No se pudieron leer los datos</b><p>Revisa tu conexión y toca «Refrescar datos».</p></div></div>';
+   if(!recuperado){
+    $('loader').classList.add('hidden');
+    $('lista').classList.remove('hidden');
+    $('sec-resumen').classList.add('hidden');
+    $('lista').innerHTML='<div class="grid"><div class="empty"><b>No se pudieron leer los datos</b><p>Revisa tu conexión y toca «Refrescar datos».</p></div></div>';
+   }
   }
  }finally{
+  cargando=false;
   if(btnRef){btnRef.classList.remove('spin');btnRef.disabled=false}
  }
 }
-cargarDatos(false);
+cargarDatos(false,false);
+
+/* Sincronización automática al volver a abrir la app desde segundo plano */
+document.addEventListener('visibilitychange',()=>{
+ if(document.visibilityState==='visible'&&Date.now()-ultimaSync>15000){
+  cargarDatos(false,true);
+ }
+});
 
 /* ---------- Vista principal ---------- */
 function nav(){
@@ -481,7 +497,9 @@ function abrirDetalle(i){
 function renderFicha(){
  const uNorm=normU(mUnidad);
  const reg=regs.filter(r=>r.uNorm===uNorm).sort((a,b)=>a.ts-b.ts);
+ if(!reg.length)return;
  const m=reg.find(r=>r.fechaFiltro===mFecha)||reg[reg.length-1];
+ mFecha=m.fechaFiltro;
  $('m-titulo').textContent=m.unidad;
  const fl=reg.map(r=>r.fechaFiltro),ix=fl.indexOf(mFecha);
  const ult=reg.slice(Math.max(0,ix-6),ix+1);
